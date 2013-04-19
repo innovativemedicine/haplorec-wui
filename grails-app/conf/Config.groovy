@@ -11,7 +11,7 @@
 //    grails.config.locations << "file:" + System.properties["${appName}.config.location"]
 // }
 
-grails.project.groupId = appName // change this to alter the default package name and Maven publishing destination
+grails.project.groupId = 'haplorec.wui' // change this to alter the default package name and Maven publishing destination
 grails.mime.file.extensions = true // enables the parsing of file extensions from URLs into the request format
 grails.mime.use.accept.header = false
 grails.mime.types = [
@@ -89,3 +89,9 @@ log4j = {
            'org.hibernate',
            'net.sf.ehcache.hibernate'
 }
+
+// grails.plugin.reveng.includeTableRegexes = [/^job$/, /^job_.*/]
+grails.plugin.reveng.destDir = 'grails-app/domain'
+grails.plugin.reveng.packageName = grails.project.groupId
+// grails.plugin.reveng.jdbcDriverJarDep = 'mysql:mysql-connector-java:5.1.20'
+// grails.plugin.reveng.jdbcDriverJarPath = "/Users/james/.grails/ivy-cache/mysql/mysql-connector-java/jars/mysql-connector-java-5.1.20.jar"

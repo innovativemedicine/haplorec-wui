@@ -1,0 +1,3 @@
+[submodule "projects/haplorec"]
+	path = projects/haplorec
+	url = git@github.com:innovativemedicine/haplorec.git

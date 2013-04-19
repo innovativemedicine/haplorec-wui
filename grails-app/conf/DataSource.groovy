@@ -1,8 +1,6 @@
 dataSource {
     pooled = true
-    driverClassName = "org.h2.Driver"
-    username = "sa"
-    password = ""
+	driverClassName = "com.mysql.jdbc.Driver"
 }
 hibernate {
     cache.use_second_level_cache = true
@@ -10,23 +8,29 @@ hibernate {
     cache.region.factory_class = 'net.sf.ehcache.hibernate.EhCacheRegionFactory'
 }
 // environment specific settings
+development_dataSource_url = "jdbc:mysql://localhost:3306/haplorec"
+development_dataSource_username = "root"
+development_dataSource_password = ""
 environments {
     development {
         dataSource {
-            dbCreate = "create-drop" // one of 'create', 'create-drop', 'update', 'validate', ''
-            url = "jdbc:h2:mem:devDb;MVCC=TRUE;LOCK_TIMEOUT=10000"
+            dbCreate = '' // one of 'create', 'create-drop', 'update', 'validate', ''
+            url = development_dataSource_url
+			username = development_dataSource_username
+			password = development_dataSource_password 
         }
     }
     test {
         dataSource {
-            dbCreate = "update"
-            url = "jdbc:h2:mem:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000"
+            dbCreate = ''
+            url = development_dataSource_url
+			username = development_dataSource_username
+            password = development_dataSource_password
         }
     }
     production {
         dataSource {
-            dbCreate = "update"
-            url = "jdbc:h2:prodDb;MVCC=TRUE;LOCK_TIMEOUT=10000"
+            dbCreate = ''
             pooled = true
             properties {
                maxActive = -1
@@ -38,6 +42,9 @@ environments {
                testOnReturn=true
                validationQuery="SELECT 1"
             }
+            url = "jdbc:mysql://localhost:3306/haplorec"
+            username = "root"
+            password = "1000anag3r"
         }
     }
 }

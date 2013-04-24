@@ -41,6 +41,12 @@ grails.project.dependency.resolution = {
     plugins {
         runtime ":hibernate:$grailsVersion"
         runtime ":jquery:1.8.0"
+
+        // backbonejs: MVC framework for javascript
+        compile ":backbonejs:0.9.10.3"
+        // dustjs: client-side templating library
+        compile ":dustjs-resources:0.9.2"
+
         runtime ":resources:1.1.6"
 
         // Uncomment these (or add new ones) to enable additional resources capabilities
@@ -54,5 +60,8 @@ grails.project.dependency.resolution = {
         runtime ":database-migration:1.1"
 
         compile ':cache:1.0.0'
+
+        // debugging
+        compile ":console:1.2"
     }
 }

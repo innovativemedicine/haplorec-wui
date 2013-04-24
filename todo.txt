@@ -1,0 +1,32 @@
+- use haplorec as a git submodule and have it play nice with eclipse
+- use a grails plugin (reverse engineer i think) to generate domains from existing haplorec db schema
+- generate controllers
+- make a draft plan for a web UI for a dependency graph of sql tables (i.e. the job_patient_* tables)
+  - try to make an abstract grails module (plugin?) that generates this UI; if too hard, make it adhoc
+
+- try using qunit for unit testing js code ( http://qunitjs.com/ )
+  - http://qunitjs.com/intro/
+    good examples of testing DOM manipulating code
+  - http://qunitjs.com/cookbook/
+    good examples of testing ajax code Asynchronous Callbacks
+- use jsPlumb for flowcharts ( http://jsplumbtoolkit.com/jquery/flowchartConnectorsDemo.html )
+- use dustjs for templating 
+  - http://grails.org/plugin/dustjs-resources for compiling dust templates to js 
+  - figure out how to configure (i.e. where to put what files)
+- use backbonejs for MVC design style
+  - http://grails.org/plugin/backbonejs
+  - use todo list example for learning backbonejs
+- example project using both backbonejs and dustjs ( https://github.com/coderguy/demandware )
+  - there seems to be a common pattern for dust template rendering from backbone views; abstract this ( 
+    https://github.com/coderguy/demandware/blob/master/app/javascript/backbone/views/HomeView.js )
+
+[o] implement algo for finding level of dependencies in the dependency graph
+[o] subclass Depenedency with HaplotypeDependency
+- convert HaplotypeDependency to JSON (make unit tests)?
+- create a backbone model with 1-to-1 correspondence to HaplotypeDependency, and instantiate using JSON data
+- deserialize the json-ified HaplotypeDependency and load them into backbone models
+  - use request.JSON ( http://nematodes.org/martin/2009/12/18/using-jquery-to-send-json-data-to-a-grails-app/, http://grails.org/doc/latest/guide/theWebLayer.html#xmlAndJSON )
+- create a HaplotypeDependencyGraph model (see notes)
+- figure out how to use dustjs; if too hard, fallback to underscore
+- create a HaplotypeDependencyGraphView (see notes)
+- figure out how backbone's notion of collections ties in with how to structure code

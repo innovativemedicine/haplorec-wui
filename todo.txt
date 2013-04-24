@@ -29,10 +29,10 @@
   - it mostly works by just importing grails.converters.JSON and doing HaplotypeInput.haplotypeDepedencyGraph() as JSON, we just need to fix a couple things:
     - don't include these fields: class, finished (where'd this come from), rule
     - only want to render dependencies by their target names, not by recursively calling JSON converter
-- create a backbone model with 1-to-1 correspondence to HaplotypeDependency, and instantiate using JSON data
-- deserialize the json-ified HaplotypeDependency and load them into backbone models
+[o] create a backbone model with 1-to-1 correspondence to HaplotypeDependency, and instantiate using JSON data
+[o] deserialize the json-ified HaplotypeDependency and load them into backbone models
   - use request.JSON ( http://nematodes.org/martin/2009/12/18/using-jquery-to-send-json-data-to-a-grails-app/, http://grails.org/doc/latest/guide/theWebLayer.html#xmlAndJSON )
-- create a HaplotypeDependencyGraph model (see notes)
-- figure out how to use dustjs; if too hard, fallback to underscore
+[o] create a HaplotypeDependencyGraph model (see notes)
 - create a HaplotypeDependencyGraphView (see notes)
+  - figure out how to use dustjs; if too hard, fallback to underscore
 - figure out how backbone's notion of collections ties in with how to structure code

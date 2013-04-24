@@ -6,7 +6,12 @@ modules = {
 
     jsPlumb {
         dependsOn 'jquery'
-        resource url:'js/jquery.jsPlumb-1.3.16-all.js'
+        resource url:'js/extern/jquery.jsPlumb-1.3.16-all.js'
+    }
+
+    pipeline {
+        dependsOn 'jsPlumb, jquery, backbone'
+        resource url:'/js/pipeline.js'
     }
 
 }

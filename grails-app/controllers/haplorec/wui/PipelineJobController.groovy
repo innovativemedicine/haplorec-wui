@@ -1,5 +1,6 @@
 package haplorec.wui
 import grails.converters.JSON
+import haplorec.wui.Util
 
 //import haplorec.util.*
 import haplorec.util.haplotype.HaplotypeInput
@@ -115,5 +116,20 @@ class PipelineJobController {
             flash.message = message(code: 'default.not.deleted.message', args: [message(code: 'job.label', default: 'Job'), id])
             redirect(action: "show", id: id)
         }
+    }
+
+    def dependencies() {
+        render haplorec.util.Haplotype.haplotypeDepedencyGraph().values().collect { d ->
+            Util.makeRenderable(d) 
+        } as JSON
+    }
+
+    def dependencyGraph() {
+        def g = haplorec.util.Haplotype.haplotypeDepedencyGraph()
+        def level = g.drugRecommendation.levels()
+        render([
+            level: level,
+            dependencies: g.values().collect { d -> Util.makeRenderable(d) },
+        ] as JSON)
     }
 }

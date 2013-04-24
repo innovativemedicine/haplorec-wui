@@ -1,4 +1,5 @@
 package haplorec.wui
+import grails.converters.JSON
 
 //import haplorec.util.*
 import haplorec.util.haplotype.HaplotypeInput

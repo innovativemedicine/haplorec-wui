@@ -20,9 +20,15 @@
   - there seems to be a common pattern for dust template rendering from backbone views; abstract this ( 
     https://github.com/coderguy/demandware/blob/master/app/javascript/backbone/views/HomeView.js )
 
+- fix annoying build problems when trying to import haplorec project into haplorec-wui (kludge it by placing a symbolic link in src/groovy pointing to 
+  projects/haplorec/src/)
+
 [o] implement algo for finding level of dependencies in the dependency graph
 [o] subclass Depenedency with HaplotypeDependency
-- convert HaplotypeDependency to JSON (make unit tests)?
+[o] convert HaplotypeDependency to JSON (make unit tests)?
+  - it mostly works by just importing grails.converters.JSON and doing HaplotypeInput.haplotypeDepedencyGraph() as JSON, we just need to fix a couple things:
+    - don't include these fields: class, finished (where'd this come from), rule
+    - only want to render dependencies by their target names, not by recursively calling JSON converter
 - create a backbone model with 1-to-1 correspondence to HaplotypeDependency, and instantiate using JSON data
 - deserialize the json-ified HaplotypeDependency and load them into backbone models
   - use request.JSON ( http://nematodes.org/martin/2009/12/18/using-jquery-to-send-json-data-to-a-grails-app/, http://grails.org/doc/latest/guide/theWebLayer.html#xmlAndJSON )

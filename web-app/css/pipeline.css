@@ -1,0 +1,20 @@
+.dependency {
+    /* display: inline-block; */
+    background: #CFDEE3;
+    padding: 10px;
+    border: 2px solid #00BFFF;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    position: absolute;
+}
+
+.dependency-graph-inner {
+    width: inherit;
+    height: 500px;
+    position: relative;
+}
+
+.dependency-graph-outer {
+    padding: 10px;
+}

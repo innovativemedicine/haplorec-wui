@@ -95,3 +95,5 @@ grails.plugin.reveng.destDir = 'grails-app/domain'
 grails.plugin.reveng.packageName = grails.project.groupId
 // grails.plugin.reveng.jdbcDriverJarDep = 'mysql:mysql-connector-java:5.1.20'
 // grails.plugin.reveng.jdbcDriverJarPath = "/Users/james/.grails/ivy-cache/mysql/mysql-connector-java/jars/mysql-connector-java-5.1.20.jar"
+
+grails.resources.mappers.dustjs.templatesRoot = '/js/templates'

@@ -1,5 +1,4 @@
 .dependency {
-    /* display: inline-block; */
     background: #CFDEE3;
     padding: 10px;
     border: 2px solid #00BFFF;
@@ -7,6 +6,10 @@
     -moz-border-radius: 10px;
     border-radius: 10px;
     position: absolute;
+}
+
+.dependency-no-file-upload {
+    opacity: 0.5;
 }
 
 .dependency-graph-inner {

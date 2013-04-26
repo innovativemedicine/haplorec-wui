@@ -1,12 +1,8 @@
 <r:require modules="pipeline, backbone"/>
 <r:script>
-// var dependencies = new pipeline.Dependencies;
-// dependencies.fetch();
-
 var g = new pipeline.DependencyGraph;
 g.fetch();
 var gView = new pipeline.DependencyGraphView({model: g});
-console.log(g);
 </r:script>
 
 <%@ page import="haplorec.wui.Job" %>

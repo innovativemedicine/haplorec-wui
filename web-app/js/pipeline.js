@@ -71,6 +71,10 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
             this.listenTo(this, 'change:level', this._init);
         },
 
+        level: function (t) {
+            return this.get('level')[t];
+        },
+
         dependsOn: function(t) {
             return this._dependsOn[t];
         },
@@ -101,7 +105,6 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
     });
 
     // views
-   	// The DOM element for a todo item...
  
     // a view backed by a dustjs template; it's render function uses dustjs 
     // to render this.template
@@ -122,10 +125,20 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
         template: "pipeline/dependency",
         className: "dependency",
         tagName: "span",
+        initialize: function () {
+            this.listenTo(this.model, 'change', this._init);
+            if (this.model) {
+                this._init();
+            }
+        },
+        _init: function () {
+            if (!this.model.get('fileUpload')) {
+                this.$el.addClass('dependency-no-file-upload');
+            }
+        },
     });
 
 	m.DependencyGraphView = Backbone.View.extend({
-        // template: "pipeline/dependencyGraph",
         el: '#dependency-graph',
         className: 'dependency-graph-inner',
         leftMargin: 10,
@@ -140,21 +153,14 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
 		// 	'blur .edit': 'close'
 		// },
 
-		// The TodoView listens for changes to its model, re-rendering. Since there's
-		// a one-to-one correspondence between a **Todo** and a **TodoView** in this
-		// app, we set a direct reference on the model for convenience.
 		initialize: function () {
-            // this.$el.addClass(this.className);
             var outer = this.$el;
             var inner = $(document.createElement('div')).addClass(this.className);
             outer.addClass('dependency-graph-outer');
             outer.append(inner);
             this.$el = inner;
-            // this.$el = $(this.el)
 			this.listenTo(this.model, 'change', this._init);
-			// this.listenTo(this.model, 'change', this.render);
 			this.listenTo(this.model, 'destroy', this.remove);
-			// this.listenTo(this.model, 'visible', this.toggleVisible);
 		},
 
         _init: function() {
@@ -168,7 +174,6 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
                 view.$el.attr('id', d.get('target'));
                 that.dViews[d] = view;
             }); 
-            console.log(this.dViews);
             _.chain(this.dViews).values().each(function (v) {
                 that.$el.append(v.$el);
             });
@@ -176,13 +181,6 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
             this._addConnections();
             this.render();
         },
-
-            // var dimension = function (dim) {
-            //     var m = dim.match(/(^\d+)(.*)/);
-            //     var magnitude = m[1];
-            //     var units = m[2];
-            //     return [magnitude, units];
-            // }
 
         _arrange: function() {
             // I think these are always integers representing pixels
@@ -216,17 +214,14 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
 
         render: function() {
             _.chain(this.dViews).values().each(function (v) {
-                console.log(v);
                 v.render();
-                // this.$el.append(v.render());
             });
         }, 
-        //TODO:
+
         _addConnections: function(d) {
             var g = this.model;
 
             var srcUUID = function(d, t) {
-                // return t.get('target') + 'Src';
                 return d.get('target') + '_' + t.get('target') + '_' + 'src';
             };
             var dstUUID = function(d, t) {
@@ -236,59 +231,69 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
             /* Add endpoints.
              */
             // the definition of target endpoints (will appear when the user drags a connection) 
-            var connectorPaintStyle = {
-				lineWidth:3,
-				strokeStyle:"#225588",
-				joinstyle:"round",
-				outlineColor:"#EAEDEF",
-				outlineWidth:3
-			};
-			var connectorHoverStyle = {
-				lineWidth:4,
-				strokeStyle:"#2e2aF8"
-			};
 			var endpointStyle = {
-				endpoint:"Dot",
-                maxConnections: -1,
-				paintStyle:{ fillStyle:"#225588",radius:4 },
-				// connector:[ "Flowchart", { stub:[40, 60], gap:10 } ],								                
-				// connector:[ "Flowchart", { midpoint: 0.2 } ],								                
-				connector:[ "Bezier", { curviness: 0.1 } ],								                
-				// connector:[ "StateMachine", {} ],								                
-				connectorStyle:connectorPaintStyle,
-				hoverPaintStyle:connectorHoverStyle,
-				connectorHoverStyle:connectorHoverStyle,
-                dragOptions:{},
-                overlays:[
-                	[ "Label", { 
-	                	// location:[0.5, -0.5], 
-	                	location:[0.1, -0.1], 
-	                	cssClass:"endpointSourceLabel" 
-                    } ],
-                    [ "Arrow", {
-                        location:0.5
-                    } ],
+                // I can't seem to get arrow heads to show up.... sigh
+                // http://stackoverflow.com/questions/14984820/connector-style-not-being-applied-to-jsplumb-connector-when-created-dynamically
+                endpoint: ["Dot", {
+                    radius: 4
+                }],
+                endpointStyle: {
+                    fillStyle: "#5b9ada"
+                },
+                setDragAllowedWhenFull: true,
+                paintStyle: {
+                    strokeStyle: "#5b9ada",
+                    lineWidth: 3
+                },
+                connector: ["Straight"],
+                connectorStyle: {
+                    lineWidth: 3,
+                    strokeStyle: "#5b9ada"
+                },
+                overlays: [
+                    ["Arrow", {
+                        width: 10,
+                        length: 10,
+                        foldback: 1,
+                        location: 1,
+                        id: "arrow"
+                    }]
                 ]
-			};
+            };
             g.reverseBFS(function (l, t) {
-                var addEndpoint = function (uuid, anchor, style) {
-                    jsPlumb.addEndpoint(t.get('target'), style, { anchor:anchor, uuid:uuid(t) })
+                var addEndpoint = function (uuid, pointLocation, endpoints, style) {
+                    // # of endpoints on the same / different level
+                    var D = _.countBy(endpoints, function (d) { return g.level(d) == g.level(t) ? 'same' : 'different' });
+                    var s = D.same || 0;
+                    var n = D.different || 0;
+                    var s_i = 0;
+                    var n_i = 0;
+                    _.each(endpoints, function(e, i) {
+                        var sameLevel = g.level(e) == g.level(t);
+                        var p = pointLocation(sameLevel, s, n, (sameLevel ? s_i : n_i) + 1);
+                        if (sameLevel) {
+                            s_i += 1;
+                        } else {
+                            n_i += 1;
+                        }
+                        jsPlumb.addEndpoint(t.get('target'), style, { anchor:p, uuid:uuid(e) })
+                    });
                 };
                 if (l != g.get('numLevels') - 1) {
                     // add leftside (dst) endpoints to t
-                    var i = 1;
-                    _.each(g.dependsOn(t), function(d) {
-                        addEndpoint(function(t) { return dstUUID(d, t) }, [0, i*(1/( g.dependsOn(t).length+1 )), -1, 0], $.extend({}, endpointStyle, {isTarget: true}));
-                        i += 1;
-                    });
+                    addEndpoint(function (d) { return dstUUID(d, t) }, function (sameLevel, s, n, i) {
+                        return sameLevel ?
+                        [i*(1/( s+1 )), 0, -1, 0] :
+                        [0, i*(1/( n+1 )), -1, 0];
+                    }, g.dependsOn(t), $.extend({}, endpointStyle, {isTarget: true}));
                 }
                 if (l != 0) {
                     // add rightside (src) endpoints to t
-                    var i = 1;
-                    _.each(g.dependants(t), function(d) {
-                        addEndpoint(function(t) { return srcUUID(t, d) }, [1, i*(1/( g.dependants(t).length+1 )), -1, 0], $.extend({}, endpointStyle, {isSource: true}));
-                        i += 1;
-                    });
+                    addEndpoint(function (d) { return srcUUID(t, d) }, function (sameLevel, s, n, i) {
+                        return sameLevel ?
+                        [i*(1/( s+1 )), 1, -1, 0] :
+                        [1, i*(1/( n+1 )), -1, 0];
+                    }, g.dependants(t), $.extend({}, endpointStyle, {isSource: true}));
                 }
             });
 

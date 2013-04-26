@@ -34,6 +34,18 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
             this._dmap = dmap;
             this._dependsOn = dependsOn;
 
+
+            var dependants = {};
+            this.get('dependencies').forEach(function (d) {
+                dependants[d] = [];
+            });
+            this.get('dependencies').forEach(function (t) {
+                _.each(g.dependsOn(t), function (d) {
+                    dependants[d].push(t);
+                });
+            });
+            this._dependants = dependants;
+
             var levelToTargets = {};
             _.chain(this.get('level')).values()
                                       .uniq()
@@ -61,6 +73,10 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
 
         dependsOn: function(t) {
             return this._dependsOn[t];
+        },
+
+        dependants: function(t) {
+            return this._dependants[t];
         },
 
         // iterate over the dependencies in reverse breadth-first-search fashion
@@ -209,11 +225,12 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
         _addConnections: function(d) {
             var g = this.model;
 
-            var srcUUID = function(t) {
-                return t.get('target') + 'Src';
+            var srcUUID = function(d, t) {
+                // return t.get('target') + 'Src';
+                return d.get('target') + '_' + t.get('target') + '_' + 'src';
             };
             var dstUUID = function(d, t) {
-                return d.get('target') + 'Src' + '_' + t.get('target') + 'Dst';
+                return d.get('target') + '_' + t.get('target') + '_' + 'dst';
             };
 
             /* Add endpoints.
@@ -235,8 +252,8 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
                 maxConnections: -1,
 				paintStyle:{ fillStyle:"#225588",radius:4 },
 				// connector:[ "Flowchart", { stub:[40, 60], gap:10 } ],								                
-				connector:[ "Flowchart", { midpoint: 0.2 } ],								                
-				// connector:[ "Bezier", { curviness: 0.1 } ],								                
+				// connector:[ "Flowchart", { midpoint: 0.2 } ],								                
+				connector:[ "Bezier", { curviness: 0.1 } ],								                
 				// connector:[ "StateMachine", {} ],								                
 				connectorStyle:connectorPaintStyle,
 				hoverPaintStyle:connectorHoverStyle,
@@ -253,17 +270,12 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
                     } ],
                 ]
 			};
-            var dstEndpoints = {};
-            this.model.get('dependencies').each(function (d) {
-                dstEndpoints[d] = [];
-            });
             g.reverseBFS(function (l, t) {
                 var addEndpoint = function (uuid, anchor, style) {
                     jsPlumb.addEndpoint(t.get('target'), style, { anchor:anchor, uuid:uuid(t) })
                 };
                 if (l != g.get('numLevels') - 1) {
                     // add leftside (dst) endpoints to t
-                    // addEndpoint(dstUUID, 'LeftMiddle', $.extend({}, endpointStyle, {isTarget: true}));
                     var i = 1;
                     _.each(g.dependsOn(t), function(d) {
                         addEndpoint(function(t) { return dstUUID(d, t) }, [0, i*(1/( g.dependsOn(t).length+1 )), -1, 0], $.extend({}, endpointStyle, {isTarget: true}));
@@ -272,21 +284,19 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
                 }
                 if (l != 0) {
                     // add rightside (src) endpoints to t
-                    // TODO: figure out what targets depend on t (i.e. g.dependants(t))
-                    addEndpoint(srcUUID, 'RightMiddle', $.extend({}, endpointStyle, {isSource: true}));
+                    var i = 1;
+                    _.each(g.dependants(t), function(d) {
+                        addEndpoint(function(t) { return srcUUID(t, d) }, [1, i*(1/( g.dependants(t).length+1 )), -1, 0], $.extend({}, endpointStyle, {isSource: true}));
+                        i += 1;
+                    });
                 }
             });
 
             /* Add connections.
              */
             g.BFS(function (l, t) {
-                _.each(_.zip(g.dependsOn(t), dstEndpoints[t]), function (d_dst) {
-                    var d = d_dst[0],
-                        dst = d_dst[1];
-                    // d = this.model.dependency(dName);
-                    // m.assert(g.level(t) <= g.level(d), "dependency is at a equal or deeper level in the depedency graph"); 
-                    // TODO: make dstUUID a function of dependency and target
-                    jsPlumb.connect({uuids:[srcUUID(d), dstUUID(d, t)], editable:true});
+                _.each(g.dependsOn(t), function (d) {
+                    jsPlumb.connect({uuids:[srcUUID(d, t), dstUUID(d, t)], editable:true});
                 });
             });
         },

@@ -33,6 +33,26 @@
 [o] deserialize the json-ified HaplotypeDependency and load them into backbone models
   - use request.JSON ( http://nematodes.org/martin/2009/12/18/using-jquery-to-send-json-data-to-a-grails-app/, http://grails.org/doc/latest/guide/theWebLayer.html#xmlAndJSON )
 [o] create a HaplotypeDependencyGraph model (see notes)
-- create a HaplotypeDependencyGraphView (see notes)
+[o] create a HaplotypeDependencyGraphView (see notes)
   - figure out how to use dustjs; if too hard, fallback to underscore
-- figure out how backbone's notion of collections ties in with how to structure code
+[o] figure out how backbone's notion of collections ties in with how to structure code
+- implement file upload feature
+  - figure out how to either submit a form using json data from backbone models, or submit things asynchronously
+    - http://stackoverflow.com/questions/8156983/submitting-form-via-ajax-request
+    - dealing with files in web-apps:
+      - https://developer.mozilla.org/en-US/docs/Using_files_from_web_applications
+      - using backone + FileReader (my concern is that this will not handle large files well, the browser reads the file into memory) http://stackoverflow.com/questions/8171562/backbone-form-with-file-upload-how-to-handle
+      - can we use multi-part form submission with a json part and parts for the file contents?
+        http://stackoverflow.com/questions/4083702/posting-a-file-and-data-to-restful-webservice-as-json
+        http://www.w3.org/TR/html401/interact/forms.html#h-17.13.4.2
+        http://www.html5rocks.com/en/tutorials/file/xhr2/
+        (perhaps we can programmatically construct a form for submission on save) https://developer.mozilla.org/en-US/docs/DOM/XMLHttpRequest/FormData
+        (sending forms with files programmatically asynchronously using jquery; i think this probably makes the most sense) http://stackoverflow.com/questions/6974684/how-to-send-formdata-objects-with-ajax-requests-in-jquery
+        (jquery plugin implementing a nice ui / multi-file selection / drag & drop) https://github.com/blueimp/jQuery-File-Upload
+        - don't do crazy asynchronous stuff
+        - I think the best approach is:
+          - for each dependency node, on-click add an input field with type="file", name="{target}" at the bottom of the form loaded from a dustjs template rendered using the dependency as a model (DependencyUploadView)
+          - use client-side javascript w/ web workers for validation / getting info about files
+          - call .click() on the input field to open a file dialog box
+    - test out posting of data (figure out how we're going to post a file)
+  - add on-click file upload functionality to nodes in graph (dialog popup, render file upload thing at bottom)

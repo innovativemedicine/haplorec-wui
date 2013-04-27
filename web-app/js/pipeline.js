@@ -3,18 +3,45 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
 
     // models
 
-    m.Dependency = Backbone.Model.extend({
+    var _grailsModel = {
+        readAction: 'show',
+        createAction: 'create',
+        updateAction: 'update',
+        deleteAction: 'remove',
+
+        // http://stackoverflow.com/questions/8731729/backbone-js-model-different-url-for-create-and-update
+        
+        methodToURL: {
+            'read':   function () { return this.url + '/' + this.readAction },
+            'create': function () { return this.url + '/' + this.createAction },
+            'update': function () { return this.url + '/' + this.updateAction },
+            'delete': function () { return this.url + '/' + this.deleteAction },
+        },
+
+        sync: function(method, model, options) {
+            options = options || {};
+            // options.url = model.methodToURL[method.toLowerCase()];
+            options.url = model.methodToURL[method.toLowerCase()].apply(model);
+            return Backbone.sync(method, model, options);
+        },
+        
+    };
+    m.GrailsCollection = Backbone.Collection.extend(_grailsModel);
+    m.GrailsModel = Backbone.Model.extend(_grailsModel);
+
+    m.Dependency = m.GrailsModel.extend({
+        // Override hashkey when storing a dependency model in a map (i.e. javascript object).
         toString: function () {
             return this.get('target');
         }
     });
 
-    m.Dependencies = Backbone.Collection.extend({
+    m.Dependencies = m.GrailsCollection.extend({
         model: m.Dependency,
         url: 'dependencies',
     });
 
-    m.DependencyGraph = Backbone.Model.extend({
+    m.DependencyGraph = m.GrailsModel.extend({
         url: 'dependencyGraph',
 
         _levelToTargets: null,
@@ -121,6 +148,40 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
         }
 	}); 
 
+    m.DependencyFileView = m.DustView.extend({
+        template: "pipeline/dependencyFile",
+        className: "dependency-file",
+        tagName: "div",
+        _enabled: true,
+        events: {
+            'click .dependency-file-delete' : 'remove',
+            // 'click .dependency-file-input' : 'askForFile',
+        },
+        initialize: function () {
+            this.listenTo(this.model, 'change', this._init);
+            if (this.model) {
+                this._init();
+            }
+        },
+        _init: function () {
+            this._input();
+        },
+        enable: function () {
+            this._enabled = true;
+            this._input();
+        },
+        disable: function () {
+            this._enabled = false;
+            this._input();
+        },
+        _input: function () {
+            this.$('.dependency-file-input').attr('disabled', !this._enabled);
+        },
+        askForFile: function() {
+            this.$('.dependency-file-input').click();
+        },
+    });
+
     m.DependencyView = m.DustView.extend({
         template: "pipeline/dependency",
         className: "dependency",
@@ -141,8 +202,9 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
 	m.DependencyGraphView = Backbone.View.extend({
         el: '#dependency-graph',
         className: 'dependency-graph-inner',
-        leftMargin: 10,
-        topMargin: 10,
+        
+		events: {
+        },
 
 		// The DOM events specific to an item.
 		// events: {
@@ -163,6 +225,10 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
 			this.listenTo(this.model, 'destroy', this.remove);
 		},
 
+        dependencyViews: function () { 
+            return _.values(this.dViews);
+        },
+
         _init: function() {
             this.model.get('dependencies').on('change', this.render, this);
 
@@ -174,11 +240,22 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
                 view.$el.attr('id', d.get('target'));
                 that.dViews[d] = view;
             }); 
-            _.chain(this.dViews).values().each(function (v) {
+            _.each(this.dependencyViews(), function (v) {
                 that.$el.append(v.$el);
             });
             this._arrange();
             this._addConnections();
+
+            // when a dependency is clicked on, ask for a file
+            var that = this;
+            _.each(this.dependencyViews(), function (v) {
+                v.$el.click(function() { 
+                    var dFileView = new m.DependencyFileView({model: v.model});
+                    that.$el.append(dFileView.render().$el);
+                    dFileView.askForFile();
+                });
+            });
+
             this.render();
         },
 
@@ -213,7 +290,7 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
         },
 
         render: function() {
-            _.chain(this.dViews).values().each(function (v) {
+            _.each(this.dependencyViews(), function (v) {
                 v.render();
             });
         }, 

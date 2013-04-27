@@ -164,7 +164,16 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
             }
         },
         _init: function () {
+            this.render();
             this._input();
+            var that = this;
+            this.$('.dependency-file-input').change(function () {
+                debugger;
+                console.log('it changed to: ', $(this).val());
+                if (!$(this).val()) {
+                    that.remove();
+                }
+            });
         },
         enable: function () {
             this._enabled = true;
@@ -179,6 +188,12 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
         },
         askForFile: function() {
             this.$('.dependency-file-input').click();
+            // var v = this.$('.dependency-file-input').attr('value');
+            // var t = !this.$('.dependency-file-input').attr('value');
+            // if (t) {
+            //     // They cancelled the file selection
+            //     this.remove();
+            // }
         },
     });
 
@@ -195,6 +210,8 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
         _init: function () {
             if (!this.model.get('fileUpload')) {
                 this.$el.addClass('dependency-no-file-upload');
+            } else {
+                this.$el.addClass('dependency-file-upload');
             }
         },
     });
@@ -249,11 +266,13 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
             // when a dependency is clicked on, ask for a file
             var that = this;
             _.each(this.dependencyViews(), function (v) {
-                v.$el.click(function() { 
-                    var dFileView = new m.DependencyFileView({model: v.model});
-                    that.$el.append(dFileView.render().$el);
-                    dFileView.askForFile();
-                });
+                if (v.model.get('fileUpload')) {
+                    v.$el.click(function() { 
+                        var dFileView = new m.DependencyFileView({model: v.model});
+                        that.$el.append(dFileView.render().$el);
+                        dFileView.askForFile();
+                    });
+                }
             });
 
             this.render();
@@ -315,17 +334,17 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
                     radius: 4
                 }],
                 endpointStyle: {
-                    fillStyle: "#5b9ada"
+                    fillStyle: "#00BFFF"
                 },
                 setDragAllowedWhenFull: true,
                 paintStyle: {
-                    strokeStyle: "#5b9ada",
-                    lineWidth: 3
+                    strokeStyle: "#00BFFF",
+                    lineWidth: 2
                 },
                 connector: ["Straight"],
                 connectorStyle: {
-                    lineWidth: 3,
-                    strokeStyle: "#5b9ada"
+                    lineWidth: 2,
+                    strokeStyle: "#00BFFF"
                 },
                 overlays: [
                     ["Arrow", {

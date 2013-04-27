@@ -8,6 +8,10 @@
     position: absolute;
 }
 
+.dependency-file-upload:hover {
+    border-color: #007BFF;
+}
+
 .dependency-no-file-upload {
     opacity: 0.5;
 }

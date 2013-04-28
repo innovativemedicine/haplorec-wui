@@ -47,6 +47,7 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
         _levelToTargets: null,
         _dependsOn: null,
         _init: function() {
+            debugger;
 
             this.set('dependencies', new m.Dependencies(this.get('dependencies')));
 
@@ -143,6 +144,10 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
                     throw err;
                 }
                 that.$el.html(output);
+                debugger;
+                if (that._init != undefined) {
+                    that._init();
+                }
             });
             return this;
         }
@@ -158,17 +163,16 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
             // 'click .dependency-file-input' : 'askForFile',
         },
         initialize: function () {
-            this.listenTo(this.model, 'change', this._init);
-            if (this.model) {
-                this._init();
-            }
+            this.listenTo(this.model, 'change', this.render);
+            // if (this.model) {
+            //     this.render();
+            // }
         },
         _init: function () {
-            this.render();
             this._input();
             var that = this;
             this.$('.dependency-file-input').change(function () {
-                debugger;
+                // debugger;
                 console.log('it changed to: ', $(this).val());
                 if (!$(this).val()) {
                     that.remove();
@@ -202,10 +206,10 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
         className: "dependency",
         tagName: "span",
         initialize: function () {
-            this.listenTo(this.model, 'change', this._init);
-            if (this.model) {
-                this._init();
-            }
+            this.listenTo(this.model, 'change', this.render);
+            // if (this.model) {
+            //     this._init();
+            // }
         },
         _init: function () {
             if (!this.model.get('fileUpload')) {
@@ -238,8 +242,17 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
             outer.addClass('dependency-graph-outer');
             outer.append(inner);
             this.$el = inner;
-			this.listenTo(this.model, 'change', this._init);
+			this.listenTo(this.model, 'change', this.render);
 			this.listenTo(this.model, 'destroy', this.remove);
+            this.model.get('dependencies').on('change', this.render, this);
+
+            this.dViews = {};
+            var that = this;
+            this.model.get('dependencies').each(function (d) {
+                var view = new m.DependencyView({model: d});
+                that.dViews[d] = view;
+            }); 
+
 		},
 
         dependencyViews: function () { 
@@ -247,19 +260,14 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
         },
 
         _init: function() {
-            this.model.get('dependencies').on('change', this.render, this);
 
-            // setup the dependency graph using jsPlumb
-            this.dViews = {};
             var that = this;
-            this.model.get('dependencies').each(function (d) {
-                var view = new pipeline.DependencyView({model: d});
-                view.$el.attr('id', d.get('target'));
-                that.dViews[d] = view;
-            }); 
             _.each(this.dependencyViews(), function (v) {
+                v.render();
+                v.$el.attr('id', v.model.get('target'));
                 that.$el.append(v.$el);
             });
+            // setup the dependency graph using jsPlumb
             this._arrange();
             this._addConnections();
 
@@ -275,7 +283,6 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
                 }
             });
 
-            this.render();
         },
 
         _arrange: function() {
@@ -298,7 +305,8 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
                 var column = (n - 1) - l;
                 var view = that.dViews[d];
                 // make sure w and h get calculated (from fitting contents)
-                view.render();
+                // dViews get rendered during _init
+                // view.render();
                 var w = view.$el.width();
                 var h = view.$el.height();
                 view.$el.css('top', ( row + 1 ) * H/(m + 1) - h/2);
@@ -309,9 +317,8 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
         },
 
         render: function() {
-            _.each(this.dependencyViews(), function (v) {
-                v.render();
-            });
+            this._init();
+            // dViews get rendered during _init
         }, 
 
         _addConnections: function(d) {

@@ -1,8 +1,15 @@
 <r:require modules="pipeline, backbone"/>
 <r:script>
 var g = new pipeline.DependencyGraph;
-g.fetch();
-var gView = new pipeline.DependencyGraphView({model: g});
+// TODO: "Note that fetch should not be used to populate collections on page load — all models 
+// needed at load time should already be bootstrapped in to place" 
+// (http://backbonejs.org/#FAQ-bootstrap)
+g.fetch({
+    success: function() {
+        var gView = new pipeline.DependencyGraphView({model: g});
+        gView.render();
+    }
+});
 </r:script>
 
 <%@ page import="haplorec.wui.Job" %>

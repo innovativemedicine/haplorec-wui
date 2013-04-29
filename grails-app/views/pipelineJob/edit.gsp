@@ -27,7 +27,7 @@
 				</g:eachError>
 			</ul>
 			</g:hasErrors>
-			<g:form method="post" >
+			<g:uploadForm method="post" >
 				<g:hiddenField name="id" value="${jobInstance?.id}" />
 				<g:hiddenField name="version" value="${jobInstance?.version}" />
 				<fieldset class="form">
@@ -37,7 +37,7 @@
 					<g:actionSubmit class="save" action="update" value="${message(code: 'default.button.update.label', default: 'Update')}" />
 					<g:actionSubmit class="delete" action="delete" value="${message(code: 'default.button.delete.label', default: 'Delete')}" formnovalidate="" onclick="return confirm('${message(code: 'default.button.delete.confirm.message', default: 'Are you sure?')}');" />
 				</fieldset>
-			</g:form>
+			</g:uploadForm>
 		</div>
 	</body>
 </html>

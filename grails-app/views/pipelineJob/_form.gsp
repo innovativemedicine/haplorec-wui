@@ -1,5 +1,23 @@
 <%@ page import="haplorec.wui.Job" %>
 
+<r:require modules="pipeline, backbone"/>
+<r:script>
+var g = new pipeline.DependencyGraph(${dependencyGraphJSON});
+// TODO: "Note that fetch should not be used to populate collections on page load — all models 
+// needed at load time should already be bootstrapped in to place" 
+// (http://backbonejs.org/#FAQ-bootstrap)
+var gView = new pipeline.DependencyGraphView({model: g});
+gView.render();
+<%--
+g.fetch({
+    success: function() {
+        var gView = new pipeline.DependencyGraphView({model: ${dependencyGraphJSON}});
+        gView.render();
+    }
+});
+--%>
+</r:script>
+
 <r:require module="jsPlumb"/>
 <r:script>
 </r:script>
@@ -11,6 +29,10 @@
 	</label>
 	<g:textField name="jobName" maxlength="50" value="${jobInstance?.jobName}"/>
 </div>
+
+<div id="dependency-graph"></div>
+
+<%--
 
 <div class="fieldcontain ${hasErrors(bean: jobInstance, field: 'jobPatientChromosomeVariants', 'error')} ">
 	<label for="jobPatientChromosomeVariants">
@@ -111,6 +133,8 @@
 <g:link controller="jobPatientVariant" action="create" params="['job.id': jobInstance?.id]">${message(code: 'default.add.label', args: [message(code: 'jobPatientVariant.label', default: 'JobPatientVariant')])}</g:link>
 </li>
 </ul>
+
+--%>
 
 </div>
 

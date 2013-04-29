@@ -46,6 +46,7 @@ grails.project.dependency.resolution = {
         compile ":backbonejs:0.9.10.3"
         // dustjs: client-side templating library
         compile ":dustjs-resources:0.9.2"
+        compile ":twitter-bootstrap:2.3.0"
 
         runtime ":resources:1.1.6"
 

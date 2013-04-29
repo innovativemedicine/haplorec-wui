@@ -62,3 +62,4 @@
 
 - looks like removing "display: table-cell" from delete button makes it appear on the same line; what's the deal...?
 - onsubmit, ignore input type=file with value undefined / empty
+- add digit suffix to input elements of same data type, since web forms just submit 1 file if there are multiple input files with the same name 

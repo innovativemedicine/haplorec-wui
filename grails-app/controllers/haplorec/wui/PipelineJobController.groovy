@@ -34,10 +34,25 @@ class PipelineJobController {
     }
 
     def create() {
-        [jobInstance: new Job(params)]
+        [jobInstance: new Job(params), dependencyGraphJSON: dependencyGraphJSON()]
     }
 
     def save() {
+        log.error("SAVE PARAMS: $params")
+		
+		def handleFile = { file ->
+			BufferedReader bin = new BufferedReader(new InputStreamReader(file.getInputStream()))
+			String line = bin.readLine()
+			// print each line
+			while (line != null) {
+				println("line: " + line)
+				line = bin.readLine()
+			}
+        }
+		if (params.containsKey('variant')) {
+			handleFile(params['variant'])
+		}
+		
         def jobInstance = new Job(params)
         if (!jobInstance.save(flush: true)) {
             render(view: "create", model: [jobInstance: jobInstance])
@@ -67,7 +82,7 @@ class PipelineJobController {
             return
         }
 
-        [jobInstance: jobInstance]
+        [jobInstance: jobInstance, dependencyGraphJSON: dependencyGraphJSON()]
     }
 
     def update(Long id, Long version) {
@@ -118,18 +133,18 @@ class PipelineJobController {
         }
     }
 
-    def dependencies() {
-        render haplorec.util.Haplotype.haplotypeDepedencyGraph().values().collect { d ->
+    def private static dependenciesJSON() {
+        haplorec.util.Haplotype.haplotypeDepedencyGraph().values().collect { d ->
             Util.makeRenderable(d) 
         } as JSON
     }
 
-    def dependencyGraph() {
+    def private static dependencyGraphJSON() {
         def g = haplorec.util.Haplotype.haplotypeDepedencyGraph()
         def level = g.drugRecommendation.levels()
-        render([
+        [
             level: level,
             dependencies: g.values().collect { d -> Util.makeRenderable(d) },
-        ] as JSON)
+        ] as JSON
     }
 }

@@ -46,7 +46,9 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
 
         _levelToTargets: null,
         _dependsOn: null,
-        _init: function() {
+
+        initialize: function(attrs, options) { 
+            this.listenTo(this, 'change:level', this.initialize);
 
             this.set('dependencies', new m.Dependencies(this.get('dependencies')));
 
@@ -66,6 +68,7 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
             this.get('dependencies').forEach(function (d) {
                 dependants[d] = [];
             });
+            var g = this;
             this.get('dependencies').forEach(function (t) {
                 _.each(g.dependsOn(t), function (d) {
                     dependants[d].push(t);
@@ -92,10 +95,6 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
                                                       .value() + 1;
             this.set('numLevels', numLevels);
 
-        },
-
-        initialize: function(attrs, options) { 
-            this.listenTo(this, 'change:level', this._init);
         },
 
         level: function (t) {
@@ -340,6 +339,8 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
         }, 
 
         _addConnections: function(d) {
+            // I'm puzzled why I need to add this all of a sudden (o/w the render mode is undefined)...
+            jsPlumb.setRenderMode(jsPlumb.SVG);
             var g = this.model;
 
             var srcUUID = function(d, t) {
@@ -397,7 +398,7 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
                         } else {
                             n_i += 1;
                         }
-                        jsPlumb.addEndpoint(t.get('target'), style, { anchor:p, uuid:uuid(e) })
+                        jsPlumb.addEndpoint(t.get('target'), style, { anchor:p, uuid:uuid(e) });
                     });
                 };
                 if (l != g.get('numLevels') - 1) {

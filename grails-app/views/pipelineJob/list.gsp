@@ -1,17 +1,3 @@
-<r:require modules="pipeline, backbone"/>
-<r:script>
-var g = new pipeline.DependencyGraph;
-// TODO: "Note that fetch should not be used to populate collections on page load — all models 
-// needed at load time should already be bootstrapped in to place" 
-// (http://backbonejs.org/#FAQ-bootstrap)
-g.fetch({
-    success: function() {
-        var gView = new pipeline.DependencyGraphView({model: g});
-        gView.render();
-    }
-});
-</r:script>
-
 <%@ page import="haplorec.wui.Job" %>
 <!DOCTYPE html>
 <html>
@@ -28,10 +14,7 @@ g.fetch({
 				<li><g:link class="create" action="create"><g:message code="default.new.label" args="[entityName]" /></g:link></li>
 			</ul>
 		</div>
-        <div id="dependency-graph"></div>
 
-
-        <%--
 		<div id="list-job" class="content scaffold-list" role="main">
 			<h1><g:message code="default.list.label" args="[entityName]" /></h1>
 			<g:if test="${flash.message}">
@@ -59,8 +42,6 @@ g.fetch({
 				<g:paginate total="${jobInstanceTotal}" />
 			</div>
 		</div>
-        --%>
-
 
 	</body>
 </html>

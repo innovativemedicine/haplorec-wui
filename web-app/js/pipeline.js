@@ -47,7 +47,6 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
         _levelToTargets: null,
         _dependsOn: null,
         _init: function() {
-            debugger;
 
             this.set('dependencies', new m.Dependencies(this.get('dependencies')));
 
@@ -144,7 +143,7 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
                     throw err;
                 }
                 that.$el.html(output);
-                debugger;
+                // debugger;
                 if (that._init != undefined) {
                     that._init();
                 }
@@ -170,11 +169,14 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
         },
         _init: function () {
             this._input();
+            this.hide();
             var that = this;
             this.$('.dependency-file-input').change(function () {
                 // debugger;
                 console.log('it changed to: ', $(this).val());
-                if (!$(this).val()) {
+                if ($(this).val()) {
+                    that.show();
+                } else {
                     that.remove();
                 }
             });
@@ -187,19 +189,22 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
             this._enabled = false;
             this._input();
         },
+        hide: function () {
+            this._old_display = this.$el.css('display');
+            this.$el.css('display', 'none');
+        },
+        show: function () {
+            this.$el.css('display', this._old_display);
+        },
         _input: function () {
             this.$('.dependency-file-input').attr('disabled', !this._enabled);
         },
         askForFile: function() {
             this.$('.dependency-file-input').click();
-            // var v = this.$('.dependency-file-input').attr('value');
-            // var t = !this.$('.dependency-file-input').attr('value');
-            // if (t) {
-            //     // They cancelled the file selection
-            //     this.remove();
-            // }
         },
     });
+    m.DependencyFileView.header = ['Data', 'File', ''];
+    m.DependencyFileView.headerClassName = "dependency-file-header";
 
     m.DependencyView = m.DustView.extend({
         template: "pipeline/dependency",
@@ -223,6 +228,7 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
 	m.DependencyGraphView = Backbone.View.extend({
         el: '#dependency-graph',
         className: 'dependency-graph-inner',
+        dependencyFilesContainerClassName: 'dependency-files-container',
         
 		events: {
         },
@@ -242,6 +248,7 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
             outer.addClass('dependency-graph-outer');
             outer.append(inner);
             this.$el = inner;
+            this.outer = outer;
 			this.listenTo(this.model, 'change', this.render);
 			this.listenTo(this.model, 'destroy', this.remove);
             this.model.get('dependencies').on('change', this.render, this);
@@ -252,6 +259,17 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
                 var view = new m.DependencyView({model: d});
                 that.dViews[d] = view;
             }); 
+
+            this.dependencyFilesContainer = $(document.createElement('div')).addClass(this.dependencyFilesContainerClassName);
+            outer.append(this.dependencyFilesContainer);
+
+            this.dependencyFilesHeader = $(document.createElement('div')).addClass(m.DependencyFileView.headerClassName);
+            _.each(m.DependencyFileView.header, function (h) {
+                var span = $(document.createElement('span'));
+                span.html(h);
+                that.dependencyFilesHeader.append(span);
+            });
+            this.dependencyFilesContainer.append(this.dependencyFilesHeader);
 
 		},
 
@@ -277,7 +295,7 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
                 if (v.model.get('fileUpload')) {
                     v.$el.click(function() { 
                         var dFileView = new m.DependencyFileView({model: v.model});
-                        that.$el.append(dFileView.render().$el);
+                        that.dependencyFilesContainer.append(dFileView.render().$el);
                         dFileView.askForFile();
                     });
                 }
@@ -409,6 +427,10 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
             });
         },
 	});
+
+    // TOOD: refactor onclick file additions into this class
+    m.DependencyGraphFormView = m.DependencyGraphView.extend({
+    });
 
     m.assert = function(condition, description) {
         if (!condition) {

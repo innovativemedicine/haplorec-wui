@@ -56,3 +56,9 @@
           - call .click() on the input field to open a file dialog box
     - test out posting of data (figure out how we're going to post a file)
   - add on-click file upload functionality to nodes in graph (dialog popup, render file upload thing at bottom)
+- figure out how quickly add pages for patient_job tables
+  - editting a scaffold generator or something
+  - vim macro to make appropriate changes to controller? or just add job and patient param to url?
+
+- looks like removing "display: table-cell" from delete button makes it appear on the same line; what's the deal...?
+- onsubmit, ignore input type=file with value undefined / empty

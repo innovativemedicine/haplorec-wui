@@ -29,6 +29,9 @@ g.fetch({
 			</ul>
 		</div>
         <div id="dependency-graph"></div>
+
+
+        <%--
 		<div id="list-job" class="content scaffold-list" role="main">
 			<h1><g:message code="default.list.label" args="[entityName]" /></h1>
 			<g:if test="${flash.message}">
@@ -56,5 +59,8 @@ g.fetch({
 				<g:paginate total="${jobInstanceTotal}" />
 			</div>
 		</div>
+        --%>
+
+
 	</body>
 </html>

@@ -12,6 +12,10 @@
     border-color: #007BFF;
 }
 
+.dependency-file-upload:active {
+    border-color: #0f5;
+}
+
 .dependency-no-file-upload {
     opacity: 0.5;
 }
@@ -26,7 +30,26 @@
     padding: 10px;
 }
 
+.dependency-files-container {
+    display: table;
+    border-spacing: 10px;
+}
+
+.dependency-file-header {
+    display: table-header-group;
+    font-weight: bold;
+}
+
+.dependency-file-header * {
+    display: table-cell;
+}
+
 .dependency-file {
+    display: table-row;
+}
+
+.dependency-file * {
+    display: table-cell;
 }
 
 .dependency-file-delete {

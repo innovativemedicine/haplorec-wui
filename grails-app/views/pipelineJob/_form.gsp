@@ -3,23 +3,8 @@
 <r:require modules="pipeline, backbone"/>
 <r:script>
 var g = new pipeline.DependencyGraph(${dependencyGraphJSON});
-// TODO: "Note that fetch should not be used to populate collections on page load — all models 
-// needed at load time should already be bootstrapped in to place" 
-// (http://backbonejs.org/#FAQ-bootstrap)
-var gView = new pipeline.DependencyGraphView({model: g});
+var gView = new pipeline.Views.DependencyGraphForm({model: g});
 gView.render();
-<%--
-g.fetch({
-    success: function() {
-        var gView = new pipeline.DependencyGraphView({model: ${dependencyGraphJSON}});
-        gView.render();
-    }
-});
---%>
-</r:script>
-
-<r:require module="jsPlumb"/>
-<r:script>
 </r:script>
 
 <div class="fieldcontain ${hasErrors(bean: jobInstance, field: 'jobName', 'error')} ">

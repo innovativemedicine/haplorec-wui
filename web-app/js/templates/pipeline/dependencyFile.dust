@@ -1,0 +1,3 @@
+<span>{dependency.attributes.name}</span>
+<input class="dependency-file-input" type="file" name="{filename}"/>
+<a class="dependency-file-delete">Delete</a>

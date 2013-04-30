@@ -136,10 +136,11 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
     });
 
     // views
+    m.Views = {};
  
     // a view backed by a dustjs template; it's render function uses dustjs 
     // to render this.template
-	m.DustView = Backbone.View.extend({
+	m.Views.Dust = Backbone.View.extend({
         render: function () {
             var that = this;
             dust.render(this.template, this.model.attributes, function (err, output) {
@@ -156,7 +157,7 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
         }
 	}); 
 
-    m.DependencyFileView = m.DustView.extend({
+    m.Views.DependencyFile = m.Views.Dust.extend({
         template: "pipeline/dependencyFile",
         className: "dependency-file",
         tagName: "div",
@@ -207,32 +208,23 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
             this.$('.dependency-file-input').click();
         },
     });
-    m.DependencyFileView.header = ['Data', 'File', ''];
-    m.DependencyFileView.headerClassName = "dependency-file-header";
+    m.Views.DependencyFile.header = ['Data', 'File', ''];
+    m.Views.DependencyFile.headerClassName = "dependency-file-header";
 
-    m.DependencyView = m.DustView.extend({
+    m.Views.Dependency = m.Views.Dust.extend({
         template: "pipeline/dependency",
         className: "dependency",
         tagName: "span",
         initialize: function () {
             this.listenTo(this.model, 'change', this.render);
-            // if (this.model) {
-            //     this._init();
-            // }
-        },
-        _init: function () {
-            if (!this.model.get('fileUpload')) {
-                this.$el.addClass('dependency-no-file-upload');
-            } else {
-                this.$el.addClass('dependency-file-upload');
-            }
         },
     });
 
-	m.DependencyGraphView = Backbone.View.extend({
+	m.Views.DependencyGraph = Backbone.View.extend({
         el: '#dependency-graph',
         className: 'dependency-graph-inner',
         dependencyFilesContainerClassName: 'dependency-files-container',
+        DependencyView: m.Views.Dependency,
         
 		events: {
         },
@@ -247,12 +239,12 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
 		// },
 
 		initialize: function () {
-            var outer = this.$el;
+            var outerEl = this.$el;
             var inner = $(document.createElement('div')).addClass(this.className);
-            outer.addClass('dependency-graph-outer');
-            outer.append(inner);
+            outerEl.addClass('dependency-graph-outer');
+            outerEl.append(inner);
             this.$el = inner;
-            this.outer = outer;
+            this.outerEl = outerEl;
 			this.listenTo(this.model, 'change', this.render);
 			this.listenTo(this.model, 'destroy', this.remove);
             this.model.get('dependencies').on('change', this.render, this);
@@ -260,30 +252,10 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
             this.dViews = {};
             var that = this;
             this.model.get('dependencies').each(function (d) {
-                var view = new m.DependencyView({model: d});
+                var view = new that.DependencyView({model: d});
                 that.dViews[d] = view;
             }); 
 
-            this.dependencyFilesContainer = $(document.createElement('div')).addClass(this.dependencyFilesContainerClassName);
-            outer.append(this.dependencyFilesContainer);
-
-            this.dependencyFilesHeader = $(document.createElement('div')).addClass(m.DependencyFileView.headerClassName);
-            _.each(m.DependencyFileView.header, function (h) {
-                var span = $(document.createElement('span'));
-                span.html(h);
-                that.dependencyFilesHeader.append(span);
-            });
-            this.dependencyFilesContainer.append(this.dependencyFilesHeader);
-
-		},
-
-        dependencyViews: function () { 
-            return _.values(this.dViews);
-        },
-
-        _init: function() {
-
-            var that = this;
             _.each(this.dependencyViews(), function (v) {
                 v.render();
                 v.$el.attr('id', v.model.get('target'));
@@ -293,25 +265,10 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
             this._arrange();
             this._addConnections();
 
-            // when a dependency is clicked on, ask for a file
-            var that = this;
-            _.each(this.dependencyViews(), function (v) {
-                var i = 0;
-                if (v.model.get('fileUpload')) {
-                    v.$el.click(function() { 
-                        var dFileView = new m.DependencyFileView({
-                            model: new m.DependencyFile({
-                                dependency: v.model,
-                                filename: v.model.get('target') + i,     
-                            }),
-                        });
-                        i += 1;
-                        that.dependencyFilesContainer.append(dFileView.render().$el);
-                        dFileView.askForFile();
-                    });
-                }
-            });
+		},
 
+        dependencyViews: function () { 
+            return _.values(this.dViews);
         },
 
         _arrange: function() {
@@ -346,7 +303,6 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
         },
 
         render: function() {
-            this._init();
             // dViews get rendered during _init
         }, 
 
@@ -442,14 +398,63 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
 	});
 
     // TOOD: refactor onclick file additions into this class
-    m.DependencyGraphFormView = m.DependencyGraphView.extend({
+    m.Views.DependencyGraphForm = m.Views.DependencyGraph.extend({
+        DependencyView: m.Views.Dependency.extend({
+            _init: function () {
+                if (!this.model.get('fileUpload')) {
+                    this.$el.addClass('dependency-no-file-upload');
+                } else {
+                    this.$el.addClass('dependency-file-upload');
+                }
+            },
+        }),
+
+        initialize: function(options) {
+            this.constructor.__super__.initialize.apply(this, [options]);
+
+            this.dependencyFilesContainer = $(document.createElement('div')).addClass(this.dependencyFilesContainerClassName);
+            this.outerEl.append(this.dependencyFilesContainer);
+
+            this.dependencyFilesHeader = $(document.createElement('div')).addClass(m.Views.DependencyFile.headerClassName);
+            var that = this;
+            _.each(m.Views.DependencyFile.header, function (h) {
+                var span = $(document.createElement('span'));
+                span.html(h);
+                that.dependencyFilesHeader.append(span);
+            });
+            this.dependencyFilesContainer.append(this.dependencyFilesHeader);
+
+            // when a dependency is clicked on, ask for a file
+            _.each(this.dependencyViews(), function (v) {
+                var i = 0;
+                if (v.model.get('fileUpload')) {
+                    v.$el.click(function() { 
+                        var dFileView = new m.Views.DependencyFile({
+                            model: new m.DependencyFile({
+                                dependency: v.model,
+                                filename: v.model.get('target') + i,     
+                            }),
+                        });
+                        i += 1;
+                        that.dependencyFilesContainer.append(dFileView.render().$el);
+                        dFileView.askForFile();
+                    });
+                }
+            });
+
+        },
     });
 
-    m.assert = function(condition, description) {
-        if (!condition) {
-            throw Error(description);
-        }
-    };
+    // TOOD: refactor onclick file additions into this class
+    m.Views.DependencyGraphShow = m.Views.DependencyGraph.extend({
+        DependencyView: m.Views.Dependency.extend({
+            template: "pipeline/dependencyShow",
+        }),
+
+        initialize: function(options) {
+            this.constructor.__super__.initialize.apply(this, [options]);
+        },
+    });
 
     return m;
 })(pipeline || {}, Backbone, _, dust, jsPlumb);

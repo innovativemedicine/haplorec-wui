@@ -1,5 +1,12 @@
-
 <%@ page import="haplorec.wui.Job" %>
+
+<r:require modules="pipeline, backbone"/>
+<r:script>
+var g = new pipeline.DependencyGraph(${dependencyGraphJSON});
+var gView = new pipeline.Views.DependencyGraphShow({model: g});
+gView.render();
+</r:script>
+
 <!DOCTYPE html>
 <html>
 	<head>
@@ -21,6 +28,9 @@
 			<g:if test="${flash.message}">
 			<div class="message" role="status">${flash.message}</div>
 			</g:if>
+
+            <div id="dependency-graph"></div>
+
 			<ol class="property-list job">
 			
 				<g:if test="${jobInstance?.jobName}">

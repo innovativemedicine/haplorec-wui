@@ -38,6 +38,7 @@ class PipelineJobController {
     }
 
     def create() {
+        // [jobInstance: new Job(params), dependencyGraphJSON: dependencyGraphJSON()]
         [jobInstance: new Job(params), dependencyGraphJSON: dependencyGraphJSON()]
     }
 
@@ -79,7 +80,8 @@ class PipelineJobController {
             return
         }
 
-        [jobInstance: jobInstance]
+        Sql sql = new Sql(dataSource)
+        [jobInstance: jobInstance, dependencyGraphJSON: dependencyGraphJSON(sql: sql, job_id: id, counts: true)]
     }
 
     def edit(Long id) {
@@ -141,18 +143,25 @@ class PipelineJobController {
         }
     }
 
-    def private static dependenciesJSON() {
-        haplorec.util.Haplotype.haplotypeDepedencyGraph().values().collect { d ->
+    def private static dependencyGraphJSON(Map kwargs = [:]) {
+        if (kwargs.counts == null) { kwargs.counts = false }
+        def (tbl, dependencies) = haplorec.util.Haplotype.dependencyGraph()
+        List deps = dependencies.values().collect { d ->
             Util.makeRenderable(d) 
-        } as JSON
-    }
+        } 
+        if (kwargs.counts) {
+            // add counts for tables
+            deps.each { d ->
+                d['count'] = kwargs.sql.rows("select count(*) as count from ${d.table} where job_id = :job_id", kwargs)[0]['count'] 
+            }
+        }
 
-    def private static dependencyGraphJSON() {
-        def g = haplorec.util.Haplotype.haplotypeDepedencyGraph()
-        def level = g.drugRecommendation.levels()
-        [
+        def level = dependencies.drugRecommendation.levels()
+        def depGraph = [
             level: level,
-            dependencies: g.values().collect { d -> Util.makeRenderable(d) },
-        ] as JSON
+            dependencies: deps,
+        ]
+
+        return depGraph as JSON
     }
 }

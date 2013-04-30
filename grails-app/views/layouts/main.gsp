@@ -23,20 +23,19 @@
 	<body>
 		<div class="container">
 		<div class="navbar navbar-fixed-top navbar-inverse">
-
-		<div class="navbar-inner">
-			<a class="brand" href="${resource()}">Haplorec</a>
-			<ul class="nav">
-				<li><a href="${createLink(action: 'create', controller: 'pipelineJob')}">Create Job</a></li>
-			</ul>
+			<div class="navbar-inner">
+				<a class="brand" href="${resource()}">Haplorec</a>
+				<ul class="nav">
+					<li><a href="${createLink(action: 'create', controller: 'pipelineJob')}">Create Job</a></li>
+				</ul>
+			</div>
 		</div>
-
 
 		<%--
 		<div id="grailsLogo" role="banner"><a href="http://grails.org"><img src="${resource(dir: 'images', file: 'grails_logo.png')}" alt="Grails"/></a></div>
 		--%>
 		<g:layoutBody/>
-		</div>
+		
 		</div>
 		<%--
 		<div class="footer" role="contentinfo"></div>

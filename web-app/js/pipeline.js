@@ -36,6 +36,11 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
         }
     });
 
+    m.DependencyFile = Backbone.Model.extend({
+        filename: null,
+        dependency: null,
+    });
+
     m.Dependencies = m.GrailsCollection.extend({
         model: m.Dependency,
         url: 'dependencies',
@@ -291,9 +296,16 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
             // when a dependency is clicked on, ask for a file
             var that = this;
             _.each(this.dependencyViews(), function (v) {
+                var i = 0;
                 if (v.model.get('fileUpload')) {
                     v.$el.click(function() { 
-                        var dFileView = new m.DependencyFileView({model: v.model});
+                        var dFileView = new m.DependencyFileView({
+                            model: new m.DependencyFile({
+                                dependency: v.model,
+                                filename: v.model.get('target') + i,     
+                            }),
+                        });
+                        i += 1;
                         that.dependencyFilesContainer.append(dFileView.render().$el);
                         dFileView.askForFile();
                     });

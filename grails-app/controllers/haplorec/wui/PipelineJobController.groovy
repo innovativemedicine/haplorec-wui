@@ -4,10 +4,14 @@ import haplorec.wui.Util
 
 //import haplorec.util.*
 import haplorec.util.haplotype.HaplotypeInput
+import haplorec.util.Haplotype
 
 import org.springframework.dao.DataIntegrityViolationException
+import javax.sql.DataSource
+import groovy.sql.Sql
 
 class PipelineJobController {
+    DataSource dataSource
 
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 	
@@ -40,24 +44,28 @@ class PipelineJobController {
     def save() {
         log.error("SAVE PARAMS: $params")
 		
-		def handleFile = { file ->
-			BufferedReader bin = new BufferedReader(new InputStreamReader(file.getInputStream()))
-			String line = bin.readLine()
-			// print each line
-			while (line != null) {
-				println("line: " + line)
-				line = bin.readLine()
+		// inputs['variants'] == [file1, file2, ...]
+		Map inputs = new LinkedHashMap();
+		HaplotypeInput.inputTables.each { inputs[it + 's'] = [] }
+		params.each { p, v ->
+			def m = (p =~ /^[^\d]+/)
+			if (m.getCount() == 1) {
+				def inputTable = m[0]
+				if (HaplotypeInput.inputTables.contains(inputTable)) {
+					inputs[inputTable + 's'].push(new BufferedReader(new InputStreamReader(v.getInputStream())))
+				}
 			}
-        }
-		if (params.containsKey('variant')) {
-			handleFile(params['variant'])
 		}
-		
+		log.error("INPUT PARAMS: $inputs")
+
         def jobInstance = new Job(params)
         if (!jobInstance.save(flush: true)) {
             render(view: "create", model: [jobInstance: jobInstance])
             return
         }
+
+        Sql sql = new Sql(dataSource)
+        Haplotype.drugRecommendations(inputs + [jobId: jobInstance.id], sql)
 
         flash.message = message(code: 'default.created.message', args: [message(code: 'job.label', default: 'Job'), jobInstance.id])
         redirect(action: "show", id: jobInstance.id)

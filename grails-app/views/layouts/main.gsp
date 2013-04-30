@@ -16,17 +16,29 @@
 		<link rel="stylesheet" href="${resource(dir: 'css', file: 'main.css')}" type="text/css">
 		<link rel="stylesheet" href="${resource(dir: 'css', file: 'mobile.css')}" type="text/css">
 		--%>
-		<r:require modules="bootstrap"/>
+		<r:require modules="bootstrapMod"/>
 		<g:layoutHead/>
 		<r:layoutResources />
 	</head>
 	<body>
 		<div class="container">
+
 		<div class="navbar navbar-fixed-top navbar-inverse">
 			<div class="navbar-inner">
 				<a class="brand" href="${resource()}">Haplorec</a>
 				<ul class="nav">
-					<li><a href="${createLink(action: 'create', controller: 'pipelineJob')}">Create Job</a></li>
+					<li class="dropdown"><a href="#" class="dropdown-toggle"
+						data-toggle="dropdown">Jobs<b class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<form class="navbar-search pull-left">
+								<div class="input-prepend">
+									<input type="text" class="search-query" placeholder="Search">
+								</div>
+							</form>
+							<li><a href="${createLink(action: 'create', controller: 'pipelineJob')}">New Job</a></li>
+							<li><a href="${createLink(action: 'list', controller: 'pipelineJob')}">List</a></li>
+						</ul>
+					</li>
 				</ul>
 			</div>
 		</div>

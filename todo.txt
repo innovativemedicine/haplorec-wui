@@ -63,3 +63,13 @@
 - looks like removing "display: table-cell" from delete button makes it appear on the same line; what's the deal...?
 - onsubmit, ignore input type=file with value undefined / empty
 - add digit suffix to input elements of same data type, since web forms just submit 1 file if there are multiple input files with the same name 
+
+- run a sample job that actually generates results
+  - figure out how we want to view / download the results
+
+- edit show-job view 
+  - show the DependencyGraphView extended with counts of the job_* tables
+  - when you click on a node it links you to the controller for that table (limited by job_id == whatever id they were looking at)
+- implement job search using bootstrap-typeahead
+- add tooltip roll-over to nodes in graph and display dependency.description (if non-null)
+- handle invalid InvalidInputException (delete rows from job_* tables), and fix the constructor for it

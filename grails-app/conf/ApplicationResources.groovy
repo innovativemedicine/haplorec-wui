@@ -9,6 +9,11 @@ modules = {
         resource url:'js/extern/jquery.jsPlumb-1.3.16-all.js'
     }
 
+    bootstrapMod {
+        dependsOn 'bootstrap'
+        resource url:'css/bootstrap-mod.css'
+    }
+
     pipeline {
         dependsOn 'jsPlumb, jquery, backbone, dustjs'
         resource url:'/js/pipeline.js'

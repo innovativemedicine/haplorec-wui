@@ -36,7 +36,9 @@
 					
 						<g:sortableColumn property="zygosity" title="${message(code: 'jobPatientVariant.zygosity.label', default: 'Zygosity')}" params="[jobId:jobId]"/>
 					
+                        <g:if test="${jobId == null}">
 						<th><g:message code="jobPatientVariant.job.label" default="Job" /></th>
+                        </g:if>
 					
 					</tr>
 				</thead>
@@ -54,7 +56,9 @@
 					
 						<td>${fieldValue(bean: jobPatientVariantInstance, field: "zygosity")}</td>
 					
+                        <g:if test="${jobId == null}">
 						<td>${fieldValue(bean: jobPatientVariantInstance, field: "job")}</td>
+                        </g:if>
 					
 					</tr>
 				</g:each>

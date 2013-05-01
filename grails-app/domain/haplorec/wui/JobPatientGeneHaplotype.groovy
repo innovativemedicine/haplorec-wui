@@ -3,12 +3,19 @@ package haplorec.wui
 import org.apache.commons.lang.builder.EqualsBuilder
 import org.apache.commons.lang.builder.HashCodeBuilder
 
+@Mixin(JobPatientDomainMixin)
 class JobPatientGeneHaplotype implements Serializable {
 
 	String patientId
 	String geneName
 	String haplotypeName
 	Job job
+
+    static namedQueries = {
+        forJob { jobId ->
+            eq 'job.id', jobId
+        }
+    }
 
 	int hashCode() {
 		def builder = new HashCodeBuilder()

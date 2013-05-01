@@ -15,6 +15,7 @@ gView.render();
 		<title><g:message code="default.show.label" args="[entityName]" /></title>
 	</head>
 	<body>
+        <%--
 		<a href="#show-job" class="skip" tabindex="-1"><g:message code="default.link.skip.label" default="Skip to content&hellip;"/></a>
 		<div class="nav" role="navigation">
 			<ul>
@@ -23,6 +24,7 @@ gView.render();
 				<li><g:link class="create" action="create"><g:message code="default.new.label" args="[entityName]" /></g:link></li>
 			</ul>
 		</div>
+        --%>
 		<div id="show-job" class="content scaffold-show" role="main">
 			<h1><g:message code="default.show.label" args="[entityName]" /></h1>
 			<g:if test="${flash.message}">
@@ -31,6 +33,7 @@ gView.render();
 
             <div id="dependency-graph"></div>
 
+            <%--
 			<ol class="property-list job">
 			
 				<g:if test="${jobInstance?.jobName}">
@@ -109,6 +112,7 @@ gView.render();
 				</g:if>
 			
 			</ol>
+            --%>
 			<g:form>
 				<fieldset class="buttons">
 					<g:hiddenField name="id" value="${jobInstance?.id}" />

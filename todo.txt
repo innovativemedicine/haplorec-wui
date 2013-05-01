@@ -70,6 +70,12 @@
 - edit show-job view 
   [o] show the DependencyGraphView extended with counts of the job_* tables
   - when you click on a node it links you to the controller for that table (limited by job_id == whatever id they were looking at)
+  - figure out how to minimally change existing job_* list views
+  - figure out how to render job_* list views via ajax from job view
+  - replace things we want to join (drugRecommendation) with the columns/rows from that particular view
+  - does pagination work? (no probably not; can we make it work though?)
+    - looks like GORM is returning null objects for jobPatientVariant.forJob(jodId).list(params) for the sample variants.txt file
+      - which rows do those nulls correspond to? (which don't they correspond to?)
 - implement job search using bootstrap-typeahead
 - add tooltip roll-over to nodes in graph and display dependency.description (if non-null)
 - handle invalid InvalidInputException (delete rows from job_* tables), and fix the constructor for it

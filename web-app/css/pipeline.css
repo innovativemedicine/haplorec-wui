@@ -1,3 +1,6 @@
+/* Dependency
+ */
+
 .dependency {
     background: #CFDEE3;
     padding: 10px;
@@ -8,17 +11,23 @@
     position: absolute;
 }
 
-.dependency-file-upload:hover {
+/* DependencyFile / DependencyGraphShow
+ */
+
+.dependency-file-upload:hover, .dependency-show:hover {
     border-color: #007BFF;
 }
 
-.dependency-file-upload:active {
+.dependency-file-upload:active, .dependency-show:active {
     border-color: #0f5;
 }
 
 .dependency-no-file-upload {
     opacity: 0.5;
 }
+
+/* DependencyGraph
+ */
 
 .dependency-graph-inner {
     width: inherit;
@@ -29,6 +38,9 @@
 .dependency-graph-outer {
     padding: 10px;
 }
+
+/* DependencyGraphForm
+ */
 
 .dependency-files-container {
     display: table;

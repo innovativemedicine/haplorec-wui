@@ -23,7 +23,10 @@
 	<body>
 		<div class="container">
 
-		<div class="navbar navbar-fixed-top navbar-inverse">
+		<%-- 
+        TODO: navbar-fixed-top is causing content to be overlapped by the navbar...
+        <div class="navbar navbar-fixed-top navbar-inverse"> --%>
+		<div class="navbar navbar-inverse">
 			<div class="navbar-inner">
 				<a class="brand" href="${resource()}">Haplorec</a>
 				<ul class="nav">

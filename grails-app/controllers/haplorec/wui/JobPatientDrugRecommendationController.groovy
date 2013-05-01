@@ -2,6 +2,7 @@ package haplorec.wui
 
 import org.springframework.dao.DataIntegrityViolationException
 
+@Mixin(JobPatientControllerMixin)
 class JobPatientDrugRecommendationController {
 
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
@@ -9,12 +10,11 @@ class JobPatientDrugRecommendationController {
     def index() {
         redirect(action: "list", params: params)
     }
-
-    def list(Integer max) {
-        params.max = Math.min(max ?: 10, 100)
-        [jobPatientDrugRecommendationInstanceList: JobPatientDrugRecommendation.list(params), jobPatientDrugRecommendationInstanceTotal: JobPatientDrugRecommendation.count()]
-    }
-
+	
+	def list(Integer max, Long jobId) { jobPatientList(JobPatientDrugRecommendation, max, jobId) }
+	
+	def listTemplate(Integer max, Long jobId) { jobPatientListTemplate(JobPatientDrugRecommendation, max, jobId) }
+	
     def create() {
         [jobPatientDrugRecommendationInstance: new JobPatientDrugRecommendation(params)]
     }

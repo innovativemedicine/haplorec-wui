@@ -9,6 +9,12 @@ class JobPatientDrugRecommendation implements Serializable {
 	Job job
 	DrugRecommendation drugRecommendation
 
+    static namedQueries = {
+        forJob { jobId ->
+            eq 'job.id', jobId
+        }
+    }
+
 	int hashCode() {
 		def builder = new HashCodeBuilder()
 		builder.append job?.id

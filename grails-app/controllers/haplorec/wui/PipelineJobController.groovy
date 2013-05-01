@@ -6,12 +6,14 @@ import haplorec.wui.Util
 import haplorec.util.haplotype.HaplotypeInput
 import haplorec.util.Haplotype
 
+import org.codehaus.groovy.grails.web.mapping.LinkGenerator;
 import org.springframework.dao.DataIntegrityViolationException
 import javax.sql.DataSource
 import groovy.sql.Sql
 
 class PipelineJobController {
     DataSource dataSource
+	LinkGenerator grailsLinkGenerator
 
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 	
@@ -39,7 +41,7 @@ class PipelineJobController {
 
     def create() {
         // [jobInstance: new Job(params), dependencyGraphJSON: dependencyGraphJSON()]
-        [jobInstance: new Job(params), dependencyGraphJSON: dependencyGraphJSON()]
+        [jobInstance: new Job(params), dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator)]
     }
 
     def save() {
@@ -81,7 +83,7 @@ class PipelineJobController {
         }
 
         Sql sql = new Sql(dataSource)
-        [jobInstance: jobInstance, dependencyGraphJSON: dependencyGraphJSON(sql: sql, job_id: id, counts: true)]
+        [jobInstance: jobInstance, dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator, sql: sql, job_id: id, counts: true)]
     }
 
     def edit(Long id) {
@@ -142,7 +144,7 @@ class PipelineJobController {
             redirect(action: "show", id: id)
         }
     }
-
+	
     def private static dependencyGraphJSON(Map kwargs = [:]) {
         if (kwargs.counts == null) { kwargs.counts = false }
         def (tbl, dependencies) = haplorec.util.Haplotype.dependencyGraph()
@@ -150,9 +152,11 @@ class PipelineJobController {
             Util.makeRenderable(d) 
         } 
         if (kwargs.counts) {
-            // add counts for tables
             deps.each { d ->
-                d['count'] = kwargs.sql.rows("select count(*) as count from ${d.table} where job_id = :job_id", kwargs)[0]['count'] 
+				// add counts for tables
+                d['count'] = kwargs.sql.rows("select count(*) as count from ${d.table} where job_id = :job_id", kwargs)[0]['count']
+				d['jobId'] = kwargs.job_id
+				d['listUrl'] = kwargs.grailsLinkGenerator.link(controller: d.table.replaceAll(/_([a-z])/, { it[0][1].toUpperCase() }), action: "listTemplate") 
             }
         }
 

@@ -449,10 +449,58 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
     m.Views.DependencyGraphShow = m.Views.DependencyGraph.extend({
         DependencyView: m.Views.Dependency.extend({
             template: "pipeline/dependencyShow",
+            _init: function () {
+                this.$el.addClass('dependency-show');
+            },
         }),
 
         initialize: function(options) {
             this.constructor.__super__.initialize.apply(this, [options]);
+
+            this.listContainer = $(document.createElement('div'));
+            this.outerEl.append(this.listContainer);
+
+            // when a dependency is clicked on, load its server-side list view
+            var that = this;
+            _.each(this.dependencyViews(), function (v) {
+                v.$el.click(function() { 
+                    $.get(
+                        v.model.get('listUrl'), 
+                        { 
+                            jobId: v.model.get('jobId'),
+                        }, 
+                        function (data) {
+                            that.listContainer.html(data);
+                            that._hackLinks(that.listContainer);
+                        }
+                    );
+                });
+            });
+
+
+        },
+
+        _hackLinks: function(el) {
+            /* Hack links in el to run asynchronously and load inside el instead of linking to a new page.
+             */
+            var that = this;
+            el.find('a').each(function (i, a) {
+                // debugger;
+                var $a = $(a);
+                console.log($a);
+                $a.click(function (event) {
+                    console.log("ermahgerd an event", event);
+                    event.preventDefault();
+                    $.get(
+                        $a.attr('href'), 
+                        function (d) { 
+                            el.html(d);
+                            that._hackLinks(el);
+                        }
+                    );
+                });
+            });
+
         },
     });
 

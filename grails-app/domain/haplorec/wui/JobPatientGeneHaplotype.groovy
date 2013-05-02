@@ -39,7 +39,6 @@ class JobPatientGeneHaplotype implements Serializable {
 	static belongsTo = [Job]
 
 	static mapping = {
-		id composite: ["job", "patientId", "geneName", "haplotypeName"]
 		version false
 	}
 

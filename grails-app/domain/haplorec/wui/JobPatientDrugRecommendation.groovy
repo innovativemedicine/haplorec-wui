@@ -35,7 +35,6 @@ class JobPatientDrugRecommendation implements Serializable {
 	static belongsTo = [Job]
 
 	static mapping = {
-		id composite: ["job", "patientId", "drugRecommendation"]
 		version false
 	}
 

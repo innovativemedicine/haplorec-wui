@@ -42,7 +42,6 @@ class JobPatientChromosomeVariant implements Serializable {
 	static belongsTo = [Job]
 
 	static mapping = {
-		id composite: ["job", "patientId", "physicalChromosome", "snpId", "allele"]
 		version false
 	}
 

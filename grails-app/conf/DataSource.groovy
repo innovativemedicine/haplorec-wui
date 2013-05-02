@@ -1,4 +1,5 @@
 dataSource {
+    logSql = true
     pooled = true
 	driverClassName = "com.mysql.jdbc.Driver"
 }

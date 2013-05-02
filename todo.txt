@@ -79,3 +79,8 @@
 - implement job search using bootstrap-typeahead
 - add tooltip roll-over to nodes in graph and display dependency.description (if non-null)
 - handle invalid InvalidInputException (delete rows from job_* tables), and fix the constructor for it
+- make a summary report file available for download  
+  - the report file should illustrate where data came from at each stage
+    - which variants map to a particular haplotype (from haplotype join variants)
+    - which genotypes map to a particular phenotype (phenotypes join genotypes... but multiple genotype sets might map to the same phenotype.... blah)
+    - which phenotypes/genotypes map to a particular drug recommendation (same issue as above; resolving the many side in a many-to-one relationship; we need to record the many when we record the one from which it came)

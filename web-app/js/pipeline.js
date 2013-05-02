@@ -223,6 +223,7 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
 	m.Views.DependencyGraph = Backbone.View.extend({
         el: '#dependency-graph',
         className: 'dependency-graph-inner',
+        height: null,
         dependencyFilesContainerClassName: 'dependency-files-container',
         DependencyView: m.Views.Dependency,
         
@@ -241,6 +242,13 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
 		initialize: function () {
             var outerEl = this.$el;
             var inner = $(document.createElement('div')).addClass(this.className);
+            if (this.options.height != null) {
+                if (typeof this.options.height == "number") {
+                    inner.height(this.options.height);
+                } else {
+                    inner.css('height', this.options.height);
+                }
+            }
             outerEl.addClass('dependency-graph-outer');
             outerEl.append(inner);
             this.$el = inner;
@@ -275,31 +283,66 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
             // I think these are always integers representing pixels
             var W = this.$el.width();
             var H = this.$el.height();
-            var n = this.model.get('numLevels');
-            // max targets per level
-            var m = _.chain(this.model._levelToTargets).values()
-                                                       .map(function (A) { return A.length })
-                                                       .max()
-                                                       .value();
-            var row = 0;
-            var lastLevel = this.model.get('numLevels') - 1;
+
             var that = this;
-            this.model.reverseBFS(function (l, d) {
-                if (l != lastLevel) {
-                    row = 0;
+            var eachCell = function (f) {
+                var n = that.model.get('numLevels');
+                var row = 0;
+                var lastLevel = that.model.get('numLevels') - 1;
+                that.model.reverseBFS(function (l, d) {
+                    if (l != lastLevel) {
+                        row = 0;
+                    }
+                    var column = (n - 1) - l;
+                    var view = that.dViews[d];
+                    f(row, column, d, view);
+                    lastLevel = l;
+                    row += 1;
+                });
+            }
+
+            /* sumWidth Int -> Int: sum of the widths of nodes at the ith row
+             * maxWidth Int -> Int: max width node in the ith column
+             * numCol Int -> Int: number of nodes in the ith column
+             */
+            var sumWidth = {};
+            var maxWidth = {};
+            var numCol = {};
+            /* sumHeight Int -> Int: sum of the heights of nodes at the ith column 
+             * maxHeight Int -> Int: max height node in the ith row
+             * numRow Int -> Int: number of nodes in the ith row
+             */
+            var sumHeight = {};
+            var maxHeight = {};
+            var numRow = {};
+            eachCell(function (row, column, d, view) {
+                var calcDim = function(sumDim, maxDim, numDim, viewDim, cellDim) {
+                    maxDim[cellDim] = ( maxDim[cellDim] > viewDim ) ? maxDim[cellDim] : viewDim;
+                    numDim[cellDim] = ( numDim[cellDim] || 0 ) + 1;
                 }
-                var column = (n - 1) - l;
-                var view = that.dViews[d];
-                // make sure w and h get calculated (from fitting contents)
-                // dViews get rendered during _init
-                // view.render();
-                var w = view.$el.width();
-                var h = view.$el.height();
-                view.$el.css('top', ( row + 1 ) * H/(m + 1) - h/2);
-                view.$el.css('left', ( column + 1 ) * W/(n + 1) - w/2);
-                lastLevel = l;
-                row += 1;
+                sumWidth[row] = ( sumWidth[row] || 0 ) + view.$el.outerWidth();
+                sumHeight[column] = ( sumHeight[column] || 0 ) + view.$el.outerHeight();
+                calcDim(sumWidth, maxWidth, numCol, view.$el.outerWidth(), column);
+                calcDim(sumHeight, maxHeight, numRow, view.$el.outerHeight(), row);
             });
+
+            eachCell(function (row, column, d, view) {
+                var sum = function (xs) { return _.reduce(xs, function(acc, e) { return acc + e }, 0) };
+                var values = function (obj, start, end) {
+                    var xs = [];
+                    for (var i = start; i < end; i++) {
+                        xs.push(obj[i]);
+                    }
+                    return xs;
+                }
+                var horiz = (W - sum(_.values(maxWidth))) / ( _.chain(numRow).values().max().value() - 1 );
+                var vert = (H - sum(_.values(maxHeight))) / ( _.chain(numCol).values().max().value() - 1 );
+                var x = ( sum(values(maxWidth, 0, column)) ) + column*horiz + (maxWidth[column] - view.$el.outerWidth())/2;
+                var y = ( sum(values(maxHeight, 0, row)) ) + row*vert + (maxHeight[row] - view.$el.outerHeight())/2;
+                view.$el.css('left', x);
+                view.$el.css('top', y);
+            });
+
         },
 
         render: function() {

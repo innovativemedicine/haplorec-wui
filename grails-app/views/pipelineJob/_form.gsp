@@ -1,10 +1,14 @@
 <%@ page import="haplorec.wui.Job" %>
 
-<r:require modules="pipeline, backbone"/>
+<r:require modules="pipeline, backbone, jquery"/>
 <r:script>
-var g = new pipeline.DependencyGraph(${dependencyGraphJSON});
-var gView = new pipeline.Views.DependencyGraphForm({model: g});
-gView.render();
+var g, gView;
+$(document).ready(function(){
+    g = new pipeline.DependencyGraph(${dependencyGraphJSON});
+    console.log($(window).height()/2);
+    gView = new pipeline.Views.DependencyGraphForm({model: g, height: $(window).height()/3});
+    gView.render();
+});
 </r:script>
 
 <div class="fieldcontain ${hasErrors(bean: jobInstance, field: 'jobName', 'error')} ">

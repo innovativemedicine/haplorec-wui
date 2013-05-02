@@ -30,8 +30,6 @@
  */
 
 .dependency-graph-inner {
-    width: inherit;
-    height: 500px;
     position: relative;
 }
 

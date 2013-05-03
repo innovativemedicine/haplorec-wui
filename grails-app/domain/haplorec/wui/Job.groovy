@@ -16,6 +16,6 @@ class Job {
 	}
 
 	static constraints = {
-		jobName nullable: true, maxSize: 50
+		jobName blank: false, unique: true, nullable: false, maxSize: 50
 	}
 }

@@ -5,6 +5,7 @@ import haplorec.wui.Util
 //import haplorec.util.*
 import haplorec.util.haplotype.HaplotypeInput
 import haplorec.util.Haplotype
+import haplorec.util.Input.InvalidInputException
 
 import org.codehaus.groovy.grails.web.mapping.LinkGenerator;
 import org.springframework.dao.DataIntegrityViolationException
@@ -63,12 +64,20 @@ class PipelineJobController {
 
         def jobInstance = new Job(params)
         if (!jobInstance.save(flush: true)) {
-            render(view: "create", model: [jobInstance: jobInstance])
+            render(view: "create", model: [jobInstance: jobInstance, dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator)])
             return
         }
 
         Sql sql = new Sql(dataSource)
-        Haplotype.drugRecommendations(inputs + [jobId: jobInstance.id], sql)
+        try {
+            Haplotype.drugRecommendations(inputs + [jobId: jobInstance.id], sql)
+        } catch (InvalidInputException e) {
+			jobInstance.refresh()
+            jobInstance.delete(flush: true)
+            jobInstance.errors.reject('job.errors.invalidInput', e.message)
+            render(view: "create", model: [jobInstance: jobInstance, dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator)])
+            return
+        }
 
         flash.message = message(code: 'default.created.message', args: [message(code: 'job.label', default: 'Job'), jobInstance.id])
         redirect(action: "show", id: jobInstance.id)

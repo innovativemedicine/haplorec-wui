@@ -1,8 +1,5 @@
 package haplorec.wui
 
-import org.apache.commons.lang.builder.EqualsBuilder
-import org.apache.commons.lang.builder.HashCodeBuilder
-
 @Mixin(JobPatientDomainMixin)
 class JobPatientGenePhenotype implements Serializable {
 
@@ -16,25 +13,6 @@ class JobPatientGenePhenotype implements Serializable {
             eq 'job.id', jobId
         }
     }
-
-	int hashCode() {
-		def builder = new HashCodeBuilder()
-		builder.append job?.id
-		builder.append patientId
-		builder.append geneName
-		builder.append phenotypeName
-		builder.toHashCode()
-	}
-
-	boolean equals(other) {
-		if (other == null) return false
-		def builder = new EqualsBuilder()
-		builder.append job?.id, other.job?.id
-		builder.append patientId, other.patientId
-		builder.append geneName, other.geneName
-		builder.append phenotypeName, other.phenotypeName
-		builder.isEquals()
-	}
 
 	static belongsTo = [Job]
 

@@ -3,9 +3,11 @@ import grails.converters.JSON
 import haplorec.wui.Util
 
 //import haplorec.util.*
-import haplorec.util.haplotype.HaplotypeInput
-import haplorec.util.Haplotype
+import haplorec.util.pipeline.PipelineInput
+import haplorec.util.pipeline.Pipeline
+import haplorec.util.pipeline.Report
 import haplorec.util.Input.InvalidInputException
+import haplorec.util.Row
 
 import org.codehaus.groovy.grails.web.mapping.LinkGenerator;
 import org.springframework.dao.DataIntegrityViolationException
@@ -25,13 +27,13 @@ class PipelineJobController {
 		byte[] input
 		
 		static constraints = {
-			datatype validator: { haplorec.util.haplotype.HaplotypeInput.inputTables.contains(it?.toString()) }
+			datatype validator: { haplorec.util.pipeline.PipelineInput.inputTables.contains(it?.toString()) }
 			input size: 0..5*1024*1024
 		}
 	}
 	
     def index() {
-		log.error(HaplotypeInput.inputTables)
+		log.error(PipelineInput.inputTables)
         redirect(action: "list", params: params)
     }
 
@@ -50,12 +52,12 @@ class PipelineJobController {
 		
 		// inputs['variants'] == [file1, file2, ...]
 		Map inputs = new LinkedHashMap();
-		HaplotypeInput.inputTables.each { inputs[it + 's'] = [] }
+		PipelineInput.inputTables.each { inputs[it + 's'] = [] }
 		params.each { p, v ->
 			def m = (p =~ /^[^\d]+/)
 			if (m.getCount() == 1) {
 				def inputTable = m[0]
-				if (HaplotypeInput.inputTables.contains(inputTable)) {
+				if (PipelineInput.inputTables.contains(inputTable)) {
 					inputs[inputTable + 's'].push(new BufferedReader(new InputStreamReader(v.getInputStream())))
 				}
 			}
@@ -70,7 +72,7 @@ class PipelineJobController {
 
         Sql sql = new Sql(dataSource)
         try {
-            Haplotype.drugRecommendations(inputs + [jobId: jobInstance.id], sql)
+            Pipeline.drugRecommendations(inputs + [jobId: jobInstance.id], sql)
         } catch (InvalidInputException e) {
 			jobInstance.refresh()
             jobInstance.delete(flush: true)
@@ -156,7 +158,7 @@ class PipelineJobController {
 	
     def private static dependencyGraphJSON(Map kwargs = [:]) {
         if (kwargs.counts == null) { kwargs.counts = false }
-        def (tbl, dependencies) = haplorec.util.Haplotype.dependencyGraph()
+        def (tbl, dependencies) = Pipeline.dependencyGraph()
         List deps = dependencies.values().collect { d ->
             Util.makeRenderable(d) 
         } 
@@ -169,7 +171,9 @@ class PipelineJobController {
             }
         }
 
-        def level = dependencies.drugRecommendation.levels()
+        def level = dependencies.phenotypeDrugRecommendation.levels(startAt: [
+            dependencies.phenotypeDrugRecommendation, 
+            dependencies.genotypeDrugRecommendation])
         def depGraph = [
             level: level,
             dependencies: deps,
@@ -177,4 +181,38 @@ class PipelineJobController {
 
         return depGraph as JSON
     }
+
+    def private report(Long id, generateReport) {
+        def jobInstance = Job.get(id)
+        if (!jobInstance) {
+            flash.message = message(code: 'default.not.found.message', args: [message(code: 'job.label', default: 'Job'), id])
+            redirect(action: "list")
+            return
+        }
+
+
+        def (tbl, dependencies) = Pipeline.dependencyGraph()
+        Sql sql = new Sql(dataSource)
+        try {
+            def rows = generateReport([sqlParams: [job_id: id]] + tbl, sql)
+
+            response.setHeader "Content-disposition", "attachment; filename='output.csv'"
+            response.contentType = 'text/csv'
+
+            response.outputStream.withWriter { w ->
+                Row.asDSV(rows, w)
+            }
+        } finally {
+            sql.close()
+        }
+    }
+
+    def genotypeReport(Long id) {
+        report(id, Report.&genotypeDrugRecommendationReport)
+    }
+
+    def phenotypeReport(Long id) {
+        report(id, Report.&phenotypeDrugRecommendationReport)
+    }
+
 }

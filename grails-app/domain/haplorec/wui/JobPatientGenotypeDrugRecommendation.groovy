@@ -1,6 +1,6 @@
 package haplorec.wui
 
-class JobPatientDrugRecommendation implements Serializable {
+class JobPatientGenotypeDrugRecommendation implements Serializable {
 
 	String patientId
 	Job job

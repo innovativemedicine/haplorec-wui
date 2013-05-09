@@ -497,6 +497,10 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
             },
         }),
 
+        fetchAsync: function(index) {
+            return true;
+        },
+
         initialize: function(options) {
             this.constructor.__super__.initialize.apply(this, [options]);
 
@@ -524,10 +528,10 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
         },
 
         _hackLinks: function(el) {
-            /* Hack links in el to run asynchronously and load inside el instead of linking to a new page.
+            /* Hack links in el to fetch asynchronously and load inside el instead of linking to a new page.
              */
             var that = this;
-            el.find('a').each(function (i, a) {
+            el.find('a').filter(that.fetchAsync).each(function (i, a) {
                 // debugger;
                 var $a = $(a);
                 console.log($a);

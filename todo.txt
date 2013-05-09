@@ -79,11 +79,17 @@
 - handle invalid InvalidInputException (delete rows from job_patient_* tables by calling Job.delete(flush:true))
 - handle loading other tables using defaultReader, but disable their loading (only allow loading variants)
 
-- make a summary report file available for download  
-  - the report file should illustrate where data came from at each stage
-    - which variants map to a particular haplotype (from haplotype join variants)
-    - which genotypes map to a particular phenotype (phenotypes join genotypes... but multiple genotype sets might map to the same phenotype.... blah)
-    - which phenotypes/genotypes map to a particular drug recommendation (same issue as above; resolving the many side in a many-to-one relationship; we need to record the many when we record the one from which it came)
+- refactor JobPatientDrugRecommendation into 2 identical domains for phenotype / genotype
+  - copy domain
+  - copy view
+  - copy controller
+- make sure dependency graph stuff works for 2 base nodes
+  - mostly; just need to make node layout vertical order better (phenotype / 
+    genotype drug recommendations are laid out poorly)
+- implement phenotype / genotype report download
+  - add it to the show job view
+    - add it to the phenotype / genotype list views??? yeah, it's more abstract that way
+    - rename delete button to delete job, and push it farther down
 - implement job search using bootstrap-typeahead
   - add tooltip roll-over to nodes in graph and display dependency.description (if non-null)
 - add a question mark roll-over to create view, where if you click on the question mark, a modal dialog appears explaining the input source
@@ -92,3 +98,5 @@
     - show a sample input file
 - edit css files to make list view columns not so squished
 - remove links in list views
+
+- make sure sql connections get closed by API

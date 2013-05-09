@@ -5,8 +5,13 @@
 var g, gView;
 $(document).ready(function(){
     g = new pipeline.DependencyGraph(${dependencyGraphJSON});
-    console.log($(window).height()/2);
-    gView = new pipeline.Views.DependencyGraphShow({model: g, height: $(window).height()/3});
+    gView = new pipeline.Views.DependencyGraphShow({
+        model: g, 
+        height: $(window).height()/3,
+    });
+    gView.fetchAsync = function(index) {
+        return ! $(this).hasClass('drug-report');
+    };
     gView.render();
 });
 </r:script>
@@ -117,7 +122,7 @@ $(document).ready(function(){
 			<g:form>
 				<fieldset class="buttons">
 					<g:hiddenField name="id" value="${jobInstance?.id}" />
-					<g:actionSubmit class="delete" action="delete" value="${message(code: 'default.button.delete.label', default: 'Delete')}" onclick="return confirm('${message(code: 'default.button.delete.confirm.message', default: 'Are you sure?')}');" />
+					<g:actionSubmit class="delete" action="delete" value="${message(code: 'custom.button.delete.label', default: 'Delete', args: [entityName])}" onclick="return confirm('${message(code: 'default.button.delete.confirm.message', default: 'Are you sure?')}');" />
 				</fieldset>
 			</g:form>
 		</div>

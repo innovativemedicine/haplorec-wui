@@ -1,7 +1,7 @@
 package haplorec.wui
 
 import grails.converters.JSON;
-import haplorec.util.haplotype.Dependency;
+import haplorec.util.pipeline.Dependency;
 
 class Util {
 

@@ -5,7 +5,8 @@ class Job {
 	String jobName
 
 	static hasMany = [jobPatientChromosomeVariants: JobPatientChromosomeVariant,
-	                  jobPatientDrugRecommendations: JobPatientDrugRecommendation,
+	                  jobPatientGenotypeDrugRecommendations: JobPatientGenotypeDrugRecommendation,
+	                  jobPatientPhenotypeDrugRecommendations: JobPatientPhenotypeDrugRecommendation,
 	                  jobPatientGeneHaplotypes: JobPatientGeneHaplotype,
 	                  jobPatientGenePhenotypes: JobPatientGenePhenotype,
 	                  jobPatientGenotypes: JobPatientGenotype,

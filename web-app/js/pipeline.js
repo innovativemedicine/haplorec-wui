@@ -178,7 +178,6 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
             var that = this;
             this.$('.dependency-file-input').change(function () {
                 // debugger;
-                console.log('it changed to: ', $(this).val());
                 if ($(this).val()) {
                     that.show();
                 } else {
@@ -534,9 +533,7 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
             el.find('a').filter(that.fetchAsync).each(function (i, a) {
                 // debugger;
                 var $a = $(a);
-                console.log($a);
                 $a.click(function (event) {
-                    console.log("ermahgerd an event", event);
                     event.preventDefault();
                     $.get(
                         $a.attr('href'), 

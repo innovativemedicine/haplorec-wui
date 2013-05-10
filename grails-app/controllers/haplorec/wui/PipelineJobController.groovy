@@ -70,9 +70,11 @@ class PipelineJobController {
             return
         }
 
-        Sql sql = new Sql(dataSource)
         try {
-            Pipeline.drugRecommendations(inputs + [jobId: jobInstance.id], sql)
+            // Run the pipeline
+            withSql(dataSource) { sql ->
+                Pipeline.drugRecommendations(inputs + [jobId: jobInstance.id], sql)
+            } 
         } catch (InvalidInputException e) {
 			jobInstance.refresh()
             jobInstance.delete(flush: true)
@@ -93,8 +95,12 @@ class PipelineJobController {
             return
         }
 
-        Sql sql = new Sql(dataSource)
-        [jobInstance: jobInstance, dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator, sql: sql, job_id: id, counts: true)]
+        def json
+        withSql(dataSource) { sql ->
+            json = dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator, sql: sql, job_id: id, counts: true)
+        }
+
+        [jobInstance: jobInstance, dependencyGraphJSON: json]
     }
 
     def edit(Long id) {
@@ -182,7 +188,9 @@ class PipelineJobController {
         return depGraph as JSON
     }
 
-    def private report(Long id, generateReport) {
+    def private report(Map kwargs = [:], Long id, generateReport) {
+        if (kwargs.filename == null) { kwargs.filename = 'output.txt' }
+
         def jobInstance = Job.get(id)
         if (!jobInstance) {
             flash.message = message(code: 'default.not.found.message', args: [message(code: 'job.label', default: 'Job'), id])
@@ -190,29 +198,38 @@ class PipelineJobController {
             return
         }
 
+        withSql(dataSource) { sql ->
+            def rows = generateReport([sqlParams: [job_id: id]], sql)
 
-        def (tbl, dependencies) = Pipeline.dependencyGraph()
-        Sql sql = new Sql(dataSource)
-        try {
-            def rows = generateReport([sqlParams: [job_id: id]] + tbl, sql)
-
-            response.setHeader "Content-disposition", "attachment; filename='output.csv'"
+            response.setHeader "Content-disposition", "attachment; filename='${kwargs.filename}'"
             response.contentType = 'text/csv'
 
             response.outputStream.withWriter { w ->
                 Row.asDSV(rows, w)
             }
+        }
+
+    }
+
+    def private static withSql(DataSource d, Closure f) {
+        Sql sql = new Sql(d)
+        try {
+            f(sql)
         } finally {
             sql.close()
         }
     }
 
     def genotypeReport(Long id) {
-        report(id, Report.&genotypeDrugRecommendationReport)
+        report(id, Report.&genotypeDrugRecommendationReport,
+            filename: 'genotype_drug_recommendation_report.txt', 
+        )
     }
 
     def phenotypeReport(Long id) {
-        report(id, Report.&phenotypeDrugRecommendationReport)
+        report(id, Report.&phenotypeDrugRecommendationReport,
+            filename: 'phenotype_drug_recommendation_report.txt', 
+        )
     }
 
 }

@@ -34,6 +34,13 @@ $(document).ready(function(){
                 </g:else>
             </h1>
 
+			<g:form>
+				<fieldset class="buttons">
+					<g:hiddenField name="id" value="${jobInstance?.id}" />
+					<g:actionSubmit class="delete btn btn-danger" action="delete" value="${message(code: 'custom.button.delete.label', default: 'Delete', args: [entityName])}" onclick="return confirm('${message(code: 'default.button.delete.confirm.message', default: 'Are you sure?')}');" />
+				</fieldset>
+			</g:form>
+
 			<g:if test="${flash.message}">
 			<div class="message" role="status">${flash.message}</div>
 			</g:if>
@@ -119,12 +126,6 @@ $(document).ready(function(){
 			
 			</ol>
             --%>
-			<g:form>
-				<fieldset class="buttons">
-					<g:hiddenField name="id" value="${jobInstance?.id}" />
-					<g:actionSubmit class="delete" action="delete" value="${message(code: 'custom.button.delete.label', default: 'Delete', args: [entityName])}" onclick="return confirm('${message(code: 'default.button.delete.confirm.message', default: 'Are you sure?')}');" />
-				</fieldset>
-			</g:form>
 		</div>
 	</body>
 </html>

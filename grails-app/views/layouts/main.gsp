@@ -57,16 +57,14 @@
 			$('input.search-query').typeahead({
 			source:y,
 			updater: function(item){
-			
-			
-			for (var i=0; i< data.length;i++){
-				if (data[i].jobName == item){
-				var n = data[i].id;
-				}else{}}
-				var m = n.toString();
+				for (var i=0; i< data.length;i++){
+					if (data[i].jobName == item){
+					var n = data[i].id;
+					}else{}}
+			var m = n.toString();
 			window.location.replace("${createLink(action: 'show', controller: 'pipelineJob')}" + "/"+m)}	
-			});
-			}
+					});
+				}	
 			);
 
 		</r:script>

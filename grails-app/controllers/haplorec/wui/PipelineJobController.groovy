@@ -48,7 +48,15 @@ class PipelineJobController {
     }
 	
 	def jsonList() {
-		render ( Job.list(params) as JSON )
+		render ( 
+            Job.list(params).collect { job ->
+                def props = [
+                    id: job.id,
+                    jobName: job.jobName,
+                ]
+                return props
+            }
+        as JSON )
 	}
 
     def save() {

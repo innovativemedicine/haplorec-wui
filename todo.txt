@@ -98,5 +98,7 @@
     - show a sample input file
 - edit css files to make list view columns not so squished
 - remove links in list views
-
 - make sure sql connections get closed by API
+
+stefanie
+- add autocomplete for job search

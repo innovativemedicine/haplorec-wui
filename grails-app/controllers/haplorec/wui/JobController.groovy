@@ -1,5 +1,7 @@
 package haplorec.wui
 
+import grails.converters.deep.JSON;
+
 import org.springframework.dao.DataIntegrityViolationException
 
 class JobController {

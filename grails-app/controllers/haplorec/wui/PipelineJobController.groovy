@@ -46,6 +46,10 @@ class PipelineJobController {
         // [jobInstance: new Job(params), dependencyGraphJSON: dependencyGraphJSON()]
         [jobInstance: new Job(params), dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator)]
     }
+	
+	def jsonList() {
+		render ( Job.list(params) as JSON )
+	}
 
     def save() {
         log.error("SAVE PARAMS: $params")

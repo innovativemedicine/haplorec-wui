@@ -37,6 +37,7 @@
 							<form class="navbar-search pull-left">
 								<div class="input-prepend">
 									<input type="text" class="search-query" placeholder="Search">
+									<input type="submit" />
 								</div>
 							</form>
 							<li><a href="${createLink(action: 'create', controller: 'pipelineJob')}">New Job</a></li>
@@ -56,17 +57,19 @@
 					}
 			$('input.search-query').typeahead({
 			source:y,
-			updater: function(item){
+			updater: 
+			function(item){
 				for (var i=0; i< data.length;i++){
 					if (data[i].jobName == item){
 					var n = data[i].id;
 					var m = "/"+ n.toString();
 					window.location.replace("${createLink(action: 'show', controller: 'pipelineJob')}"+m);
 					}else{}
-					}}});
-				}	
-			);
-
+					}}});});
+		$("form").submit(function(){
+		if(true){
+		event.preventDefault();}});
+			
 		</r:script>
 
 		<%--

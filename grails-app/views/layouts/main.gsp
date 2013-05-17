@@ -34,10 +34,9 @@
 					<li class="dropdown"><a href="#" class="dropdown-toggle"
 						data-toggle="dropdown">Jobs<b class="caret"></b></a>
 						<ul class="dropdown-menu">
-							<form class="navbar-search pull-left">
+							<form id="job-search" class="navbar-search pull-left">
 								<div class="input-prepend">
 									<input type="text" class="search-query" placeholder="Search">
-									<input type="submit" />
 								</div>
 							</form>
 							<li><a href="${createLink(action: 'create', controller: 'pipelineJob')}">New Job</a></li>
@@ -66,9 +65,9 @@
 					window.location.replace("${createLink(action: 'show', controller: 'pipelineJob')}"+m);
 					}else{}
 					}}});});
-		$("form").submit(function(){
-		if(true){
-		event.preventDefault();}});
+		$("#job-search").submit(function(){
+            event.preventDefault();
+        });
 			
 		</r:script>
 

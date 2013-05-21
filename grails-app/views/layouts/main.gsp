@@ -49,23 +49,26 @@
 		
 		<r:script>
 		$.get('http://localhost:8080/haplorec-wui/pipelineJob/jsonList',
-		function(data) {
-			var y = new Array(data.length);
-			for(var i=0;i< data.length;i++){
-						y[i]=data[i].jobName;
-					}
-			$('input.search-query').typeahead({
-			source:y,
-			updater: 
-			function(item){
-				for (var i=0; i< data.length;i++){
-					if (data[i].jobName == item){
-					var n = data[i].id;
-					var m = "/"+ n.toString();
-					window.location.replace("${createLink(action: 'show', controller: 'pipelineJob')}"+m);
-					}else{}
-					}}});});
-		$("#job-search").submit(function(){
+            function(data) {
+                var y = new Array(data.length);
+                for(var i=0;i< data.length;i++){
+                    y[i]=data[i].jobName;
+                }
+                $('input.search-query').typeahead({
+                    source:y,
+                    updater: function(item) {
+                        for (var i=0; i< data.length; i++) {
+                            if (data[i].jobName == item) {
+                                var n = data[i].id;
+                                var m = "/"+ n.toString();
+                                window.location.replace("${createLink(action: 'show', controller: 'pipelineJob')}"+m);
+                            }
+                        }
+                    }
+                });
+            }
+        );
+		$("#job-search").submit(function() {
             event.preventDefault();
         });
 			

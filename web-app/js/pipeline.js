@@ -490,6 +490,7 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
             	  var saminp = new m.Views.sampleinputfile({
             		  model: new Backbone.Model({
             			  rows: v.model.attributes.rows,
+            			 
             		  }),
             	  });
             	  that.dependencySampleInputContainer.html(saminp.render().$el)

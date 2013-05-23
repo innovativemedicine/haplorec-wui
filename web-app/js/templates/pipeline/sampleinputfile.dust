@@ -1,5 +1,9 @@
-hello there
-{rows}
+<table border="1">
 {#rows}
-blerp
+<tr>
+{#.}
+<td>{.}</td>
+{/.}
+</tr>
 {/rows}
+</table>

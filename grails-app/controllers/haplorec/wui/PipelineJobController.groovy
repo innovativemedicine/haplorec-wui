@@ -3,10 +3,12 @@ import grails.converters.JSON
 import haplorec.wui.Util
 import haplorec.util.Input
 
+
 //import haplorec.util.*
 import haplorec.util.pipeline.PipelineInput
 import haplorec.util.pipeline.Pipeline
 import haplorec.util.pipeline.Report
+
 import haplorec.util.Input.InvalidInputException
 import haplorec.util.Row
 
@@ -203,8 +205,11 @@ class PipelineJobController {
 				def rows = []
 				Input.dsv(['asList': true], absoluteFilename).each { row ->
 					rows.add(row) // row is a list of strings, e.g. [PLATE, EXPERIMENT, CHIP, WELL_POSITION, ASSAY_ID, GENOTYPE_ID, DESCRIPTION, SAMPLE_ID, ENTRY_OPERATOR]
-				}
-				d['rows'] = rows
+					}
+				d['header']=rows[0]
+				d['rows'] = rows[1,2,3,4,5,6,7,8,9]
+				// error with rows[1..-1]?
+				
 			}
 		}
 

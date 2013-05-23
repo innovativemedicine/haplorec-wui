@@ -1,4 +1,9 @@
 <table border="1">
+<tr>
+{#header}
+<th>{.}</th>
+{/header}
+</tr>
 {#rows}
 <tr>
 {#.}

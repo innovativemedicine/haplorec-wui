@@ -21,6 +21,7 @@ modules = {
         resource url: '/js/templates/pipeline/dependency.dust', attrs: [rel: "javascript/dust", type: 'js'], bundle: 'bundle_pipeline'
         resource url: '/js/templates/pipeline/dependencyShow.dust', attrs: [rel: "javascript/dust", type: 'js'], bundle: 'bundle_pipeline'
         resource url: '/js/templates/pipeline/dependencyFile.dust', attrs: [rel: "javascript/dust", type: 'js'], bundle: 'bundle_pipeline'
+		resource url: '/js/templates/pipeline/sampleinputfile.dust', attrs: [rel: "javascript/dust", type: 'js'], bundle: 'bundle_pipeline'
     }
 
 }

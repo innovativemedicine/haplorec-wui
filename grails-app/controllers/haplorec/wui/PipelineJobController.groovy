@@ -1,6 +1,7 @@
 package haplorec.wui
 import grails.converters.JSON
 import haplorec.wui.Util
+import haplorec.util.Input
 
 //import haplorec.util.*
 import haplorec.util.pipeline.PipelineInput
@@ -44,8 +45,10 @@ class PipelineJobController {
 
     def create() {
         // [jobInstance: new Job(params), dependencyGraphJSON: dependencyGraphJSON()]
-        [jobInstance: new Job(params), dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator)]
-    }
+        
+    	[jobInstance: new Job(params), dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator, context: grailsApplication.mainContext,sampleInputs:true)]
+		}
+	
 	
 	def jsonList() {
 		render ( 
@@ -174,8 +177,11 @@ class PipelineJobController {
         }
     }
 	
-    def private static dependencyGraphJSON(Map kwargs = [:]) {
+	
+    def private static dependencyGraphJSON(Map kwargs = [:])  {
+		
         if (kwargs.counts == null) { kwargs.counts = false }
+		if (kwargs.sampleInputs == null) { kwargs.sampleInputs = false }
         def (tbl, dependencies) = Pipeline.dependencyGraph()
         List deps = dependencies.values().collect { d ->
             Util.makeRenderable(d) 
@@ -188,6 +194,19 @@ class PipelineJobController {
 				d['listUrl'] = kwargs.grailsLinkGenerator.link(controller: d.table.replaceAll(/_([a-z])/, { it[0][1].toUpperCase() }), action: "listTemplate") 
             }
         }
+		
+		if (kwargs.sampleInputs) {
+			deps.each { d ->
+				// add sample input for each dependency
+				def filename = "/sample_input/${d.target}.txt"
+				def absoluteFilename = kwargs.context.getResource(filename).getFile().getCanonicalPath()
+				def rows = []
+				Input.dsv(['asList': true], absoluteFilename).each { row ->
+					rows.add(row) // row is a list of strings, e.g. [PLATE, EXPERIMENT, CHIP, WELL_POSITION, ASSAY_ID, GENOTYPE_ID, DESCRIPTION, SAMPLE_ID, ENTRY_OPERATOR]
+				}
+				d['rows'] = rows
+			}
+		}
 
         def level = dependencies.phenotypeDrugRecommendation.levels(startAt: [
             dependencies.phenotypeDrugRecommendation, 

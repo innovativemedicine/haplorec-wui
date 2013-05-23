@@ -35,7 +35,6 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
             return this.get('target');
         }
     });
-
     m.DependencyFile = Backbone.Model.extend({
         filename: null,
         dependency: null,
@@ -156,7 +155,9 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
             return this;
         }
 	}); 
-
+    m.Views.sampleinputfile=m.Views.Dust.extend({
+    	template: "pipeline/sampleinputfile",
+    });
     m.Views.DependencyFile = m.Views.Dust.extend({
         template: "pipeline/dependencyFile",
         className: "dependency-file",
@@ -454,6 +455,9 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
         initialize: function(options) {
             this.constructor.__super__.initialize.apply(this, [options]);
 
+            this.dependencySampleInputContainer = $(document.createElement('div'));
+            this.outerEl.append(this.dependencySampleInputContainer);
+            
             this.dependencyFilesContainer = $(document.createElement('div')).addClass(this.dependencyFilesContainerClassName);
             this.outerEl.append(this.dependencyFilesContainer);
 
@@ -482,6 +486,14 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
                         dFileView.askForFile();
                     });
                 }
+              v.$el.mouseover(function(){
+            	  var saminp = new m.Views.sampleinputfile({
+            		  model: new Backbone.Model({
+            			  rows: v.model.attributes.rows,
+            		  }),
+            	  });
+            	  that.dependencySampleInputContainer.html(saminp.render().$el)
+              }); 
             });
 
         },
@@ -510,6 +522,7 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
             var that = this;
             _.each(this.dependencyViews(), function (v) {
                 v.$el.click(function() { 
+                	
                     $.get(
                         v.model.get('listUrl'), 
                         { 
@@ -520,7 +533,9 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
                             that._hackLinks(that.listContainer);
                         }
                     );
+                    
                 });
+              
             });
 
 

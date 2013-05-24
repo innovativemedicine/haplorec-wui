@@ -9,7 +9,7 @@
 	{#rows}
 	<tr>
 		{#.}
-			<td align="center">{.}</td>
+			<td>{.}</td>
 		{/.}
 	</tr>
 	{/rows}

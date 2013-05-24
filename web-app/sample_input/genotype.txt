@@ -1,3 +1,4 @@
 SAMPLE_ID	GENE	HAPLOTYPE	HAPLOTYPE
 sample1	GENE1	*1	*1	
 sample2	GENE2	*2	*2
+...	...	...	...

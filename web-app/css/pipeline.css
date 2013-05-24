@@ -82,5 +82,6 @@ table.sample-input-file th {
 }
 
 table.sample-input-file td {
+	text-align:center;
 	border: hidden;
 }

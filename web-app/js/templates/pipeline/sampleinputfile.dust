@@ -1,14 +1,16 @@
-<table border="1">
-<tr>
-{#header}
-<th>{.}</th>
-{/header}
-</tr>
-{#rows}
-<tr>
-{#.}
-<td>{.}</td>
-{/.}
-</tr>
-{/rows}
+<br></br>
+<p class="tabletitle">Sample Input File:</p>
+<table class="sample-input-file" border="1">
+	<tr>
+		{#header}
+			<th>{.}</th>
+		{/header}
+	</tr>
+	{#rows}
+	<tr>
+		{#.}
+			<td>{.}</td>
+		{/.}
+	</tr>
+	{/rows}
 </table>

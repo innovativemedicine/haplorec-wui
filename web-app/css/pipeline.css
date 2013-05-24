@@ -67,3 +67,26 @@
 
 .dependency-file-input {
 }
+table.sample-input-file {
+	border: 2px solid #00BFFF;
+	}
+
+table.sample-input-file th
+{
+border: 2px solid #00BFFF;
+background-color:#CFDEE3;
+color:black;
+}
+table.sample-input-file td
+{border: 2px solid #00BFFF;
+}
+
+p.tabletitle
+{font-weight: bold;
+font-size:25px;
+ }
+
+
+
+	
+    

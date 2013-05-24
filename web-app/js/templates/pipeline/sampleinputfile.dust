@@ -1,6 +1,6 @@
 <br></br>
-<h1>Sample Input File:</h1>
-<table class="sample-input-file" border="1">
+<h4>Sample Input File:</h4>
+<table class="sample-input-file">
 	<tr>
 		{#header}
 			<th>{.}</th>

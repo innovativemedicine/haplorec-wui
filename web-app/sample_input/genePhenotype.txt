@@ -1,3 +1,3 @@
 SAMPLE_ID	GENE	PHENOTYPE
-1	1	1	
-2	2	2
+sample1	GENE1	phenotype1	
+sample2	GENE2	phenotype2

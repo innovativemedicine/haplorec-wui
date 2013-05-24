@@ -69,18 +69,20 @@
 }
 
 table.sample-input-file {
-	border: 2px hidden;
+	border: hidden;
+	border-collapse: separate;
+	border-spacing: 2px;
 }
 
+
 table.sample-input-file th {
-	border: 2px solid white;
+	border: hidden;
 	background-color:#CFDEE3;
 	color:black;
 }
 
 table.sample-input-file td {
-
-	border: 2px hidden;
+	border: hidden;
 }
 
 

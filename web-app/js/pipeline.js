@@ -470,10 +470,12 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
             });
             this.dependencyFilesContainer.append(this.dependencyFilesHeader);
 
-            // when a dependency is clicked on, ask for a file
             _.each(this.dependencyViews(), function (v) {
-                var i = 0;
+
+                // fileUpload indicates whether this is an dependency that accepts input
                 if (v.model.get('fileUpload')) {
+                    // when a dependency is clicked on, ask for a file
+                    var i = 0;
                     v.$el.click(function() { 
                         var dFileView = new m.Views.DependencyFile({
                             model: new m.DependencyFile({
@@ -485,19 +487,25 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
                         that.dependencyFilesContainer.append(dFileView.render().$el);
                         dFileView.askForFile();
                     });
-                }
-              v.$el.mouseover(function(){
-            	  var saminp = new m.Views.sampleinputfile({
-            		  model: new Backbone.Model({
-            			  rows: v.model.attributes.rows,
-            			  header: v.model.attributes.header,
-            			 
-            		  }),
-            	  });
-            	  that.dependencySampleInputContainer.html(saminp.render().$el)
-              }); 
-            });
 
+                    // when a dependency is rolled over, show a sample input file
+                    v.$el.mouseover(function() {
+                        if (typeof v.model.get('rows') != "undefined" && typeof v.model.get('header') != "undefined") {
+                            var saminp = new m.Views.sampleinputfile({
+                                model: new Backbone.Model({
+                                    rows: v.model.attributes.rows,
+                                    header: v.model.attributes.header,
+                                }),
+                            });
+                            that.dependencySampleInputContainer.html(saminp.render().$el);
+                        } else {
+                            // if we don't have a dependency file, just clear the container
+                            that.dependencySampleInputContainer.empty();
+                        }
+                    }); 
+                }
+
+            });
         },
     });
 

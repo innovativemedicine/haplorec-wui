@@ -203,14 +203,16 @@ class PipelineJobController {
 				def filename = "/sample_input/${d.target}.txt"
 				def absoluteFilename = kwargs.context.getResource(filename).getFile().getCanonicalPath()
 				def rows = []
-				Input.dsv(['asList': true], absoluteFilename).each { row ->
-					rows.add(row) // row is a list of strings, e.g. [PLATE, EXPERIMENT, CHIP, WELL_POSITION, ASSAY_ID, GENOTYPE_ID, DESCRIPTION, SAMPLE_ID, ENTRY_OPERATOR]
-					}
-				def a =rows.size()
-				d['header']=rows[0]
-				d['rows'] = rows[1,*2..a]
-				
-				
+                try {
+                    Input.dsv(absoluteFilename, asList: true).each { row ->
+                        rows.add(row) // row is a list of strings, e.g. [PLATE, EXPERIMENT, CHIP, WELL_POSITION, ASSAY_ID, GENOTYPE_ID, DESCRIPTION, SAMPLE_ID, ENTRY_OPERATOR]
+                    } 
+                    def a = rows.size()
+                    d['header']=rows[0]
+                    d['rows'] = rows[1,*2..a]
+                } catch (FileNotFoundException e) {
+                    // don't add rows / headers since we don't have a sample input file
+                } 
 			}
 		}
 

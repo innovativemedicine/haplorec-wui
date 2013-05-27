@@ -201,9 +201,9 @@ class PipelineJobController {
 			deps.each { d ->
 				// add sample input for each dependency
 				def filename = "/sample_input/${d.target}.txt"
-				def absoluteFilename = kwargs.context.getResource(filename).getFile().getCanonicalPath()
 				def rows = []
                 try {
+					def absoluteFilename = kwargs.context.getResource(filename).getFile().getCanonicalPath()
                     Input.dsv(absoluteFilename, asList: true).each { row ->
                         rows.add(row) // row is a list of strings, e.g. [PLATE, EXPERIMENT, CHIP, WELL_POSITION, ASSAY_ID, GENOTYPE_ID, DESCRIPTION, SAMPLE_ID, ENTRY_OPERATOR]
                     } 

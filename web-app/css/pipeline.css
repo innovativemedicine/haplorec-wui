@@ -14,8 +14,12 @@
 /* DependencyFile / DependencyGraphShow
  */
 
-.dependency-file-upload:hover, .dependency-show:hover {
-    border-color: #007BFF;
+.dependency-show:hover {
+    border-color:  #007BFF;
+}
+
+.dependency-file-upload-hover{
+	border-color: #0f5;
 }
 
 .dependency-file-upload:active, .dependency-show:active {

@@ -239,6 +239,17 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
 		// 	'blur .edit': 'close'
 		// },
 
+        highlight: function(node) {
+        	if (this.highlightedNode == null) {
+        		this.highlightedNode = node;
+        	}
+        	this.highlightedNode.$el.addClass('dependency-show').removeClass('dependency-file-upload-hover');
+	        node.$el.removeClass('dependency-show').addClass('dependency-file-upload-hover');
+	        this.highlightedNode = node;
+        },
+        
+        highlightedNode: null,
+        
 		initialize: function () {
             var outerEl = this.$el;
             var inner = $(document.createElement('div')).addClass(this.className);
@@ -273,6 +284,10 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
             this._arrange();
             this._addConnections();
 
+		},
+		
+		dependencyView: function(targetName) {
+			return $(this.dViews[targetName]);
 		},
 
         dependencyViews: function () { 
@@ -490,6 +505,7 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
 
                     // when a dependency is rolled over, show a sample input file
                     v.$el.mouseover(function() {
+                    	that.highlight(v);
                         if (typeof v.model.get('rows') != "undefined" && typeof v.model.get('header') != "undefined") {
                             var saminp = new m.Views.sampleinputfile({
                                 model: new Backbone.Model({
@@ -532,7 +548,7 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
             var that = this;
             _.each(this.dependencyViews(), function (v) {
                 v.$el.click(function() { 
-                	
+                	that.highlight(v);
                     $.get(
                         v.model.get('listUrl'), 
                         { 

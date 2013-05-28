@@ -20,7 +20,7 @@
 		<r:require modules="bootstrapMod"/>
 		<g:layoutHead/>
 		<r:layoutResources />
-	</head>
+	</head>	
 	<body>
 		<div class="container">
 
@@ -44,6 +44,8 @@
 						</ul>
 					</li>
 				</ul>
+				<!-- this is a hack...yup -->
+				<div class="spinner-container pull-right" style="width: 3em; height: 3em;"></div>
 			</div>
 		</div>
 		

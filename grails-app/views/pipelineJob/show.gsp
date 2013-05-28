@@ -8,6 +8,7 @@ $(document).ready(function(){
     gView = new pipeline.Views.DependencyGraphShow({
         model: g, 
         height: $(window).height()/3,
+        spinnerContainer: $('.spinner-container'),
     });
     gView.fetchAsync = function(index) {
         return ! $(this).hasClass('drug-report');

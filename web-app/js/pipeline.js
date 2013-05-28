@@ -1,4 +1,4 @@
-var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
+var pipeline = (function (m, Backbone, _, dust, jsPlumb, Spinner) {
 	'use strict';
 
     // models
@@ -549,19 +549,23 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
             _.each(this.dependencyViews(), function (v) {
                 v.$el.click(function() { 
                 	that.highlight(v);
-                    $.get(
+                    // start the spinner
+                    var request = $.get(
                         v.model.get('listUrl'), 
                         { 
                             jobId: v.model.get('jobId'),
-                        }, 
-                        function (data) {
-                            that.listContainer.html(data);
-                            that._hackLinks(that.listContainer);
                         }
                     );
-                    
+                    request.done(function (data) {
+                        // stop spinner
+                        that.listContainer.html(data);
+                        that._hackLinks(that.listContainer);
+                    });
+                    request.fail(function () {
+                        // stop spinner
+                    });
                 });
-              
+
             });
 
 
@@ -590,4 +594,4 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb) {
     });
 
     return m;
-})(pipeline || {}, Backbone, _, dust, jsPlumb);
+})(pipeline || {}, Backbone, _, dust, jsPlumb, Spinner);

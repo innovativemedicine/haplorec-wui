@@ -20,6 +20,7 @@ import groovy.sql.Sql
 class PipelineJobController {
     DataSource dataSource
 	LinkGenerator grailsLinkGenerator
+	def grailsApplication
 
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 	
@@ -196,7 +197,7 @@ class PipelineJobController {
 				d['listUrl'] = kwargs.grailsLinkGenerator.link(controller: d.table.replaceAll(/_([a-z])/, { it[0][1].toUpperCase() }), action: "listTemplate") 
             }
         }
-		
+
 		if (kwargs.sampleInputs) {
 			deps.each { d ->
 				// add sample input for each dependency
@@ -207,9 +208,8 @@ class PipelineJobController {
                     Input.dsv(absoluteFilename, asList: true).each { row ->
                         rows.add(row) // row is a list of strings, e.g. [PLATE, EXPERIMENT, CHIP, WELL_POSITION, ASSAY_ID, GENOTYPE_ID, DESCRIPTION, SAMPLE_ID, ENTRY_OPERATOR]
                     } 
-                    def a = rows.size()
                     d['header']=rows[0]
-                    d['rows'] = rows[1,*2..a]
+                    d['rows'] = rows[1,2..rows.size()-1]
                 } catch (FileNotFoundException e) {
                     // don't add rows / headers since we don't have a sample input file
                 } 
@@ -270,5 +270,15 @@ class PipelineJobController {
             filename: 'phenotype_drug_recommendation_report.txt', 
         )
     }
+	
+	def main() {
+		def filename = "/sample_input/variant.txt"
+		def rows = []
+		def absoluteFilename = grailsApplication.mainContext.getResource(filename).getFile().getCanonicalPath()
+		Input.dsv(absoluteFilename, asList: true).each { row ->
+			rows.add(row)
+		}
+		[sampleVariantJSON: ( [header: rows[0], rows: rows[1,2..rows.size()-1] ] as JSON )]
+	}
 
 }

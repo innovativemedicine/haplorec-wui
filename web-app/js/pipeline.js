@@ -524,7 +524,6 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb, Spinner) {
             });
         },
     });
-
     // TOOD: refactor onclick file additions into this class
     m.Views.DependencyGraphShow = m.Views.DependencyGraph.extend({
         DependencyView: m.Views.Dependency.extend({

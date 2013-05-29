@@ -272,30 +272,18 @@ class PipelineJobController {
     }
 	
 	def main() {
-		def filename = "/sample_input/variant.txt"
-		def rows = []
-		def absoluteFilename = grailsApplication.mainContext.getResource(filename).getFile().getCanonicalPath()
-		Input.dsv(absoluteFilename, asList: true).each { row ->
-			rows.add(row)
-		}
-
-		def filename1 = "/sample_output/genotype_drug_recommendation_report.txt"
-		def rows1 = []
-		def absoluteFilename1 = grailsApplication.mainContext.getResource(filename1).getFile().getCanonicalPath()
-		Input.dsv(absoluteFilename1, asList: true).each { row ->
-			rows1.add(row)
-		}
-
-		def filename2 = "/sample_output/genotype_drug_recommendation_report.txt"
-		def rows2 = []
-		def absoluteFilename2 = grailsApplication.mainContext.getResource(filename2).getFile().getCanonicalPath()
-		Input.dsv(absoluteFilename2, asList: true).each { row ->
-			rows2.add(row)
-		}
-		
-		[sampleVariantJSON: ( [header:rows[0], rows: rows[1,2..rows.size()-1] ] as JSON ),
-		 samplephenoJSON: ( [header: rows2[0], rows: rows2[1,2..rows2.size()-1] ] as JSON ),
-		 samplegenoJSON: ( [header: rows1[0], rows: rows1[1,2..rows1.size()-1] ] as JSON ),]
+		def rowgetter ={filename->
+			def rows = []
+			def absoluteFilename = grailsApplication.mainContext.getResource(filename).getFile().getCanonicalPath()
+			Input.dsv(absoluteFilename, asList: true).each { row ->
+				rows.add(row)}
+			return rows}
+		def x=rowgetter("/sample_input/variant.txt")
+		def y=rowgetter("/sample_output/phenotype_drug_recommendation_report.txt")
+		def z =rowgetter("/sample_output/genotype_drug_recommendation_report.txt")
+		[sampleVariantJSON: ( [header:x[0], rows: x[1,2..x.size()-1] ] as JSON ),
+		 samplephenoJSON: ( [header: y[0], rows: y[1,2..y.size()-1] ] as JSON ),
+		 samplegenoJSON: ( [header: z[0], rows: z[1,2..z.size()-1] ] as JSON ),]
 	}
 
 }

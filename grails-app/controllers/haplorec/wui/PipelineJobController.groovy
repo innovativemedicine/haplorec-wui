@@ -278,7 +278,24 @@ class PipelineJobController {
 		Input.dsv(absoluteFilename, asList: true).each { row ->
 			rows.add(row)
 		}
-		[sampleVariantJSON: ( [header: rows[0], rows: rows[1,2..rows.size()-1] ] as JSON )]
+
+		def filename1 = "/sample_output/genotype_drug_recommendation_report.txt"
+		def rows1 = []
+		def absoluteFilename1 = grailsApplication.mainContext.getResource(filename1).getFile().getCanonicalPath()
+		Input.dsv(absoluteFilename1, asList: true).each { row ->
+			rows1.add(row)
+		}
+
+		def filename2 = "/sample_output/genotype_drug_recommendation_report.txt"
+		def rows2 = []
+		def absoluteFilename2 = grailsApplication.mainContext.getResource(filename2).getFile().getCanonicalPath()
+		Input.dsv(absoluteFilename2, asList: true).each { row ->
+			rows2.add(row)
+		}
+		
+		[sampleVariantJSON: ( [header:rows[0], rows: rows[1,2..rows.size()-1] ] as JSON ),
+		 samplephenoJSON: ( [header: rows2[0], rows: rows2[1,2..rows2.size()-1] ] as JSON ),
+		 samplegenoJSON: ( [header: rows1[0], rows: rows1[1,2..rows1.size()-1] ] as JSON ),]
 	}
 
 }

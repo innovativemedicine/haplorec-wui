@@ -272,15 +272,17 @@ class PipelineJobController {
     }
 	
 	def main() {
-		def rowgetter ={filename->
+		def rowgetter = { filename ->
 			def rows = []
 			def absoluteFilename = grailsApplication.mainContext.getResource(filename).getFile().getCanonicalPath()
 			Input.dsv(absoluteFilename, asList: true).each { row ->
-				rows.add(row)}
-			return rows}
-		def x=rowgetter("/sample_input/variant.txt")
-		def y=rowgetter("/sample_output/phenotype_drug_recommendation_report.txt")
-		def z =rowgetter("/sample_output/genotype_drug_recommendation_report.txt")
+				rows.add(row)
+            }
+			return rows
+        }
+		def x = rowgetter("/sample_input/variant.txt")
+		def y = rowgetter("/sample_output/phenotype_drug_recommendation_report.txt")
+		def z = rowgetter("/sample_output/genotype_drug_recommendation_report.txt")
 		[sampleVariantJSON: ( [header:x[0], rows: x[1,2..x.size()-1] ] as JSON ),
 		 samplephenoJSON: ( [header: y[0], rows: y[1,2..y.size()-1] ] as JSON ),
 		 samplegenoJSON: ( [header: z[0], rows: z[1,2..z.size()-1] ] as JSON ),]

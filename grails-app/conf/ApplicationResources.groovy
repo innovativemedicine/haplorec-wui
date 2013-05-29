@@ -4,6 +4,11 @@ modules = {
         resource url:'js/application.js'
     }
 
+    application {
+        dependsOn 'bootstrapMod'
+        resource url:'css/application.css'
+    }
+
     jsPlumb {
         dependsOn 'jquery'
         resource url:'js/extern/jquery.jsPlumb-1.3.16-all.js'

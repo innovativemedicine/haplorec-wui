@@ -100,5 +100,6 @@
 - remove links in list views
 - make sure sql connections get closed by API
 
-stefanie
-- add autocomplete for job search
+- add spinner when waiting for a job to be created
+- make the default page pipelineJob/main
+- change headers in report file to match style / names of variants input file

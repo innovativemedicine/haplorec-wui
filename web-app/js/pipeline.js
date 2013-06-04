@@ -147,7 +147,6 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb, Spinner) {
                     throw err;
                 }
                 that.$el.html(output);
-                // debugger;
                 if (that._init != undefined) {
                     that._init();
                 }
@@ -178,7 +177,6 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb, Spinner) {
             this.hide();
             var that = this;
             this.$('.dependency-file-input').change(function () {
-                // debugger;
                 if ($(this).val()) {
                     that.show();
                 } else {
@@ -513,7 +511,8 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb, Spinner) {
                                     header: v.model.attributes.header,
                                 }),
                             });
-                            that.dependencySampleInputContainer.html(saminp.render().$el);
+                            that.dependencySampleInputContainer.html("<h4>Sample Input File:</h4>");
+                            that.dependencySampleInputContainer.append(saminp.render().$el);
                         } else {
                             // if we don't have a dependency file, just clear the container
                             that.dependencySampleInputContainer.empty();
@@ -572,7 +571,6 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb, Spinner) {
                             visibility: true
                         };
                 	var spinner = new Spinner(opts);
-                	debugger;
                 	if (that.spinnerContainer != null) {
                 		spinner.spin(that.spinnerContainer.get(0));
                 	}
@@ -602,7 +600,6 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb, Spinner) {
              */
             var that = this;
             el.find('a').filter(that.fetchAsync).each(function (i, a) {
-                // debugger;
                 var $a = $(a);
                 $a.click(function (event) {
                     event.preventDefault();

@@ -39,20 +39,23 @@ $(document).ready(function(){
 	</head>
 	<body>
 
-	<p>Haplorec is a patient variant to drug recommendation pipeline. Here is how to get started:</p>
+	<p>Haplorec is a patient variant to drug recommendation pipeline. Here's how to get started:</p>
     
     <div class="main">
     <h2>1. Create a new Job</h2>
-    Upload a patient variant file:<div id="sample-variant"></div>
+    <p>Upload a patient variant file:</p>
+    <div id="sample-variant"></div>
     </div>
 
     <div class="main">
-    <h2>2. Download a report</h2>
-    Genotype drug recommendations:<div id ="sample-outgeno"></div>
+    <h2>2. Download a Report</h2>
+    <p><a class="drug-report btn btn-primary">${message(code: 'jobPatientGenotypeDrugRecommendation.label', default: 'JobPatientGenotypeDrugRecommendation')} Report</a></p>
+    <div id ="sample-outgeno"></div>
     </div>
 
     <div class="main">
-    Phenotype drug recommendations:<div id="sample-outpheno"></div>
+    <p><a class="drug-report btn btn-primary">${message(code: 'jobPatientPhenotypeDrugRecommendation.label', default: 'JobPatientPhenotypeDrugRecommendation')} Report</a></p>
+    <div id="sample-outpheno"></div>
     </div>
 
     </body>

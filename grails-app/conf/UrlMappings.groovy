@@ -7,7 +7,11 @@ class UrlMappings {
 			}
 		}
 
-		"/"(view:"/index")
+		"/" {
+			controller = "pipelineJob"
+			action = "main"
+		}
+		
 		"500"(view:'/error')
 	}
 }

@@ -13,13 +13,13 @@ class DrugRecommendation {
 
 	static mapping = {
 		version false
+		implications type: 'text'
+		recommendation type: 'text'
+		classification type: 'text'
+		diplotypeEgs type: 'text'
 	}
 
 	static constraints = {
 		drugName nullable: true, maxSize: 50
-		implications nullable: true, maxSize: 50
-		recommendation nullable: true, maxSize: 50
-		classification nullable: true, maxSize: 50
-		diplotypeEgs nullable: true, maxSize: 50
 	}
 }

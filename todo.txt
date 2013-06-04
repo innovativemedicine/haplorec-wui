@@ -103,3 +103,5 @@
 - add spinner when waiting for a job to be created
 - make the default page pipelineJob/main
 - change headers in report file to match style / names of variants input file
+- make g:link's on list pages link to a new page
+- make drug links on recommendation pages link to "show drug" page

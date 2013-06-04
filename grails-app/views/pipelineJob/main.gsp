@@ -39,11 +39,12 @@ $(document).ready(function(){
 	</head>
 	<body>
 
-	<p>Haplorec is a patient variant to drug recommendation pipeline. Here's how to get started:</p>
+	<p>Haplorec is a variant to drug recommendation pipeline.</p>
+    <p>Here's how to get started:</p>
     
     <div class="main">
     <h2>1. Create a new Job</h2>
-    <p>Upload a patient variant file:</p>
+    <p>Upload a variant file:</p>
     <div id="sample-variant"></div>
     </div>
 

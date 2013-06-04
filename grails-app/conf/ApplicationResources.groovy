@@ -1,7 +1,7 @@
 modules = {
 
     application {
-        dependsOn 'bootstrapMod'
+        dependsOn 'bootstrapMod, spinjs'
         resource url:'js/application.js'
         resource url:'css/application.css'
     }

@@ -75,14 +75,14 @@
 table.sample-input-file {
 	border: hidden;
 	border-collapse: separate;
-	border-spacing: 2px;
+	border-spacing: 0.5em;
 }
 
 
 table.sample-input-file th {
-	border: hidden;
 	background-color:#CFDEE3;
-	color:black;
+    border-radius: 5px;
+    padding: 0.25em;
 }
 
 table.sample-input-file td {

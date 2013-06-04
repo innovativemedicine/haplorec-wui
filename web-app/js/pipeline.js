@@ -536,44 +536,18 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb, Spinner) {
             return true;
         },
         
-        spinnerContainer: null,
-
         initialize: function(options) {
             this.constructor.__super__.initialize.apply(this, [options]);
 
             this.listContainer = $(document.createElement('div'));
             this.outerEl.append(this.listContainer);
             
-            this.spinnerContainer = options.spinnerContainer;
-
             // when a dependency is clicked on, load its server-side list view
             var that = this;
             _.each(this.dependencyViews(), function (v) {
                 v.$el.click(function() { 
                 	that.highlight(v);
                     // start the spinner
-                	var opts = {
-                            lines: 13, // The number of lines to draw
-                            length: 3, // The length of each line
-                            width: 4, // The line thickness
-                            radius: 10, // The radius of the inner circle
-                            corners: 1, // Corner roundness (0..1)
-                            rotate: 0, // The rotation offset
-                            color: 'white', // #rgb or #rrggbb
-                            speed: 1, // Rounds per second
-                            trail: 60, // Afterglow percentage
-                            shadow: false, // Whether to render a shadow
-                            hwaccel: false, // Whether to use hardware acceleration
-                            className: 'spinner', // The CSS class to assign to the spinner
-                            zIndex: 2e9, // The z-index (defaults to 2000000000)
-                            top: 'auto', // Top position relative to parent in px
-                            left: 'auto', // Left position relative to parent in px
-                            visibility: true
-                        };
-                	var spinner = new Spinner(opts);
-                	if (that.spinnerContainer != null) {
-                		spinner.spin(that.spinnerContainer.get(0));
-                	}
                     var request = $.get(
                         v.model.get('listUrl'), 
                         { 
@@ -581,12 +555,10 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb, Spinner) {
                         }
                     );
                     request.done(function (data) {
-                        spinner.stop();
                         that.listContainer.html(data);
                         that._hackLinks(that.listContainer);
                     });
                     request.fail(function () {
-                        spinner.stop();
                     });
                 });
 

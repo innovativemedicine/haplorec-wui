@@ -285,7 +285,7 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb, Spinner) {
 		},
 		
 		dependencyView: function(targetName) {
-			return $(this.dViews[targetName]);
+			return this.dViews[targetName];
 		},
 
         dependencyViews: function () { 
@@ -532,12 +532,16 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb, Spinner) {
             },
         }),
 
+        router: null,
+
         fetchAsync: function(index) {
             return true;
         },
         
         initialize: function(options) {
             this.constructor.__super__.initialize.apply(this, [options]);
+
+            this.router = new m.Routers.DependencyGraphShowRouter({view: this});
 
             this.listContainer = $(document.createElement('div'));
             this.outerEl.append(this.listContainer);
@@ -546,25 +550,40 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb, Spinner) {
             var that = this;
             _.each(this.dependencyViews(), function (v) {
                 v.$el.click(function() { 
-                	that.highlight(v);
-                    // start the spinner
-                    var request = $.get(
-                        v.model.get('listUrl'), 
-                        { 
-                            jobId: v.model.get('jobId'),
-                        }
-                    );
-                    request.done(function (data) {
-                        that.listContainer.html(data);
-                        that._hackLinks(that.listContainer);
-                    });
-                    request.fail(function () {
-                    });
+                	// that.highlight(v);
+                    // that.visit(
+                        // v.model.get('listUrl'), 
+                        // { 
+                        //     jobId: v.model.get('jobId'),
+                        // }
+                    // );
+                    that.select(v);
+                    var target = that.highlightedNode.model.get('target');
+                    that.router.navigate(target);
                 });
-
             });
 
 
+        },
+
+        select: function(dependencyView) {
+            this.highlight(dependencyView);
+            this.visit(
+                dependencyView.model.get('listUrl'), 
+                { 
+                    jobId: dependencyView.model.get('jobId'),
+                }
+            );
+        },
+
+        // load a url in a div below the graph
+        visit: function (url, params) {
+            var request = $.get(url, params);
+            var that = this;
+            request.done(function (data) {
+                that.listContainer.html(data);
+                that._hackLinks(that.listContainer);
+            });
         },
 
         _hackLinks: function(el) {
@@ -575,17 +594,47 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb, Spinner) {
                 var $a = $(a);
                 $a.click(function (event) {
                     event.preventDefault();
-                    $.get(
-                        $a.attr('href'), 
-                        function (d) { 
-                            el.html(d);
-                            that._hackLinks(el);
-                        }
-                    );
+                    var link = $a.attr('href');
+                    var target = that.highlightedNode.model.get('target');
+                    // that.router.targetAt(that.highlightedNode.model.get('target'), link);
+                    that.visit(link);
+                    // record this link in our history
+                    that.router.navigate(target + '/link' + link);
                 });
             });
 
         },
+    });
+
+    // routers
+    m.Routers = {};
+
+    m.Routers.DependencyGraphShowRouter = Backbone.Router.extend({
+
+        initialize: function(options) {
+            this.view = options.view;
+        },
+
+        routes: {
+            ":target": "target",
+            ":target/link/*link": "targetAt",
+        },
+
+        targetAt: function(target, link) {
+            var dView = this.view.dependencyView(target)
+            if (typeof dView !== 'undefined') {
+                this.view.highlight(dView);
+                this.view.visit('/' + link); 
+            }
+        },
+
+        target: function(target) {
+            var dView = this.view.dependencyView(target)
+            if (typeof dView !== 'undefined') {
+                this.view.select(dView);
+            }
+        },
+
     });
 
     return m;

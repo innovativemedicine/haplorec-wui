@@ -14,6 +14,7 @@ $(document).ready(function(){
         return ! $(this).hasClass('drug-report');
     };
     gView.render();
+    Backbone.history.start();
 });
 </r:script>
 

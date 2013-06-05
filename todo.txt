@@ -105,3 +105,9 @@
 - change headers in report file to match style / names of variants input file
 - make g:link's on list pages link to a new page
 - make drug links on recommendation pages link to "show drug" page
+
+- make view reference router, so that it can do this.router.navigate('...', {trigger: false}) to record back button history (trigger false is the default)
+
+- bug: spinner keeps spinning on clicking patient link
+- bug: back button after selecting a single node doesn't return to a graph with an unselected node
+  - router.navigate('/') => view.selectNothing (or something)

@@ -1,6 +1,18 @@
 a.drug-report {
 }
 
+span.property-label {
+	font-weight: 900
+}
+  	
+span.nextline{
+  	display: block; 
+}
+  	
+ul.nobullets{
+  	list-style-type: none;
+}
+
 .main {
     margin-bottom: 2em;
 }

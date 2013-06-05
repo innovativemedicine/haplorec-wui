@@ -89,5 +89,8 @@ table.sample-input-file td {
 	text-align:center;
 	border: hidden;
 }
+p.dump{
+	color: blue;
+}
 
 

@@ -204,6 +204,7 @@ img {
 
 /* CREATE/EDIT FORMS AND SHOW PAGES */
 
+
 fieldset,
 .property-list {
 	margin: 0.6em 1.25em 0 1.25em;
@@ -228,21 +229,29 @@ fieldset,
 	color: #666666;
 	text-align: right;
 	width: 25%;
+	
+	
 }
 
 .fieldcontain .property-label {
 	float: left;
+	
+	
+	
 }
 
 .fieldcontain .property-value {
 	display: block;
 	margin-left: 27%;
+	background-color: red;
+	
 }
 
 label {
 	cursor: pointer;
 	display: inline-block;
 	margin: 0 0.25em 0 0;
+
 }
 
 input, select, textarea {
@@ -594,3 +603,4 @@ a.skip {
 	position: absolute;
 	left: -9999px;
 }
+

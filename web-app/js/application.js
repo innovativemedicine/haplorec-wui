@@ -24,7 +24,6 @@ if (typeof app === 'undefined') {
         m.spinning = false;
         m.startSpinner = function () {
             if (spinnerContainer != null && !m.spinning) {
-                debugger;
                 m.spinner.spin(spinnerContainer.get(0));
                 m.spinning = true;
             }
@@ -32,7 +31,6 @@ if (typeof app === 'undefined') {
 
         m.stopSpinner = function () {
             if (m.spinning) {
-                debugger;
                 m.spinner.stop();
                 m.spinning = false;
             }

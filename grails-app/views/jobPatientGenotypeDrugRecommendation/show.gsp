@@ -1,4 +1,3 @@
-
 <%@ page import="haplorec.wui.JobPatientGenotypeDrugRecommendation" %>
 <!DOCTYPE html>
 <html>
@@ -22,34 +21,34 @@
 			<div class="message" role="status">${flash.message}</div>
 			</g:if>
 			<ol class="property-list jobPatientGenotypeDrugRecommendation">
-			
+
 				<g:if test="${jobPatientGenotypeDrugRecommendationInstance?.patientId}">
 				<li class="fieldcontain">
 					<span id="patientId-label" class="property-label"><g:message code="jobPatientGenotypeDrugRecommendation.patientId.label" default="Patient Id" /></span>
-					
+
 						<span class="property-value" aria-labelledby="patientId-label"><g:fieldValue bean="${jobPatientGenotypeDrugRecommendationInstance}" field="patientId"/></span>
-					
+
 				</li>
 				</g:if>
-			
+
 				<g:if test="${jobPatientGenotypeDrugRecommendationInstance?.drugRecommendation}">
 				<li class="fieldcontain">
 					<span id="drugRecommendation-label" class="property-label"><g:message code="jobPatientGenotypeDrugRecommendation.drugRecommendation.label" default="Drug Recommendation" /></span>
-					
+
 						<span class="property-value" aria-labelledby="drugRecommendation-label"><g:link controller="drugRecommendation" action="show" id="${jobPatientGenotypeDrugRecommendationInstance?.drugRecommendation?.id}">${jobPatientGenotypeDrugRecommendationInstance?.drugRecommendation?.encodeAsHTML()}</g:link></span>
-					
+
 				</li>
 				</g:if>
-			
+
 				<g:if test="${jobPatientGenotypeDrugRecommendationInstance?.job}">
 				<li class="fieldcontain">
 					<span id="job-label" class="property-label"><g:message code="jobPatientGenotypeDrugRecommendation.job.label" default="Job" /></span>
-					
+
 						<span class="property-value" aria-labelledby="job-label"><g:link controller="job" action="show" id="${jobPatientGenotypeDrugRecommendationInstance?.job?.id}">${jobPatientGenotypeDrugRecommendationInstance?.job?.encodeAsHTML()}</g:link></span>
-					
+
 				</li>
 				</g:if>
-			
+
 			</ol>
 			<g:form>
 				<fieldset class="buttons">

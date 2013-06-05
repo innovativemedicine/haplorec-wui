@@ -29,19 +29,34 @@ class DrugRecommendationController {
         flash.message = message(code: 'default.created.message', args: [message(code: 'drugRecommendation.label', default: 'DrugRecommendation'), drugRecommendationInstance.id])
         redirect(action: "show", id: drugRecommendationInstance.id)
     }
+	
+	private def showCommon(Long id) {
+		def drugRecommendationInstance = DrugRecommendation.get(id)
+		if (!drugRecommendationInstance) {
+			flash.message = message(code: 'default.not.found.message', args: [message(code: 'drugRecommendation.label', default: 'DrugRecommendation'), id])
+			redirect(action: "list")
+			return
+		}
+		
+		return drugRecommendationInstance
+	}
 
     def show(Long id) {
-        def drugRecommendationInstance = DrugRecommendation.get(id)
-        if (!drugRecommendationInstance) {
-            flash.message = message(code: 'default.not.found.message', args: [message(code: 'drugRecommendation.label', default: 'DrugRecommendation'), id])
-            redirect(action: "list")
-            return
-        }
-
-        [drugRecommendationInstance: drugRecommendationInstance]
+        def model = showCommon(id)
+		if (model == null) {
+			return
+		}
+		[drugRecommendationInstance: model]
     }
 
-    def edit(Long id) {
+	def showTemplate(Long id) {
+		def model = showCommon(id)
+		if (model != null) {
+			render(template: '/drugRecommendation/show', model)
+		}
+	}
+	
+    def edit(Long id) {  
         def drugRecommendationInstance = DrugRecommendation.get(id)
         if (!drugRecommendationInstance) {
             flash.message = message(code: 'default.not.found.message', args: [message(code: 'drugRecommendation.label', default: 'DrugRecommendation'), id])

@@ -22,20 +22,23 @@ class DrugRecommendation {
 	static constraints = {
 		drugName nullable: true, maxSize: 50
 	}
-	def shortener(arg){
-		def n=Math.min(100,arg.length());
-		if (arg.length()>100){
-			return arg.substring(0,n)+"...";
+	
+	def shortener(arg) {
+		def n = Math.min(100, arg.length())
+		if (arg.length() > 100) {
+			return arg.substring(0,n) + "..."
 		}
-		else{
-			return arg.substring(0,n);}}
-	def imp_shortener(){
+		else {
+			return arg.substring(0,n)
+		}
+	}
+	
+	def imp_shortener() {
 		return shortener(this.implications)
 	}
 		
-	def rec_shortener(){
-		return shortener(this.recommendation)
-		
+	def rec_shortener() {
+		return shortener(this.recommendation)	
 	}
 }
 

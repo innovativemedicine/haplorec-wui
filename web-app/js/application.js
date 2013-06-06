@@ -47,4 +47,12 @@ if (typeof app === 'undefined') {
 
         return m;
     })(app || {}, Spinner, jQuery || undefined);
+    
+    
+    
 }
+
+
+
+
+

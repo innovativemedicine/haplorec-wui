@@ -61,9 +61,9 @@
 					
 						<td><g:link controller="drugRecommendation" action="show" id="${jobPatientGenotypeDrugRecommendationInstance?.drugRecommendation?.id}">${fieldValue(bean: jobPatientGenotypeDrugRecommendationInstance?.drugRecommendation, field: "drugName")}</g:link></td>
 					
-						<td>${fieldValue(bean: jobPatientGenotypeDrugRecommendationInstance?.drugRecommendation, field: "implications")}</td>
+						<td>${jobPatientGenotypeDrugRecommendationInstance?.drugRecommendation?.imp_shortener()}</td>
 					
-						<td>${fieldValue(bean: jobPatientGenotypeDrugRecommendationInstance?.drugRecommendation, field: "recommendation")}</td>
+						<td>${jobPatientGenotypeDrugRecommendationInstance?.drugRecommendation?.rec_shortener()}</td>
 					
 						<td>${fieldValue(bean: jobPatientGenotypeDrugRecommendationInstance?.drugRecommendation, field: "classification")}</td>
 					

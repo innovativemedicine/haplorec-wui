@@ -7,7 +7,17 @@
 		<g:set var="entityName" value="${message(code: 'jobPatientPhenotypeDrugRecommendation.label', default: 'JobPatientPhenotypeDrugRecommendation')}" />
 		<title><g:message code="default.list.label" args="[entityName]" /></title>
 	</head>
+	
 	<body>
+	<script>
+	var elements = document.getElementsByClassName("short");
+
+	for (var i = 0; i < elements.length; i++) {
+	  var n= Math.min(100,elements[i].innerHTML.length);
+	  elements[i].innerHTML=elements[i].innerHTML.substring(0,n)+"...";
+	}
+	
+	</script>
         <%--
 		<a href="#list-jobPatientPhenotypeDrugRecommendation" class="skip" tabindex="-1"><g:message code="default.link.skip.label" default="Skip to content&hellip;"/></a>
 		<div class="nav" role="navigation">
@@ -61,9 +71,9 @@
 					
 						<td><g:link controller="drugRecommendation" action="show" id="${jobPatientPhenotypeDrugRecommendationInstance?.drugRecommendation?.id}">${fieldValue(bean: jobPatientPhenotypeDrugRecommendationInstance?.drugRecommendation, field: "drugName")}</g:link></td>
 					
-						<td>${fieldValue(bean: jobPatientPhenotypeDrugRecommendationInstance?.drugRecommendation, field: "implications")}</td>
+						<td class="short">${fieldValue(bean: jobPatientPhenotypeDrugRecommendationInstance?.drugRecommendation, field: "implications")}</td>
 					
-						<td>${fieldValue(bean: jobPatientPhenotypeDrugRecommendationInstance?.drugRecommendation, field: "recommendation")}</td>
+						<td class="short">${fieldValue(bean: jobPatientPhenotypeDrugRecommendationInstance?.drugRecommendation, field: "recommendation")}</td>
 					
 						<td>${fieldValue(bean: jobPatientPhenotypeDrugRecommendationInstance?.drugRecommendation, field: "classification")}</td>
 					

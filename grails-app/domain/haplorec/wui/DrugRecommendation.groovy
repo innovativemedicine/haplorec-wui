@@ -24,6 +24,9 @@ class DrugRecommendation {
 	}
 	
 	def shortener(arg) {
+	    if (arg == null) {
+			return null
+		}
 		def n = Math.min(100, arg.length())
 		if (arg.length() > 100) {
 			return arg.substring(0,n) + "..."

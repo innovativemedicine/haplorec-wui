@@ -54,13 +54,13 @@
 				<g:each in="${jobPatientPhenotypeDrugRecommendationInstanceList}" status="i" var="jobPatientPhenotypeDrugRecommendationInstance">
 					<tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
 					
-						<td><g:link action="show" id="${jobPatientPhenotypeDrugRecommendationInstance.id}">${fieldValue(bean: jobPatientPhenotypeDrugRecommendationInstance, field: "patientId")}</g:link></td>
+						<td>${fieldValue(bean: jobPatientPhenotypeDrugRecommendationInstance, field: "patientId")}</td>
 					
                         <%-- join drugRecommendation
 						<td>${fieldValue(bean: jobPatientPhenotypeDrugRecommendationInstance, field: "drugRecommendation")}</td>
                         --%>
 					
-						<td><g:link controller="drugRecommendation" action="show" id="${jobPatientPhenotypeDrugRecommendationInstance?.drugRecommendation?.id}">${fieldValue(bean: jobPatientPhenotypeDrugRecommendationInstance?.drugRecommendation, field: "drugName")}</g:link></td>
+						<td><g:link action="show" id="${jobPatientPhenotypeDrugRecommendationInstance?.drugRecommendation?.id}">${fieldValue(bean: jobPatientPhenotypeDrugRecommendationInstance?.drugRecommendation, field: "drugName")}</g:link></td>
 					
 						<td>${jobPatientPhenotypeDrugRecommendationInstance?.drugRecommendation?.imp_shortener()}</td>
 					

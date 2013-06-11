@@ -33,7 +33,7 @@
 				<g:each in="${jobPatientGenePhenotypeInstanceList}" status="i" var="jobPatientGenePhenotypeInstance">
 					<tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
 					
-						<td><g:link action="show" id="${jobPatientGenePhenotypeInstance.id}">${fieldValue(bean: jobPatientGenePhenotypeInstance, field: "patientId")}</g:link></td>
+						<td>${fieldValue(bean: jobPatientGenePhenotypeInstance, field: "patientId")}</td>
 					
 						<td>${fieldValue(bean: jobPatientGenePhenotypeInstance, field: "geneName")}</td>
 					

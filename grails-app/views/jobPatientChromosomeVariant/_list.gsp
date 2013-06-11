@@ -35,7 +35,7 @@
 				<g:each in="${jobPatientChromosomeVariantInstanceList}" status="i" var="jobPatientChromosomeVariantInstance">
 					<tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
 					
-						<td><g:link action="show" id="${jobPatientChromosomeVariantInstance.id}">${fieldValue(bean: jobPatientChromosomeVariantInstance, field: "patientId")}</g:link></td>
+						<td>${fieldValue(bean: jobPatientChromosomeVariantInstance, field: "patientId")}</td>
 					
 						<td>${fieldValue(bean: jobPatientChromosomeVariantInstance, field: "physicalChromosome")}</td>
 					

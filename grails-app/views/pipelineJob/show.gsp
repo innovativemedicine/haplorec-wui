@@ -59,18 +59,6 @@ $(document).ready(function(){
 					
 				</li>
 			
-
-				<g:if test="${jobInstance?.jobPatientChromosomeVariants}">
-				<li class="fieldcontain">
-					<span id="jobPatientChromosomeVariants-label" class="property-label"><g:message code="job.jobPatientChromosomeVariants.label" default="Job Patient Chromosome Variants" /></span>
-					
-						<g:each in="${jobInstance.jobPatientChromosomeVariants}" var="j">
-						<span class="property-value" aria-labelledby="jobPatientChromosomeVariants-label"><g:link controller="jobPatientChromosomeVariant" action="show" id="${j.id}">${j?.encodeAsHTML()}</g:link></span>
-						</g:each>
-					
-				</li>
-				</g:if>
-			
 				<g:if test="${jobInstance?.jobPatientDrugRecommendations}">
 				<li class="fieldcontain">
 					<span id="jobPatientDrugRecommendations-label" class="property-label"><g:message code="job.jobPatientDrugRecommendations.label" default="Job Patient Drug Recommendations" /></span>

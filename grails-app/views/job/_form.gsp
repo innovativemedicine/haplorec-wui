@@ -10,23 +10,6 @@
 	<g:textField name="jobName" maxlength="50" value="${jobInstance?.jobName}"/>
 </div>
 
-<div class="fieldcontain ${hasErrors(bean: jobInstance, field: 'jobPatientChromosomeVariants', 'error')} ">
-	<label for="jobPatientChromosomeVariants">
-		<g:message code="job.jobPatientChromosomeVariants.label" default="Job Patient Chromosome Variants" />
-		
-	</label>
-	
-<ul class="one-to-many">
-<g:each in="${jobInstance?.jobPatientChromosomeVariants?}" var="j">
-    <li><g:link controller="jobPatientChromosomeVariant" action="show" id="${j.id}">${j?.encodeAsHTML()}</g:link></li>
-</g:each>
-<li class="add">
-<g:link controller="jobPatientChromosomeVariant" action="create" params="['job.id': jobInstance?.id]">${message(code: 'default.add.label', args: [message(code: 'jobPatientChromosomeVariant.label', default: 'JobPatientChromosomeVariant')])}</g:link>
-</li>
-</ul>
-
-</div>
-
 <div class="fieldcontain ${hasErrors(bean: jobInstance, field: 'jobPatientDrugRecommendations', 'error')} ">
 	<label for="jobPatientDrugRecommendations">
 		<g:message code="job.jobPatientDrugRecommendations.label" default="Job Patient Drug Recommendations" />

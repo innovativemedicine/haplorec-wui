@@ -70,13 +70,16 @@ class PipelineJobController {
 		
 		// inputs['variants'] == [file1, file2, ...]
 		Map inputs = new LinkedHashMap();
-		PipelineInput.inputTables.each { inputs[it + 's'] = [] }
 		params.each { p, v ->
 			def m = (p =~ /^[^\d]+/)
 			if (m.getCount() == 1) {
 				def inputTable = m[0]
 				if (PipelineInput.inputTables.contains(inputTable)) {
-					inputs[inputTable + 's'].push(new BufferedReader(new InputStreamReader(v.getInputStream())))
+                    def inputKey = inputTable + 's'
+                    if (!inputs.containsKey(inputTable)) {
+                        inputs[inputKey] = []
+                    }
+					inputs[inputKey].push(new BufferedReader(new InputStreamReader(v.getInputStream())))
 				}
 			}
 		}

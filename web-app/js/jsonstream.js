@@ -14,25 +14,48 @@ var jsonstream = (function(m) {
          *   0; on reading a message, this should change to position of newline+1)
          *   - l: the length of data that has been read so far (initially 0)
          *   - each time we poll XMLHTTPRequest.responseText for changes (regardless of how that might be triggered), do the following:
-         *
-         *   def readMessages() {
-         *      L = XMLHTTPRequest.responseText.length
-         *      while l < L && reponseText[l] != '\n': 
-         *        l += 1
-         *      if l < L: 
-         *        // reponseText[l] == '\n' must be true if we're here, so there's a new message waiting
-         *        message = reponseText.substring(begin, l)
-         *        onMessage(JSON.parse(message))
-         *        // read past newline delimiter 
-         *        l += 1
-         *        // mark the beginning of the next message
-         *        begin = l
-         *        // there might still be messages available to read
-         *        readMessage()
-         *   }
-         *
+         */
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", url, true); 
+        xhr.send();
+        
+        var l = 0; 
+        var begin = 0;
+
+            function readMessages() {
+                var L = xhr.responseText.length
+                while (l < L && xhr.responseText[l] != '\n'){ 
+                    l += 1;
+                }
+                if (l < L){ 
+                    // reponseText[l] == '\n' must be true if we're here, so there's a new message waiting
+                    var message = xhr.responseText.substring(begin, l);
+                    onMessage(JSON.parse(message));
+                    // read past newline delimiter 
+                    l += 1;
+                    // mark the beginning of the next message
+                    begin = l;
+                 // there might still be messages available to read
+                    readMessages();
+                }
+            }
+
+       
+        var interval = setInterval(readMessages, 5000);
+
+        setTimeout(function(){
+            clearInterval(interval);
+            readMessages();
+            xhr.abort();
+        }, 25000);
+
+
+         /*
          * - on loading new 
          */
     };
 
+    return m;
+    
 })(jsonstream || {});
+

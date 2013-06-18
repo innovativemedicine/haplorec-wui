@@ -110,3 +110,13 @@
 
 - bug: back button after selecting a single node doesn't return to a graph with an unselected node
   - router.navigate('/') => view.selectNothing (or something)
+
+- bug: 1,2,...,Next buttons of graph views need jobId param added
+
+- create a javascript module jsonstream.js that abstracts reading the response of a long-lived 
+  asynchronous http request (can just implement GET for now) consisting of JSON strings delimited by 
+  newlines
+- create a job_state table that records the state of targets in the graph (idle? [absence of a 
+  target in the table => idle], running, done) (ideally this table would only be present in 
+  haplorec-wui, and we could update it by hooking into handlers in the haplorec pipeline; the only 
+  complexity is having to have multiple schema files... meh) 

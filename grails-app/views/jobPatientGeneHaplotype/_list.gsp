@@ -48,7 +48,7 @@
 				</tbody>
 			</table>
 			<div class="pagination">
-				<g:paginate total="${jobPatientGeneHaplotypeInstanceTotal}" />
+				<g:paginate total="${jobPatientGeneHaplotypeInstanceTotal}" params="[jobId:jobId]"/>
 			</div>
 		</div>
 	</body>

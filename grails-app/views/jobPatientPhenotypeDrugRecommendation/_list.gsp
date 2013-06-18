@@ -79,7 +79,7 @@
 				</tbody>
 			</table>
 			<div class="pagination">
-				<g:paginate total="${jobPatientPhenotypeDrugRecommendationInstanceTotal}" />
+				<g:paginate total="${jobPatientPhenotypeDrugRecommendationInstanceTotal}" params="[jobId:jobId]"/>
 			</div>
 
             <g:if test="${jobId != null}">

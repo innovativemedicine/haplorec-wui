@@ -1,4 +1,4 @@
-var pipeline = (function (m, Backbone, _, dust, jsPlumb, Spinner) {
+var pipeline = (function (m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
 	'use strict';
 
     // models
@@ -638,4 +638,4 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb, Spinner) {
     });
 
     return m;
-})(pipeline || {}, Backbone, _, dust, jsPlumb, Spinner);
+})(pipeline || {}, Backbone, _, dust, jsPlumb, Spinner, jsonstream);

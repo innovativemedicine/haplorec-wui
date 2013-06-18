@@ -291,4 +291,23 @@ class PipelineJobController {
 		 samplegenoJSON: ( [header: z[0], rows: z[1,2..z.size()-1] ] as JSON ),]
 	}
 
+    // TOOD: remove this, it just to make testing jsonparse.js easy
+    def jsonstream() {
+        response.contentType = 'application/json'
+        def json = { message ->
+            "{\"message\":\"$message\"}\n"
+        }
+        def sendMessage = { msg, timeout ->
+            response.outputStream << json("$msg message; sleeping for $timeout seconds...")
+            response.outputStream.flush()
+            if (timeout != 0) {
+                sleep(timeout*1000)
+            }
+        }
+        sendMessage('first', 3)
+        sendMessage('second', 2)
+        sendMessage('third', 1)
+        sendMessage('last', 0)
+    }
+
 }

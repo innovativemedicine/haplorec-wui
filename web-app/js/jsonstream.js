@@ -17,42 +17,29 @@ var jsonstream = (function(m) {
          */
         var xhr = new XMLHttpRequest();
         xhr.open("GET", url, true); 
+        xhr.onprogress=readMessages;
         xhr.send();
-        
+
         var l = 0; 
         var begin = 0;
 
-            function readMessages() {
-                var L = xhr.responseText.length
-                while (l < L && xhr.responseText[l] != '\n'){ 
-                    l += 1;
-                }
-                if (l < L){ 
-                    // reponseText[l] == '\n' must be true if we're here, so there's a new message waiting
-                    var message = xhr.responseText.substring(begin, l);
-                    onMessage(JSON.parse(message));
-                    // read past newline delimiter 
-                    l += 1;
-                    // mark the beginning of the next message
-                    begin = l;
-                 // there might still be messages available to read
-                    readMessages();
-                }
+        function readMessages() {
+            var L = xhr.responseText.length
+            while (l < L && xhr.responseText[l] != '\n'){ 
+                l += 1;
             }
-
-       
-        var interval = setInterval(readMessages, 5000);
-
-        setTimeout(function(){
-            clearInterval(interval);
-            readMessages();
-            xhr.abort();
-        }, 25000);
-
-
-         /*
-         * - on loading new 
-         */
+            if (l < L){ 
+                // reponseText[l] == '\n' must be true if we're here, so there's a new message waiting
+                var message = xhr.responseText.substring(begin, l);
+                onMessage(JSON.parse(message));
+                // read past newline delimiter 
+                l += 1;
+                // mark the beginning of the next message
+                begin = l;
+                // there might still be messages available to read
+                readMessages();
+            }
+        }
     };
 
     return m;

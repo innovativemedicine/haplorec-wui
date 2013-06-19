@@ -120,3 +120,4 @@
   target in the table => idle], running, done) (ideally this table would only be present in 
   haplorec-wui, and we could update it by hooking into handlers in the haplorec pipeline; the only 
   complexity is having to have multiple schema files... meh) 
+- add handlers in haplorec

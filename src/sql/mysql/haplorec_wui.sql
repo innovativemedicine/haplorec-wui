@@ -6,7 +6,7 @@
 CREATE TABLE job_state (
     job_id bigint not null,
     target varchar(200) not null,
-    state enum('running', 'done') not null,
+    state enum('running', 'done', 'failed') not null,
     foreign key (job_id) references job(id),
     primary key (job_id, target)
 ) ENGINE=InnoDB;

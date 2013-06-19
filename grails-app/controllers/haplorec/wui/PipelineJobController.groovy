@@ -94,6 +94,7 @@ class PipelineJobController {
         try {
             // Run the pipeline
             withSql(dataSource) { sql ->
+                // TODO: add handlers for inserting records into job_state
                 Pipeline.drugRecommendations(inputs + [jobId: jobInstance.id], sql)
             } 
         } catch (InvalidInputException e) {
@@ -308,6 +309,31 @@ class PipelineJobController {
         sendMessage('second', 2)
         sendMessage('third', 1)
         sendMessage('last', 0)
+    }
+
+    def status(Long jobId) {
+        /* pollTimeout = 1 second
+         *
+         * def (_, dependencies) = Pipeline.dependencyGraph()
+         *
+         * def jobDone(rows):
+         *   return (
+         *     there is a row in rows with row.state == 'failed' OR 
+         *     ( [row.target for row in rows where row.state == 'done'] as Set ) == 
+         *     ( [d.target for d in dependencies] as Set )
+         *   )
+         *
+         * request_timeout = 10 minutes
+         * start_time = System.currentTimeMillis()
+         * while true:
+         *   rows = select * from job_table where job_id = $jobId
+         *   if there are any new targets or an already reported target has changed state:
+         *      output messages for those targets
+         *   time_passed = start_time - System.currentTimeMillis()
+         *   if jobDone(rows) OR time_passed >= request_timeout * 60 * 1000:
+         *     break
+         *   sleep for pollTimeout * 1000
+         */
     }
 
 }

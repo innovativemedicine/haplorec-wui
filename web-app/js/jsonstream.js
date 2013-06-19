@@ -18,6 +18,7 @@ var jsonstream = (function(m) {
         var xhr = new XMLHttpRequest();
         xhr.open("GET", url, true); 
         xhr.onprogress=readMessages;
+        xhr.onloadend=readMessages;
         xhr.send();
 
         var l = 0; 

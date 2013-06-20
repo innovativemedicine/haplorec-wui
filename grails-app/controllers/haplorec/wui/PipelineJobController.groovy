@@ -312,28 +312,61 @@ class PipelineJobController {
     }
 
     def status(Long jobId) {
-        /* pollTimeout = 1 second
-         *
-         * def (_, dependencies) = Pipeline.dependencyGraph()
-         *
-         * def jobDone(rows):
-         *   return (
-         *     there is a row in rows with row.state == 'failed' OR 
-         *     ( [row.target for row in rows where row.state == 'done'] as Set ) == 
-         *     ( [d.target for d in dependencies] as Set )
-         *   )
-         *
-         * request_timeout = 10 minutes
-         * start_time = System.currentTimeMillis()
-         * while true:
-         *   rows = select * from job_table where job_id = $jobId
-         *   if there are any new targets or an already reported target has changed state:
-         *      output messages for those targets
-         *   time_passed = start_time - System.currentTimeMillis()
-         *   if jobDone(rows) OR time_passed >= request_timeout * 60 * 1000:
-         *     break
-         *   sleep for pollTimeout * 1000
-         */
+        response.contentType = 'application/json'
+		response.outputStream.flush()
+        def pollTimeout = 1 
+         
+        def (_, dependencies) = Pipeline.dependencyGraph() 
+		
+        def jobDone = {rows ->
+			
+            return (
+				//there is a row in rows with row.state == 'failed'
+				//( [row.target for row in rows where row.state == 'done'] as Set ) ==
+				//( [d.target for d in dependencies] as Set )
+			     rows.find{ it.state == 'failed' } != null ||
+			     (rows.findAll{it.state=='done'}.collect{it.target} as Set) == dependencies.keySet()
+            )
+			
+        }
+
+        // convert a JobState object to JSON
+        def json = { jobState ->
+            def props = jobState.properties
+            def jobStateProps = ['target', 'state'].inject([:]) { m, prop ->
+              m[prop] = props[prop]
+              m
+            }
+            (jobStateProps as JSON).toString() + '\n'
+        }
+
+		def request_timeout = 10 
+        def start_time = System.currentTimeMillis()
+		def rows=[]
+        while (true) {
+			//def rows = select * from job_table where job_id = $jobId
+           // if there are any new targets or an already reported target has changed state:
+           //    output messages for those targets
+            //time_passed = start_time - System.currentTimeMillis()
+            //if jobDone(rows) OR time_passed >= request_timeout * 60 * 1000:
+             // break
+           // sleep for pollTimeout * 1000
+			def new_rows = JobState.forJob(jobId).list()
+			if (!jobDone(new_rows) && rows != new_rows){
+				response.outputStream << new_rows.findAll{!(it in rows)}.collect { json(it) + '\n' }.join('')
+                response.outputStream.flush()
+				rows = new_rows
+			}
+			def time_passed = start_time - System.currentTimeMillis()
+
+			if (jobDone(new_rows) || time_passed >= request_timeout*60*1000) {
+                response.outputStream << "its done or failed"
+                break
+			} 
+
+			sleep(pollTimeout*1000)
+        }
+         
     }
 
 }

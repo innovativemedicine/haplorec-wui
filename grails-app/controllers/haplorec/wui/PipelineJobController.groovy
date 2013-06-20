@@ -8,6 +8,7 @@ import haplorec.util.Input
 import haplorec.util.pipeline.PipelineInput
 import haplorec.util.pipeline.Pipeline
 import haplorec.util.pipeline.Report
+import haplorec.util.dependency.Dependency
 
 import haplorec.util.Input.InvalidInputException
 import haplorec.util.Row
@@ -94,12 +95,39 @@ class PipelineJobController {
         try {
             // Run the pipeline
             withSql(dataSource) { sql ->
-                // TODO: add handlers for inserting records into job_state
-                Pipeline.drugRecommendations(inputs + [jobId: jobInstance.id], sql)
+                def jobId = jobInstance.id
+                def (_, job) = Pipeline.pipelineJob(inputs + [jobId: jobInstance.id], sql)
+                def beforeBuild = { d ->
+                    def jobState = new JobState(job: jobInstance, target: d.target, state: 'running')
+                    log.error("before build: ${jobState.properties}")
+                    jobState.save(flush: true)
+                }
+                def afterBuild = { d ->
+                    def jobState = JobState.jobTarget(jobId, d.target).get()
+                    jobState.state = 'done'
+                    log.error("after build: ${jobState.properties}")
+                    jobState.save(flush: true)
+                }
+                def onFail = { d, e ->
+                    def jobState = JobState.jobTarget(jobId, d.target).get()
+                    jobState.state = 'failed'
+                    log.error("failed: ${jobState.properties}")
+                    jobState.save(flush: true)
+                }
+                job.values().each { dependency ->
+                    dependency.beforeBuild += beforeBuild 
+                    dependency.afterBuild += afterBuild 
+                    dependency.onFail += onFail
+                }
+                Set<Dependency> built = []
+                job.phenotypeDrugRecommendation.build(built)
+                job.genotypeDrugRecommendation.build(built)
             } 
         } catch (InvalidInputException e) {
 			jobInstance.refresh()
-            jobInstance.delete(flush: true)
+            // Don't delete the job on failure, since otherwise /pipelineJob/status might miss this occurence (race 
+            // condition).
+            // jobInstance.delete(flush: true)
             jobInstance.errors.reject('job.errors.invalidInput', e.message)
             render(view: "create", model: [jobInstance: jobInstance, dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator)])
             return

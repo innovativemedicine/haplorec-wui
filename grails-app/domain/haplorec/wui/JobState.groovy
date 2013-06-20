@@ -13,6 +13,10 @@ class JobState {
         forJob { jobId ->
             eq 'job.id', jobId
         }
+        jobTarget { jobId, target ->
+            eq 'job.id', jobId
+            eq 'target', target
+        }
     }
 
 	static belongsTo = [Job]

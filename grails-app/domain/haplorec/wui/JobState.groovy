@@ -1,5 +1,8 @@
 package haplorec.wui
 
+import groovy.transform.EqualsAndHashCode
+
+@EqualsAndHashCode
 class JobState {
 
 	Job job
@@ -16,6 +19,7 @@ class JobState {
 
 	static mapping = {
 		version false
+		cache false
 	}
 
 }

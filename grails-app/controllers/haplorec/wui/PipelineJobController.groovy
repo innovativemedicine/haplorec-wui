@@ -332,39 +332,32 @@ class PipelineJobController {
 
         // convert a JobState object to JSON
         def json = { jobState ->
-            def props = jobState.properties
             def jobStateProps = ['target', 'state'].inject([:]) { m, prop ->
-              m[prop] = props[prop]
+              m[prop] = jobState[prop]
               m
             }
             (jobStateProps as JSON).toString() + '\n'
         }
 
-		def request_timeout = 10 
+		def request_timeout = 10
         def start_time = System.currentTimeMillis()
 		def rows=[]
-        while (true) {
-			//def rows = select * from job_table where job_id = $jobId
-           // if there are any new targets or an already reported target has changed state:
-           //    output messages for those targets
-            //time_passed = start_time - System.currentTimeMillis()
-            //if jobDone(rows) OR time_passed >= request_timeout * 60 * 1000:
-             // break
-           // sleep for pollTimeout * 1000
-			def new_rows = JobState.forJob(jobId).list()
-			if (!jobDone(new_rows) && rows != new_rows){
-				response.outputStream << new_rows.findAll{!(it in rows)}.collect { json(it) + '\n' }.join('')
-                response.outputStream.flush()
-				rows = new_rows
-			}
-			def time_passed = start_time - System.currentTimeMillis()
-
-			if (jobDone(new_rows) || time_passed >= request_timeout*60*1000) {
-                response.outputStream << "its done or failed"
-                break
-			} 
-
-			sleep(pollTimeout*1000)
+        withSql(dataSource) { sql ->
+            while (true) {
+    			def new_rows = sql.rows('select * from job_state where job_id = :jobId order by id', [jobId:jobId])
+    			if ((rows.collect{it.state}!=new_rows.collect{it.state})){
+    				response.outputStream << new_rows.findAll{!(it in rows)}.collect { json(it) + '\n' }.join('')
+                    response.outputStream.flush()
+    				rows = new_rows
+    			}
+                log.error("state: ${new_rows.collect{it.state}}")
+    			def time_passed = start_time - System.currentTimeMillis()
+    			if (jobDone(new_rows) || time_passed >= request_timeout*60*1000) {
+                    log.error("its done or failed")
+                    break
+    			}
+    			sleep(pollTimeout*1000)
+            }
         }
          
     }

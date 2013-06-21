@@ -3,6 +3,17 @@
 <!DOCTYPE html>
 <html>
 	<head>
+	<style type ="text/css">
+	.done{
+	color:green;
+	}
+	.running{
+	color:yellow;
+	}
+	.failed{
+	color:red;
+	}
+	</style>
 		<meta name="layout" content="main">
 		<g:set var="entityName" value="${message(code: 'job.label', default: 'Job')}" />
 		<title><g:message code="default.create.label" args="[entityName]" /></title>
@@ -34,7 +45,20 @@
 		<r:script>
 		$(document).ready(function(){
 			$("#startup").click(function(){
-				jsonstream.get("http://localhost:8080/haplorec-wui/pipelineJob/status?jobId=18",function(n){console.log(n)});
+				jsonstream.get(
+					"http://localhost:8080/haplorec-wui/pipelineJob/status?jobId=18",
+						function(message){
+							if (message.state=="done"){
+							$("#"+message.target).removeClass("running failed").addClass("done");
+							}
+							if (message.state=="running"){
+							$("#"+message.target).removeClass("done failed").addClass("running");
+							}
+							if (message.state=="failed"){
+							$("#"+message.target).removeClass("done running").addClass("failed");
+							}
+						}
+				);
 			});
 		});
 		

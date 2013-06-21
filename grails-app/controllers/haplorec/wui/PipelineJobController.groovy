@@ -221,7 +221,8 @@ class PipelineJobController {
 
         def level = dependencies.phenotypeDrugRecommendation.levels(startAt: [
             dependencies.phenotypeDrugRecommendation, 
-            dependencies.genotypeDrugRecommendation])
+            dependencies.genotypeDrugRecommendation,
+            dependencies.uniqueHaplotype])
         def depGraph = [
             level: level,
             dependencies: deps,

@@ -364,7 +364,7 @@ class PipelineJobController {
               m[prop] = jobState[prop]
               m
             }
-            (jobStateProps as JSON).toString() + '\n'
+            (jobStateProps as JSON).toString()
         }
 
 		def request_timeout = 10

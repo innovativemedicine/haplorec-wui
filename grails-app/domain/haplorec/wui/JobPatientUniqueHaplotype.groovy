@@ -1,12 +1,11 @@
 package haplorec.wui
 
 @Mixin(JobPatientDomainMixin)
-class JobPatientGeneHaplotype implements Serializable {
+class JobPatientUniqueHaplotype implements Serializable {
 
 	String patientId
 	String physicalChromosome
 	String geneName
-	String haplotypeName
 	Job job
 
     static namedQueries = {
@@ -25,6 +24,5 @@ class JobPatientGeneHaplotype implements Serializable {
 		patientId nullable: true, maxSize: 50
 		physicalChromosome nullable: true, maxSize: 50
 		geneName nullable: true, maxSize: 50
-		haplotypeName nullable: true, maxSize: 50
 	}
 }

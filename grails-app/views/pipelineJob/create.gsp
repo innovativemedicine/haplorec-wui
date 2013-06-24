@@ -3,17 +3,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-	<style type ="text/css">
-	.done{
-	color:green;
-	}
-	.running{
-	color:yellow;
-	}
-	.failed{
-	color:red;
-	}
-	</style>
+
 		<meta name="layout" content="main">
 		<g:set var="entityName" value="${message(code: 'job.label', default: 'Job')}" />
 		<title><g:message code="default.create.label" args="[entityName]" /></title>
@@ -37,16 +27,16 @@
 					<g:render template="form"/>
 				</fieldset>
 				<fieldset class="buttons">
-					<g:submitButton name="create" class="save" value="${message(code: 'default.button.create.label', default: 'Create')}" />
-					<button type="button" id="startup">Here</button>
+					<g:submitButton name="create" class="save" value="${message(code: 'default.button.create.label', default: 'Create')}"/>
+					<button type="button" class="save">Here</button>
 				</fieldset>
 			</g:uploadForm>
 		</div>
 		<r:script>
 		$(document).ready(function(){
-			$("#startup").click(function(){
+				$(".save").click(function(){
 				jsonstream.get(
-					"http://localhost:8080/haplorec-wui/pipelineJob/status?jobId=18",
+					'${createLink(controller:'pipelineJob', action:'status')}?jobId=40',
 						function(message){
 							if (message.state=="done"){
 							$("#"+message.target).removeClass("running failed").addClass("done");
@@ -59,9 +49,8 @@
 							}
 						}
 				);
-			});
+			});	
 		});
-		
 		</r:script>
 	</body>
 </html>

@@ -29,6 +29,7 @@ $(document).ready(function(){
 		<meta name="layout" content="main">
 		<g:set var="entityName" value="${message(code: 'job.label', default: 'Job')}" />
 		<title><g:message code="default.show.label" args="[entityName]" /></title>
+	
 	</head>
 	<body>
 		<div id="show-job" class="content scaffold-show" role="main">
@@ -122,5 +123,24 @@ $(document).ready(function(){
 			</ol>
             --%>
 		</div>
+		<r:script>
+		$(document).ready(function(){
+				jsonstream.get(
+					'${createLink(controller:'pipelineJob', action:'status')}?jobId=${jobInstance.id}',
+						function(message){
+							if (message.state=="done"){
+							$("#"+message.target).removeClass("running failed").addClass("done");
+							}
+							if (message.state=="running"){
+							$("#"+message.target).removeClass("done failed").addClass("running");
+							}
+							if (message.state=="failed"){
+							$("#"+message.target).removeClass("done running").addClass("failed");
+							}
+						}
+				);
+		});	
+		
+		</r:script>
 	</body>
 </html>

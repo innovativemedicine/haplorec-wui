@@ -92,5 +92,15 @@ table.sample-input-file td {
 p.dump{
 	color: blue;
 }
+span.done{
+	color:green;
+}
+span.running{
+	color:yellow;
+}
+span.failed{
+	color:red;
+}
+
 
 

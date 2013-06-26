@@ -28,13 +28,13 @@
 				</fieldset>
 				<fieldset class="buttons">
 					<g:submitButton name="create" class="save" value="${message(code: 'default.button.create.label', default: 'Create')}" />
-					<button type="button" class="save">Here</button>
 				</fieldset>
 			</g:uploadForm>
 		</div>
 		<r:script>
 		$(document).ready(function(){
-			$(".save").click(function(){
+			alert(${Job.executeQuery("SHOW TABLE STATUS LIKE Job")})
+			$(".sav").click(function(){
 				jsonstream.get(
 					'${createLink(controller:'pipelineJob', action:'status')}?jobId=${Job.list()[-1].getId()+1}',
 						function(message){

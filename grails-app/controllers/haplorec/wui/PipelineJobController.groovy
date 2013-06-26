@@ -49,8 +49,9 @@ class PipelineJobController {
 
     def create() {
         // [jobInstance: new Job(params), dependencyGraphJSON: dependencyGraphJSON()]
-        
+		
     	[jobInstance: new Job(params), dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator, context: grailsApplication.mainContext,sampleInputs:true)]
+
 		}
 	
 	
@@ -67,6 +68,7 @@ class PipelineJobController {
 	}
 
     def save() {
+		
         log.error("SAVE PARAMS: $params")
 		
 		// inputs['variants'] == [file1, file2, ...]
@@ -91,7 +93,7 @@ class PipelineJobController {
             render(view: "create", model: [jobInstance: jobInstance, dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator)])
             return
         }
-
+		
         try {
             // Run the pipeline
             withSql(dataSource) { sql ->
@@ -378,7 +380,7 @@ class PipelineJobController {
                     response.outputStream.flush()
     				rows = new_rows
     			}
-                log.error("state: ${new_rows.collect{it.state}}")
+                //log.error("state: ${new_rows.collect{it.state}}")
     			def time_passed = start_time - System.currentTimeMillis()
     			if (jobDone(new_rows) || time_passed >= request_timeout*60*1000) {
                     log.error("its done or failed")

@@ -16,3 +16,12 @@ ul.nobullets{
 .main {
     margin-bottom: 2em;
 }
+.done{
+	color:green;
+}
+.running{
+	color:yellow;
+}
+.failed{
+	color:red;
+}

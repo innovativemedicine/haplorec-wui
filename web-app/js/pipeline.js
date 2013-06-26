@@ -636,6 +636,6 @@ var pipeline = (function (m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
         },
 
     });
-
+   
     return m;
 })(pipeline || {}, Backbone, _, dust, jsPlumb, Spinner, jsonstream);

@@ -90,7 +90,6 @@ class PipelineJobController {
 		withSql(dataSource) { sql ->
 			iddd = sql.rows("SELECT Auto_increment FROM information_schema.tables WHERE table_name='job'")
 		}
-		
         log.error("SAVE PARAMS: $params")
 		
 		// inputs['variants'] == [file1, file2, ...]
@@ -112,10 +111,10 @@ class PipelineJobController {
 
         def jobInstance = new Job(params)
         if (!jobInstance.save(flush: true)) {
-            render(view: "create", model: [jobInstance: jobInstance, dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator), ident: iddd.collect{json(it)}[0]])
+			render(view: "create", model: [jobInstance: jobInstance, dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator), ident: iddd.collect{json(it)}[0]])
             return
         }
-		
+
         try {
             // Run the pipeline
             withSql(dataSource) { sql ->
@@ -402,7 +401,7 @@ class PipelineJobController {
                     response.outputStream.flush()
     				rows = new_rows
     			}
-                //log.error("state: ${new_rows.collect{it.state}}")
+                log.error("state: ${new_rows.collect{it.state}}")
     			def time_passed = start_time - System.currentTimeMillis()
     			if (jobDone(new_rows) || time_passed >= request_timeout*60*1000) {
                     log.error("its done or failed")

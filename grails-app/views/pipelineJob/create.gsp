@@ -28,6 +28,7 @@
 				</fieldset>
 				<fieldset class="buttons">
 					<g:submitButton name="create" class="save" value="${message(code: 'default.button.create.label', default: 'Create')}" />
+					<button type="button" class="save">Click</button>
 				</fieldset>
 			</g:uploadForm>
 		</div>
@@ -48,9 +49,10 @@
 							$("#"+message.target).removeClass("done running").addClass("failed");
 							}
 						}
-				);
-			});	
-		});
+					);
+				});	
+			});
+		
 		</r:script>
 	</body>
 </html>

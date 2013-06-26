@@ -49,8 +49,18 @@ class PipelineJobController {
 
     def create() {
         // [jobInstance: new Job(params), dependencyGraphJSON: dependencyGraphJSON()]
-		
-    	[jobInstance: new Job(params), dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator, context: grailsApplication.mainContext,sampleInputs:true)]
+		def json = { idd ->
+			def iddProps = ['Auto_increment'].inject([:]) { m, prop ->
+			  m[prop] = idd[prop]
+			  m
+			}
+			(iddProps as JSON).toString()
+		}
+		def iddd
+		withSql(dataSource) { sql ->
+			iddd = sql.rows("SELECT Auto_increment FROM information_schema.tables WHERE table_name='job'")
+		}
+    	[jobInstance: new Job(params), dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator, context: grailsApplication.mainContext,sampleInputs:true), ident: iddd.collect{json(it)}[0]]
 
 		}
 	
@@ -68,6 +78,18 @@ class PipelineJobController {
 	}
 
     def save() {
+		
+		def json = { idd ->
+			def iddProps = ['Auto_increment'].inject([:]) { m, prop ->
+			  m[prop] = idd[prop]
+			  m
+			}
+			(iddProps as JSON).toString()
+		}
+		def iddd
+		withSql(dataSource) { sql ->
+			iddd = sql.rows("SELECT Auto_increment FROM information_schema.tables WHERE table_name='job'")
+		}
 		
         log.error("SAVE PARAMS: $params")
 		
@@ -90,7 +112,7 @@ class PipelineJobController {
 
         def jobInstance = new Job(params)
         if (!jobInstance.save(flush: true)) {
-            render(view: "create", model: [jobInstance: jobInstance, dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator)])
+            render(view: "create", model: [jobInstance: jobInstance, dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator), ident: iddd.collect{json(it)}[0]])
             return
         }
 		
@@ -131,7 +153,7 @@ class PipelineJobController {
             // condition).
             // jobInstance.delete(flush: true)
             jobInstance.errors.reject('job.errors.invalidInput', e.message)
-            render(view: "create", model: [jobInstance: jobInstance, dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator)])
+            render(view: "create", model: [jobInstance: jobInstance, dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator), ident: iddd.collect{json(it)}[0]])
             return
         }
 

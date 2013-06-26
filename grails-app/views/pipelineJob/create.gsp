@@ -33,10 +33,10 @@
 		</div>
 		<r:script>
 		$(document).ready(function(){
-			alert(${Job.executeQuery("SHOW TABLE STATUS LIKE Job")})
-			$(".sav").click(function(){
+			var next_id = ${ident}.Auto_increment.toString();
+			$(".save").click(function(){
 				jsonstream.get(
-					'${createLink(controller:'pipelineJob', action:'status')}?jobId=${Job.list()[-1].getId()+1}',
+					'${createLink(controller:'pipelineJob', action:'status')}?jobId='+next_id,
 						function(message){
 							if (message.state=="done"){
 							$("#"+message.target).removeClass("running failed").addClass("done");

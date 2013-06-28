@@ -20,7 +20,7 @@ var jsonstream = (function(m) {
         xhr.onprogress=readMessages;
         xhr.onloadend=readMessages;
         xhr.send();
-
+        
         var l = 0; 
         var begin = 0;
 

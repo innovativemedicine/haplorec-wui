@@ -22,13 +22,13 @@
 				</g:eachError>
 			</ul>
 			</g:hasErrors>
-			<g:uploadForm action="save" >
+			<g:uploadForm action="save">
 				<fieldset class="form">
 					<g:render template="form"/>
 				</fieldset>
 				<fieldset class="buttons">
 					<g:submitButton name="create" class="save" value="${message(code: 'default.button.create.label', default: 'Create')}" />
-					<button type="button" class="save">Click</button>
+					<button type="button" class="saves">Progress</button>
 				</fieldset>
 			</g:uploadForm>
 		</div>
@@ -36,22 +36,11 @@
 		$(document).ready(function(){
 			var next_id = ${ident}.Auto_increment.toString();
 			$(".save").click(function(){
-				jsonstream.get(
-					'${createLink(controller:'pipelineJob', action:'status')}?jobId='+next_id,
-						function(message){
-							if (message.state=="done"){
-							$("#"+message.target).removeClass("running failed").addClass("done");
-							}
-							if (message.state=="running"){
-							$("#"+message.target).removeClass("done failed").addClass("running");
-							}
-							if (message.state=="failed"){
-							$("#"+message.target).removeClass("done running").addClass("failed");
-							}
-						}
-					);
-				});	
-			});
+				setTimeout(
+				function(){window.open('show/'+next_id);}
+				,1000);
+			});	
+		});
 		
 		</r:script>
 	</body>

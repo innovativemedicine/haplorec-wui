@@ -400,14 +400,15 @@ class PipelineJobController {
             while (true) {
     			def new_rows = sql.rows('select * from job_state where job_id = :jobId order by id', [jobId:jobId])
     			if ((rows.collect{it.state}!=new_rows.collect{it.state})){
-    				response.outputStream << new_rows.findAll{!(it in rows)}.collect { json(it) + '\n' }.join('')
+					log.error("h")
+    				response.outputStream <<  new_rows.findAll{!(it in rows)}.collect { json(it) + '\n' }.join('')
                     response.outputStream.flush()
 					
     				rows = new_rows
     			}
-                log.error("state: ${new_rows.collect{it.state}}")
+                log.error("state: ${rows.collect{it.state}}")
     			def time_passed = start_time - System.currentTimeMillis()
-    			if (jobDone(new_rows) || time_passed >= request_timeout*60*1000) {
+    			if (jobDone(rows) || time_passed >= request_timeout*60*1000) {
                     log.error("its done or failed")
                     break
     			}

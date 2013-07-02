@@ -22,22 +22,26 @@
 				</g:eachError>
 			</ul>
 			</g:hasErrors>
+			
 			<g:uploadForm action="save">
 				<fieldset class="form">
 					<g:render template="form"/>
 				</fieldset>
+				
 				<fieldset class="buttons">
 					<g:submitButton name="create" class="save" value="${message(code: 'default.button.create.label', default: 'Create')}" />
-					<button type="button" class="saves">Progress</button>
+              
 				</fieldset>
-			</g:uploadForm>
+			</g:uploadForm> 
 		</div>
 		<r:script>
 		$(document).ready(function(){
 			var next_id = ${ident}.Auto_increment.toString();
 			$(".save").click(function(){
 				setTimeout(
-				function(){window.open('show/'+next_id);}
+				function(){
+				window.open('status?jobId='+next_id);
+				window.open('show/'+next_id);}
 				,1000);
 			});	
 		});

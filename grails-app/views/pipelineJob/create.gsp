@@ -37,12 +37,14 @@
 		<r:script>
 		$(document).ready(function(){
 			var next_id = ${ident}.Auto_increment.toString();
+			
+			//opened new window to avoid getOuputStream already called error
+			
 			$(".save").click(function(){
 				setTimeout(
 				function(){
-				window.open('status?jobId='+next_id);
-				window.open('show/'+next_id);}
-				,1000);
+				window.open('loading/'+next_id);}
+				,500);
 			});	
 		});
 		

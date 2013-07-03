@@ -58,6 +58,7 @@ class PipelineJobController {
 			(idProps as JSON).toString()
 		}
 		
+		//used auto_increment to find next id since jobInstance is not defined yet
 		def next_id
 		withSql(dataSource) { sql ->
 			next_id = sql.rows("SELECT Auto_increment FROM information_schema.tables WHERE table_name='job'")
@@ -89,6 +90,8 @@ class PipelineJobController {
 			}
 			(idProps as JSON).toString()
 		}
+		
+		//used auto_increment to find next id since jobInstance is not defined yet
 		def next_id
 		withSql(dataSource) { sql ->
 			next_id = sql.rows("SELECT Auto_increment FROM information_schema.tables WHERE table_name='job'")
@@ -178,7 +181,26 @@ class PipelineJobController {
 
         [jobInstance: jobInstance, dependencyGraphJSON: json]
     }
+	
+	
+	//created new page so pop-up loading page did not have to be the same as show
+	
+	def loading(Long id) {
+		def jobInstance = Job.get(id)
+		if (!jobInstance) {
+			flash.message = message(code: 'default.not.found.message', args: [message(code: 'job.label', default: 'Job'), id])
+			redirect(action: "list")
+			return
+		}
 
+		def json
+		withSql(dataSource) { sql ->
+			json = dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator, sql: sql, job_id: id, counts: true)
+		}
+
+		[jobInstance: jobInstance, dependencyGraphJSON: json]
+	}
+	
     def edit(Long id) {
         def jobInstance = Job.get(id)
         if (!jobInstance) {

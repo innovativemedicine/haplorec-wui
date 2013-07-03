@@ -134,11 +134,11 @@ $(document).ready(function(){
 						function(message){
 							if (message.state=="done"){
 							var y = $("#"+message.target).html()
-							$("#"+message.target).html(y.replace("loading...","")).removeClass("running failed").addClass("done").show();
+							$("#"+message.target).html(y.replace('<img src="/haplorec-wui/static/images/spin.gif" alt="Loading">','')).removeClass("running failed").addClass("done").show();
 							}
 							if (message.state=="running"){
 							var x = $("#"+message.target).html()
-							$("#"+message.target).html("loading..."+x).removeClass("done failed").addClass("running").show();
+							$("#"+message.target).html('<img src="${resource(dir: 'images', file: 'spin.gif')}" alt="Loading"/>'+x).removeClass("done failed").addClass("running").show();
 							}
 							if (message.state=="failed"){
 							$("#"+message.target).removeClass("done running").addClass("failed").show();

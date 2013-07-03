@@ -21,6 +21,7 @@ ul.nobullets{
 }
 .running{
 	color:yellow;
+	
 }
 .failed{
 	color:red;

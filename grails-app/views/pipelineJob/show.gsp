@@ -122,23 +122,35 @@ $(document).ready(function(){
 			
 			</ol>
             --%>
+  
 		</div>
 		<r:script>
 		$(document).ready(function(){
+				$("._jsPlumb_connector").hide();
+				$(".dependency").hide();
+				$("._jsPlumb_endpoint").hide();
 				jsonstream.get(
 					'${createLink(controller:'pipelineJob', action:'status')}?jobId=${jobInstance.id}',
 						function(message){
 							if (message.state=="done"){
-							$("#"+message.target).removeClass("running failed").addClass("done");
+							var y = $("#"+message.target).html()
+							$("#"+message.target).html(y.replace("loading...","")).removeClass("running failed").addClass("done").show();
 							}
 							if (message.state=="running"){
-							$("#"+message.target).removeClass("done failed").addClass("running");
+							var x = $("#"+message.target).html()
+							$("#"+message.target).html("loading..."+x).removeClass("done failed").addClass("running").show();
 							}
 							if (message.state=="failed"){
-							$("#"+message.target).removeClass("done running").addClass("failed");
+							$("#"+message.target).removeClass("done running").addClass("failed").show();
+							}
+							if ($(".dependency").length==$(".done").length || $(".failed").length==1){
+								$(".dependency").show();
+								$("._jsPlumb_connector").show();
+								$("._jsPlumb_endpoint").show();
 							}
 						}
 				);
+				
 		});	
 		
 		</r:script>

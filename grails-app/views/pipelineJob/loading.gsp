@@ -90,7 +90,7 @@ $(document).ready(function(){
 								$(".dependency").show();
 								$("._jsPlumb_connector").show();
 								$("._jsPlumb_endpoint").show();
-								setTimeout(function(){window.close();},200);
+								setTimeout(function(){window.close();},100);
 							}
 						}
 				);

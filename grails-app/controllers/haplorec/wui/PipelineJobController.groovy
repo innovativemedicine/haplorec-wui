@@ -422,7 +422,6 @@ class PipelineJobController {
             while (true) {
     			def new_rows = sql.rows('select * from job_state where job_id = :jobId order by id', [jobId:jobId])
     			if ((rows.collect{it.state}!=new_rows.collect{it.state})){
-					log.error("h")
     				response.outputStream <<  new_rows.findAll{!(it in rows)}.collect { json(it) + '\n' }.join('')
                     response.outputStream.flush()
 					

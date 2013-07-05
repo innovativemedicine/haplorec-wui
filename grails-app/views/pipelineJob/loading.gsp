@@ -87,10 +87,7 @@ $(document).ready(function(){
 							//once all nodes are finished/failed show whole graph and close loading window
 							
 							if ($(".dependency").length==$(".done").length || $(".failed").length==1){
-								$(".dependency").show();
-								$("._jsPlumb_connector").show();
-								$("._jsPlumb_endpoint").show();
-								setTimeout(function(){window.close();},100);
+								setTimeout(function(){window.close();},700);
 							}
 						}
 				);

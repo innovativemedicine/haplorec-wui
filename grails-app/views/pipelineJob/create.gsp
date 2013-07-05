@@ -45,6 +45,7 @@
 				function(){
 				window.open('loading/'+next_id);}
 				,500);
+				
 			});	
 		});
 		

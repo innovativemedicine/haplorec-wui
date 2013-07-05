@@ -154,8 +154,7 @@ $(document).ready(function(){
 							
 							//showing complete graph
 							
-							if ($(".dependency").length==$(".done").length || $(".failed").length==1){
-								$(".dependency").show();
+							if ($(".dependency").length==$(".done").length){
 								$("._jsPlumb_connector").show();
 								$("._jsPlumb_endpoint").show();
 							}

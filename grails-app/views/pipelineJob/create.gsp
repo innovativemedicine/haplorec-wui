@@ -29,21 +29,25 @@
 				</fieldset>
 				
 				<fieldset class="buttons">
-					<g:submitButton name="create" class="save" value="${message(code: 'default.button.create.label', default: 'Create')}" />
+					<g:submitButton name="create" class="save" value="${message(code: 'default.button.create.label', default: 'Create')}"/>
               
 				</fieldset>
 			</g:uploadForm> 
 		</div>
+		<div class="iframeloading"></div>
 		<r:script>
 		$(document).ready(function(){
-			var next_id = ${ident}.Auto_increment.toString();
+			var next_id = "loading/"+${ident}.Auto_increment.toString();
 			
-			//opened new window to avoid getOuputStream already called error
+			//using iframe to avoid getOuputStream already called error
 			
 			$(".save").click(function(){
 				setTimeout(
 				function(){
-				window.open('loading/'+next_id);}
+				$("#create-job").hide();
+				$(".buttons").hide();
+				$(".iframeloading").html('<iframe src="'+next_id+'" seamless width=100% height=600px scrolling="no"></iframe>');
+				}
 				,500);
 				
 			});	
@@ -52,3 +56,4 @@
 		</r:script>
 	</body>
 </html>
+

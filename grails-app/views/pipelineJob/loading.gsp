@@ -54,6 +54,7 @@ $(document).ready(function(){
 		</div>
 		<r:script>
 		$(document).ready(function(){
+				$(".navbar").hide();
 				$("._jsPlumb_connector").hide();
 				$(".dependency").hide();
 				$("._jsPlumb_endpoint").hide();
@@ -82,12 +83,6 @@ $(document).ready(function(){
 							}
 							if (message.state=="failed"){
 								$("#"+message.target).removeClass("done running").addClass("failed").show();
-							}
-							
-							//once all nodes are finished/failed show whole graph and close loading window
-							
-							if ($(".dependency").length==$(".done").length || $(".failed").length==1){
-								setTimeout(function(){window.close();},700);
 							}
 						}
 				);

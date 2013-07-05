@@ -46,7 +46,7 @@
 				function(){
 				$("#create-job").hide();
 				$(".buttons").hide();
-				$(".iframeloading").html('<iframe src="'+next_id+'" seamless width=100% height=600px scrolling="no"></iframe>');
+				$(".iframeloading").html('<iframe src="'+next_id+'" seamless width=100% height=800px scrolling="no"></iframe>');
 				}
 				,500);
 				

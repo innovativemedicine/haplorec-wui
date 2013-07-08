@@ -135,18 +135,17 @@ $(document).ready(function(){
 						
 							//getting rid of loading image
 							
-							var y = $("#"+message.target).html().replace('<img src="/haplorec-wui/static/images/spin.gif" alt="Loading">','');
+							var y = $("#"+message.target).html().replace('<img src="${resource(dir: 'images', file: 'spin.gif')}" alt="Loading">','');
 							$("#"+message.target).html(y)
 							
 							//updating nodes
 							
 							if (message.state=="done"){
-								var y = $("#"+message.target).html().replace('<img src="/haplorec-wui/static/images/spin.gif" alt="Loading">','');
 								$("#"+message.target).removeClass("running failed").addClass("done").show();
 							}
 							if (message.state=="running"){
 								var x = $("#"+message.target).html()
-								$("#"+message.target).html('<img src="${resource(dir: 'images', file: 'spin.gif')}" alt="Loading"/>'+x).removeClass("done failed").addClass("running").show();
+								$("#"+message.target).html('<img src="${resource(dir: 'images', file: 'spin.gif')}" alt="Loading">'+x).removeClass("done failed").addClass("running").show();
 							}
 							if (message.state=="failed"){
 								$("#"+message.target).removeClass("done running").addClass("failed").show();

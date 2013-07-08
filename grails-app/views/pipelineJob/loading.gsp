@@ -58,7 +58,6 @@ $(document).ready(function(){
 				$("._jsPlumb_connector").hide();
 				$(".dependency").hide();
 				$("._jsPlumb_endpoint").hide();
-				
 				jsonstream.get(
 					'${createLink(controller:'pipelineJob', action:'status')}?jobId=${jobInstance.id}',
 						function(message){
@@ -69,7 +68,7 @@ $(document).ready(function(){
 							var new_content = node_content.replace(/[0-9]/g,"");
 							new_content = new_content.replace("(","");
 							new_content = new_content.replace(")","");
-							new_content = new_content.replace('<img src="/haplorec-wui/static/images/spin.gif" alt="Loading">','');
+							new_content = new_content.replace('<img src="${resource(dir: 'images', file: 'spin.gif')}" alt="Loading">','');
 							$("#"+message.target).html(new_content);
 							
 							//updating nodes
@@ -79,7 +78,7 @@ $(document).ready(function(){
 							}
 							if (message.state=="running"){
 								var x = $("#"+message.target).html()
-								$("#"+message.target).html('<img src="${resource(dir: 'images', file: 'spin.gif')}" alt="Loading"/>'+x).removeClass("done failed").addClass("running").show();
+								$("#"+message.target).html('<img src="${resource(dir: 'images', file: 'spin.gif')}" alt="Loading">'+x).removeClass("done failed").addClass("running").show();
 							}
 							if (message.state=="failed"){
 								$("#"+message.target).removeClass("done running").addClass("failed").show();

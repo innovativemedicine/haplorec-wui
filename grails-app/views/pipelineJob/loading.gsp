@@ -65,9 +65,7 @@ $(document).ready(function(){
 							//getting rid of numbers since they dont update, and loading image
 							
 							var node_content = $("#"+message.target).html();
-							var new_content = node_content.replace(/[0-9]/g,"");
-							new_content = new_content.replace("(","");
-							new_content = new_content.replace(")","");
+							var new_content = node_content.replace(/[0-9()]/g,"")
 							new_content = new_content.replace('<img src="${resource(dir: 'images', file: 'spin.gif')}" alt="Loading">','');
 							$("#"+message.target).html(new_content);
 							

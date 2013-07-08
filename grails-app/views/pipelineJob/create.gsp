@@ -37,16 +37,15 @@
 		<div class="iframeloading"></div>
 		<r:script>
 		$(document).ready(function(){
-			var next_id = "loading/"+${ident}.Auto_increment.toString();
-			
 			//using iframe to avoid getOuputStream already called error
 			
 			$(".save").click(function(){
+				var new_job = "loading/?jobName="+$("#jobName").val();
 				setTimeout(
 				function(){
 				$("#create-job").hide();
 				$(".buttons").hide();
-				$(".iframeloading").html('<iframe src="'+next_id+'" seamless width=100% height=800px scrolling="no"></iframe>');
+				$(".iframeloading").html('<iframe src="'+new_job+'" seamless width=100% height=800px scrolling="no"></iframe>');
 				}
 				,500);
 				

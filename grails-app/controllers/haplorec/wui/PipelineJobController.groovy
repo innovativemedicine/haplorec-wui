@@ -50,21 +50,7 @@ class PipelineJobController {
     def create() {
         // [jobInstance: new Job(params), dependencyGraphJSON: dependencyGraphJSON()]
 		
-		def json = { next_id ->
-			def idProps = ['Auto_increment'].inject([:]) { m, prop ->
-			  m[prop] = next_id[prop]
-			  m
-			}
-			(idProps as JSON).toString()
-		}
-		
-		//used auto_increment to find next id since jobInstance is not defined yet
-		def next_id
-		withSql(dataSource) { sql ->
-			next_id = sql.rows("SELECT Auto_increment FROM information_schema.tables WHERE table_name='job'")
-		}
-		
-    	[jobInstance: new Job(params), dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator, context: grailsApplication.mainContext,sampleInputs:true), ident: next_id.collect{json(it)}[0]]
+    	[jobInstance: new Job(params), dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator, context: grailsApplication.mainContext,sampleInputs:true)]
 
 		}
 	
@@ -82,20 +68,6 @@ class PipelineJobController {
 	}
 
     def save() {
-		
-		def json = { next_id ->
-			def idProps = ['Auto_increment'].inject([:]) { m, prop ->
-			  m[prop] = next_id[prop]
-			  m
-			}
-			(idProps as JSON).toString()
-		}
-		
-		//used auto_increment to find next id since jobInstance is not defined yet
-		def next_id
-		withSql(dataSource) { sql ->
-			next_id = sql.rows("SELECT Auto_increment FROM information_schema.tables WHERE table_name='job'")
-		}
         log.error("SAVE PARAMS: $params")
 		
 		// inputs['variants'] == [file1, file2, ...]
@@ -117,7 +89,7 @@ class PipelineJobController {
 
         def jobInstance = new Job(params)
         if (!jobInstance.save(flush: true)) {
-			render(view: "create", model: [jobInstance: jobInstance, dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator), ident: next_id.collect{json(it)}[0]])
+			render(view: "create", model: [jobInstance: jobInstance, dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator)])
             return
         }
 
@@ -158,7 +130,7 @@ class PipelineJobController {
             // condition).
             // jobInstance.delete(flush: true)
             jobInstance.errors.reject('job.errors.invalidInput', e.message)
-            render(view: "create", model: [jobInstance: jobInstance, dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator), ident: next_id.collect{json(it)}[0]])
+            render(view: "create", model: [jobInstance: jobInstance, dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator)])
             return
         }
 

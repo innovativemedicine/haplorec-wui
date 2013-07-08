@@ -185,22 +185,37 @@ class PipelineJobController {
 	
 	//created new page so pop-up loading page did not have to be the same as show
 	
-	def loading(Long id) {
-		def jobInstance = Job.get(id)
-		if (!jobInstance) {
-			flash.message = message(code: 'default.not.found.message', args: [message(code: 'job.label', default: 'Job'), id])
-			redirect(action: "list")
-			return
-		}
+	def loading(Long id, String jobName) {
+        def jobInstance
+        def notFound = { identifier ->
+            flash.message = message(code: 'default.not.found.message', args: [message(code: 'job.label', default: 'Job'), identifier])
+            redirect(action: "list")
+        }
+        if (id != null) {
+            jobInstance = Job.get(id)
+            if (!jobInstance) {
+                notFound(id)
+                return
+            }
+        } else if (jobName != null) {
+            jobInstance = Job.findByJobName(jobName)
+            if (!jobInstance) {
+                notFound(jobName)
+                return
+            }
+        } else {
+            notFound(null)
+            return
+        }
 
 		def json
 		withSql(dataSource) { sql ->
-			json = dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator, sql: sql, job_id: id, counts: true)
+			json = dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator, sql: sql, job_id: jobInstance.id, counts: true)
 		}
 
 		[jobInstance: jobInstance, dependencyGraphJSON: json]
 	}
-	
+
     def edit(Long id) {
         def jobInstance = Job.get(id)
         if (!jobInstance) {

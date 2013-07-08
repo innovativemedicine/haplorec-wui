@@ -121,3 +121,9 @@
   haplorec-wui, and we could update it by hooking into handlers in the haplorec pipeline; the only 
   complexity is having to have multiple schema files... meh) 
 - add handlers in haplorec
+
+Stefanie:
+- when creating a new job, you won't know what the id of the new job is going to be.  
+  However, you know what the name of the new job is going to be, which is a unique 
+  identifier for that job. Either a) get the job_id with that name then proceed as usual 
+  or b) use the job_name as a unique identifier throughout.  a) sounds easiest.

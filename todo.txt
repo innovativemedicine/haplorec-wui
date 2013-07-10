@@ -156,4 +156,21 @@
     Allele = String (possibly null)
     SNP = String (possibly null)
 
-    from job_patient
+Don't join against gene_snp to get records with null alleles since it leads to a lot of superfluous 
+and unnecessary rows. A GeneHaplotypeMatrix class can always provide an iterable interface that 
+fills in the null's without the overhead of materializing them in memory.
+
+i.e. don't do this:
+
+select job_id, gene_name, gene_snp_table.snp_id, patient_id, physical_chromosome
+from job_patient_unique_haplotype
+join job_patient_variant using (job_id, patient_id, physical_chromosome)
+right join gene_snp_table using (gene_name)
+order by job_id, gene_name, gene_snp_table.snp_id, patient_id, physical_chromosome
+
+instead, do this:
+
+select job_id, gene_name, snp_id, patient_id, physical_chromosome
+from job_patient_unique_haplotype
+join job_patient_variant using (job_id, patient_id, physical_chromosome)
+order by job_id, gene_name, snp_id, patient_id, physical_chromosome

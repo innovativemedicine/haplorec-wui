@@ -41,7 +41,7 @@ $(document).ready(function(){
     <h3>Mapping Variants to Haplotypes:</h3>
     <p>First of all, to determine which variants belong to each side of the chromosome there must be a maximum of one heterozygote variant.</p>
     <p>This is because when the variants are recorded for each location, the physical chromosome which they came from is not stored.</p>
-    <img src="${resource(dir: 'images', file: 'chromosomes.png')}" alt="Chromosomes">
+    <img src="${resource(dir: 'images', file: 'chromosome_1.png')}" alt="Chromosomes">
     <p>For example, the above physical chromosomes could be recorded as</p>
     <table border="1">
     	<tr>
@@ -84,10 +84,10 @@ $(document).ready(function(){
 	<div><a href="http://www.pharmgkb.org/gene/PA28469#tabview=tab4&subtab=32">Gene-haplotype matrix</a></div>
 	<h4>Novel Haplotypes</h4>
 	
-	<div>A novel haplotype occurs when the input variant list contains at least one snp for that gene, but there exists no known haplotype whose variants include all of the input variants for those snps.
+	<p>A novel haplotype occurs when the input variant list contains at least one snp for that gene, but there exists no known haplotype whose variants include all of the input variants for those snps.
 	Also, novel haplotypes can be identified only if there is a maximum of one heterozygote variant in the variant list. 
 	For example, if you have the following samples for the G6PD gene-haplotype matrix:
-	</div>
+	</p>
 	<table border="1" style="display: inline-block;">
 		<caption>Sample 1</caption>
 		<tr>

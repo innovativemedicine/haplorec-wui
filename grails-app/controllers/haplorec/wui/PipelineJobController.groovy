@@ -89,6 +89,7 @@ class PipelineJobController {
 
         def jobInstance = new Job(params)
         if (!jobInstance.save(flush: true)) {
+			log.error('bad pipeline job')
 			render(view: "create", model: [jobInstance: jobInstance, dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator)])
             return
         }

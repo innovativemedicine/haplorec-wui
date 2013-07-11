@@ -30,25 +30,79 @@
 				
 				<fieldset class="buttons">
 					<g:submitButton name="create" class="save" value="${message(code: 'default.button.create.label', default: 'Create')}"/>
+					<a class='blamo'>blamo</a>
               
 				</fieldset>
 			</g:uploadForm> 
+			<input class='save2' type='submit' value='hello'/>
 		</div>
 		<div class="iframeloading"></div>
 		<r:script>
+		
 		$(document).ready(function(){
 			//using iframe to avoid getOuputStream already called error
-			
 			$(".save").click(function(){
-				var new_job = "loading/?jobName="+$("#jobName").val();
-				setTimeout(
-				function(){
-				$("#create-job").hide();
-				$(".buttons").hide();
-				$(".iframeloading").html('<iframe src="'+new_job+'" seamless width=100% height=800px scrolling="no"></iframe>');
-				}
-				,500);
+			//$(".blamo").click(function(){
+			// $(".save").click(function(){
 				
+				// $(".iframeloading").html("herpderp");
+				// setTimeout(function() {
+
+					$('#create-job form').submit(function(e) {
+				        e.preventDefault();
+				        $.ajax({
+				            type: 'POST',
+				            cache: false,
+				            url: "${createLink(controller:'pipelineJob', action:'save')}",
+				            data: $(this).serialize(), 
+
+				        })
+				        .done(function(data) {
+			            	debugger;
+			                $("body").html(data);
+			            })
+			            .fail(function(jqXHR, textStatus, errorThrown) {
+			            	alert('post failed');
+			            	debugger;
+			            });
+					});
+					// var new_job = "${resource()}"
+
+					// var iframeHtml = '<iframe src="'+new_job+'" seamless width=100% height=800px scrolling="no"></iframe>';
+					var iframe = document.createElement("iframe");
+					iframe.onload = pollIframe;
+					iframe.src = "loading/?jobName="+$("#jobName").val();
+					var timeoutID = null;
+					var pollIframe = function() {
+						alert("iframe loaded");
+						if ($('#loading-page', iframe.document).length > 0) {
+							/* The pipeline job page has been created and we can start watching it load.
+							 */
+							 $(".iframeloading")[0].appendChild(iframe);
+							 clearTimeout(timeoutID);
+		 					$("#create-job").hide();
+							$(".buttons").hide();
+						} else if (timeoutID === null) {
+							/* Poll until it's created.
+							 */ 	
+							 timeoutID = setTimeout(pollIframe, 1*1000);
+						}
+					};
+					pollIframe();
+				 	
+
+
+
+					
+					
+
+					//$(".iframeloading").html(iframeHtml);
+					//var iframe = $(".iframeloading iframe").get(0);
+				// }, 1);
+				
+				//while($("iframe").contents().find("#list-job").length>0){
+				//	$(".iframeloading").html(iframeHtml);
+				//}
 			});	
 		});
 		

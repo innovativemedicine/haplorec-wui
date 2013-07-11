@@ -49,7 +49,7 @@ $(document).ready(function(){
 
             <div id="dependency-graph"></div>
 
-          
+          	<div id='loading-page'></div>
   
 		</div>
 		<r:script>

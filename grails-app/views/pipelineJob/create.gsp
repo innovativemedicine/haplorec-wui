@@ -62,7 +62,7 @@
 			                $("body").html(data);
 			            })
 			            .fail(function(jqXHR, textStatus, errorThrown) {
-			            	alert('post failed');
+			            	$("body").html(jqXHR.responseText);
 			            	debugger;
 			            });
 					});
@@ -78,8 +78,10 @@
 						if ($('#loading-page', iframe.document).length > 0) {
 							/* The pipeline job page has been created and we can start watching it load.
 							 */
-							 $(".iframeloading")[0].appendChild(iframe);
-							 clearTimeout(timeoutID);
+							$(".iframeloading")[0].appendChild(iframe);
+							if (timeoutID !== null) {
+								clearTimeout(timeoutID);
+							}
 		 					$("#create-job").hide();
 							$(".buttons").hide();
 						} else if (timeoutID === null) {
@@ -88,7 +90,7 @@
 							 timeoutID = setTimeout(pollIframe, 1*1000);
 						}
 					};
-					pollIframe();
+					
 				 	
 
 

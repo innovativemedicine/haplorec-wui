@@ -69,38 +69,61 @@
 			            	$("body").html(jqXHR.responseText);
 			            });
 					});
-					// var new_job = "${resource()}"
 
-					// var iframeHtml = '<iframe src="'+new_job+'" seamless width=100% height=800px scrolling="no"></iframe>';
 					/* Check the job status by loading it in an iframe.  Since the job may not be created 
 					 * yet, this request might fail, so we poll until it succeeds.
 					 */
-					var iframe = document.createElement("iframe");
-					iframe.onload = pollIframe;
-					iframe.src = "loading/?jobName="+$("#jobName").val();
+                    var loadingPage = "${createLink(controller: 'pipelineJob', action: 'status')}?jobName="+$("#jobName").val();
 					var timeoutID = null;
 					debugger;
-					var pollIframe = function() {
-						debugger;
-						alert("iframe loaded");
-						/* Trigger the iframe to reload (i think...).
-						 */
-						iframe.src = iframe.src;
-						if ($('#loading-page', iframe.document).length > 0) {
-							/* The pipeline job page has been created and we can start watching it load.
-							 */
-							$(".iframeloading")[0].appendChild(iframe);
-							if (timeoutID !== null) {
-								clearTimeout(timeoutID);
-							}
-		 					$("#create-job").hide();
-							$(".buttons").hide();
-						} else if (timeoutID === null) {
-							/* Poll until it's created.
-							 */ 	
-							 timeoutID = setTimeout(pollIframe, 1*1000);
-						}
+
+
+					var pollLoading = function() {
+                        debugger;
+                        // $(".navbar").hide();
+                        $("._jsPlumb_connector").hide();
+                        $(".dependency").hide();
+                        $("._jsPlumb_endpoint").hide();
+                        jsonstream.get(
+                            loadingPage,
+                            function(message) {
+
+                                //getting rid of numbers since they dont update, and loading image
+
+                                var node_content = $("#"+message.target).html();
+                                var new_content = node_content.replace(/[0-9()]/g,"");
+                                new_content = new_content.replace('<img src="${resource(dir: 'images', file: 'spin.gif')}" alt="Loading">','');
+                                $("#"+message.target).html(new_content);
+
+                                //updating nodes
+
+                                if (message.state=="done"){
+                                    $("#"+message.target).removeClass("running failed").addClass("done").show();
+                                }
+                                if (message.state=="running"){
+                                    var x = $("#"+message.target).html()
+                                    $("#"+message.target).html('<img src="${resource(dir: 'images', file: 'spin.gif')}" alt="Loading">'+x).removeClass("done failed").addClass("running").show();
+                                }
+                                if (message.state=="failed"){
+                                    $("#"+message.target).removeClass("done running").addClass("failed").show();
+                                }
+
+                                /* The pipeline job page has been created and we can start watching it load.
+                                 */
+                                if (timeoutID !== null) {
+                                    clearTimeout(timeoutID);
+                                }
+                            },
+                            function() {
+                                if (timeoutID === null) {
+                                    /* Poll until it's created.
+                                     */ 	
+                                    timeoutID = setTimeout(pollLoading, 1*1000);
+                                }
+                            }
+                        );
 					};
+                    pollLoading();
 
 					//$(".iframeloading").html(iframeHtml);
 					//var iframe = $(".iframeloading iframe").get(0);

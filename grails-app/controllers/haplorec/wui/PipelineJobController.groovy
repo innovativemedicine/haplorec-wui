@@ -375,7 +375,29 @@ class PipelineJobController {
         sendMessage('last', 0)
     }
 
-    def status(Long jobId) {
+    def status(Long jobId, String jobName) {
+
+        def jobInstance
+        def notFound = { identifier ->
+            response.status = 404
+        }
+        if (jobId != null) {
+            jobInstance = Job.get(jobId)
+            if (!jobInstance) {
+                notFound(jobId)
+                return
+            }
+        } else if (jobName != null) {
+            jobInstance = Job.findByJobName(jobName)
+            if (!jobInstance) {
+                notFound(jobName)
+                return
+            }
+        } else {
+            notFound(null)
+            return
+        }
+
         response.contentType = 'application/json'
 		response.outputStream.flush()
         def pollTimeout = 1 
@@ -408,7 +430,7 @@ class PipelineJobController {
 		def rows=[]
         withSql(dataSource) { sql ->
             while (true) {
-    			def new_rows = sql.rows('select * from job_state where job_id = :jobId order by id', [jobId:jobId])
+    			def new_rows = sql.rows('select * from job_state where job_id = :jobId order by id', [jobId:jobInstance.id])
     			if ((rows.collect{it.state}!=new_rows.collect{it.state})){
     				response.outputStream <<  new_rows.findAll{!(it in rows)}.collect { json(it) + '\n' }.join('')
                     response.outputStream.flush()

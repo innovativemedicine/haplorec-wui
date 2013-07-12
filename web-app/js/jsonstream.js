@@ -1,7 +1,7 @@
 var jsonstream = (function(m) {
 	'use strict';
 
-    m.get = function(url, onMessage) {
+    m.get = function(url, onMessage, onError) {
         /* TODO:
          * read the response of a long-lived asynchronous http request consisting of JSON strings delimited by newlines.
          * - use XMLHTTPRequest to perform the asynchronous http request
@@ -17,14 +17,18 @@ var jsonstream = (function(m) {
          */
         var xhr = new XMLHttpRequest();
         xhr.open("GET", url, true); 
-        xhr.onprogress=readMessages;
-        xhr.onloadend=readMessages;
+        xhr.onprogress = readMessages;
+        xhr.onloadend = readMessages;
+        xhr.onerror = onError;
         xhr.send();
         
         var l = 0; 
         var begin = 0;
 
         function readMessages() {
+            if (xhr.status != 200) {
+                onError();
+            }
             var L = xhr.responseText.length
             while (l < L && xhr.responseText[l] != '\n'){ 
                 l += 1;

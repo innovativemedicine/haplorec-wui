@@ -48,6 +48,9 @@
 				// $(".iframeloading").html("herpderp");
 				// setTimeout(function() {
 
+					/* Asynchronously submit the form (since synchronously submitting it has a weird issue
+					 * where we can't conurrently perform a GET to check job status.
+					 */
 					$('#create-job form').submit(function(e) {
 				        e.preventDefault();
 				        $.ajax({
@@ -69,6 +72,9 @@
 					// var new_job = "${resource()}"
 
 					// var iframeHtml = '<iframe src="'+new_job+'" seamless width=100% height=800px scrolling="no"></iframe>';
+					/* Check the job status by loading it in an iframe.  Since the job may not be created 
+					 * yet, this request might fail, so we poll until it succeeds.
+					 */
 					var iframe = document.createElement("iframe");
 					iframe.onload = pollIframe;
 					iframe.src = "loading/?jobName="+$("#jobName").val();

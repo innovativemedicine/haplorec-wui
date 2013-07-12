@@ -38,7 +38,8 @@
 		
 		$(document).ready(function(){
 			$(".save").click(function(){
-				
+
+                    if (!($("#jobName").val()=="")){
 					/* Asynchronously submit the form (since synchronously submitting it has a weird issue
 					 * where we can't conurrently perform a GET to check job status.
 					 */
@@ -56,12 +57,8 @@
                         .done(function(data, textStatus, jqXHR) {
                             /* Manually redirect to the new job's show page (to emulate a synchronous request).
                              */
-                            if ($("#jobName").val()==""){
-                            window.location.href = "${createLink(controller: 'pipelineJob', action: 'create')}"
-                            }
-                            else{
                             window.location.href = "${createLink(controller: 'pipelineJob', action: 'show')}?jobName="+$("#jobName").val();
-                            }
+                            
 			            })
 			            .fail(function(jqXHR, textStatus, errorThrown) {
 			            	$("body").html(jqXHR.responseText);
@@ -119,7 +116,7 @@
 					};
                     pollLoading();
 
-			});	
+			}});	
 		});
 		
 		</r:script>

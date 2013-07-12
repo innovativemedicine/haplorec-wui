@@ -30,24 +30,15 @@
 				
 				<fieldset class="buttons">
 					<g:submitButton name="create" class="save" value="${message(code: 'default.button.create.label', default: 'Create')}"/>
-					<a class='blamo'>blamo</a>
               
 				</fieldset>
 			</g:uploadForm> 
-			<input class='save2' type='submit' value='hello'/>
 		</div>
-		<div class="iframeloading"></div>
 		<r:script>
 		
 		$(document).ready(function(){
-			//using iframe to avoid getOuputStream already called error
 			$(".save").click(function(){
-			//$(".blamo").click(function(){
-			// $(".save").click(function(){
 				
-				// $(".iframeloading").html("herpderp");
-				// setTimeout(function() {
-
 					/* Asynchronously submit the form (since synchronously submitting it has a weird issue
 					 * where we can't conurrently perform a GET to check job status.
 					 */
@@ -62,8 +53,10 @@
 				            data: new FormData(this),
 
 				        })
-				        .done(function(data) {
-			                $("body").html(data);
+                        .done(function(data, textStatus, jqXHR) {
+                            /* Manually redirect to the new job's show page (to emulate a synchronous request).
+                             */
+                            window.location.href = "${createLink(controller: 'pipelineJob', action: 'show')}?jobName="+$("#jobName").val();
 			            })
 			            .fail(function(jqXHR, textStatus, errorThrown) {
 			            	$("body").html(jqXHR.responseText);
@@ -75,12 +68,8 @@
 					 */
                     var loadingPage = "${createLink(controller: 'pipelineJob', action: 'status')}?jobName="+$("#jobName").val();
 					var timeoutID = null;
-					debugger;
-
 
 					var pollLoading = function() {
-                        debugger;
-                        // $(".navbar").hide();
                         $("._jsPlumb_connector").hide();
                         $(".dependency").hide();
                         $("._jsPlumb_endpoint").hide();
@@ -125,13 +114,6 @@
 					};
                     pollLoading();
 
-					//$(".iframeloading").html(iframeHtml);
-					//var iframe = $(".iframeloading iframe").get(0);
-				// }, 1);
-				
-				//while($("iframe").contents().find("#list-job").length>0){
-				//	$(".iframeloading").html(iframeHtml);
-				//}
 			});	
 		});
 		

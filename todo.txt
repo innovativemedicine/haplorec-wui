@@ -127,3 +127,8 @@ Stefanie:
   However, you know what the name of the new job is going to be, which is a unique 
   identifier for that job. Either a) get the job_id with that name then proceed as usual 
   or b) use the job_name as a unique identifier throughout.  a) sounds easiest.
+
+- make sure graph progress stuff works in major browsers (chrome, firefox; basically anything but IE)
+- merge in graph progress stuff
+- novel haplotypes stuff
+- deploy (where?)

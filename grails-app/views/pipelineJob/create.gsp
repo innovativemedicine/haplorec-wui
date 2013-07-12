@@ -56,17 +56,17 @@
 				        $.ajax({
 				            type: 'POST',
 				            cache: false,
+		                    contentType: false,
+        					processData: false,
 				            url: "${createLink(controller:'pipelineJob', action:'save')}",
-				            data: $(this).serialize(), 
+				            data: new FormData(this),
 
 				        })
 				        .done(function(data) {
-			            	debugger;
 			                $("body").html(data);
 			            })
 			            .fail(function(jqXHR, textStatus, errorThrown) {
 			            	$("body").html(jqXHR.responseText);
-			            	debugger;
 			            });
 					});
 					// var new_job = "${resource()}"
@@ -79,8 +79,13 @@
 					iframe.onload = pollIframe;
 					iframe.src = "loading/?jobName="+$("#jobName").val();
 					var timeoutID = null;
+					debugger;
 					var pollIframe = function() {
+						debugger;
 						alert("iframe loaded");
+						/* Trigger the iframe to reload (i think...).
+						 */
+						iframe.src = iframe.src;
 						if ($('#loading-page', iframe.document).length > 0) {
 							/* The pipeline job page has been created and we can start watching it load.
 							 */
@@ -96,13 +101,6 @@
 							 timeoutID = setTimeout(pollIframe, 1*1000);
 						}
 					};
-					
-				 	
-
-
-
-					
-					
 
 					//$(".iframeloading").html(iframeHtml);
 					//var iframe = $(".iframeloading iframe").get(0);

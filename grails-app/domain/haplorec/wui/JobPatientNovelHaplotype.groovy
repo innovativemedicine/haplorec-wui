@@ -1,7 +1,7 @@
 package haplorec.wui
 
 @Mixin(JobPatientDomainMixin)
-class JobPatientUniqueHaplotype implements Serializable {
+class JobPatientNovelHaplotype implements Serializable {
 
 	String patientId
 	String physicalChromosome

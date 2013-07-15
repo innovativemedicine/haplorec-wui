@@ -16,6 +16,7 @@
 		
 	</label>
 	
+<%--
 <ul class="one-to-many">
 <g:each in="${jobInstance?.jobPatientDrugRecommendations?}" var="j">
     <li><g:link controller="jobPatientDrugRecommendation" action="show" id="${j.id}">${j?.encodeAsHTML()}</g:link></li>
@@ -24,6 +25,7 @@
 <g:link controller="jobPatientDrugRecommendation" action="create" params="['job.id': jobInstance?.id]">${message(code: 'default.add.label', args: [message(code: 'jobPatientDrugRecommendation.label', default: 'JobPatientDrugRecommendation')])}</g:link>
 </li>
 </ul>
+--%>
 
 </div>
 

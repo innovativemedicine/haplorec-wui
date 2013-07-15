@@ -91,6 +91,9 @@ class PipelineJobController {
         if (!jobInstance.save(flush: true)) {
 			log.error('bad pipeline job')
 			render(view: "create", model: [jobInstance: jobInstance, dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator)])
+            /* Return a status code other than 200 so that the client can handle invalid input errors appropriately.
+             */
+            response.status = 400
             return
         }
 

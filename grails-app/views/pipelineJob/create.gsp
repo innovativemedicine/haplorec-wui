@@ -40,120 +40,93 @@
 		
 		//getting job list
 		
-			function joblist() {
-    			var result="";
-    			$.ajax({
-      				url:"${createLink(controller:'pipelineJob', action:'jsonList')}",
-      				async: false,  
-      				success:function(data) {
-         			result = data; 
-     				}
-   				});
-  			 return result;
-			}
-			
-			//just the names
-			
-			var y = new Array(joblist().length);
-            for(var i=0;i< joblist().length;i++){
-                    y[i]=joblist()[i].jobName;
-            }
-
 			$(".save").click(function(){
-					var input_name = $("#jobName").val()
-					
-					// checking if the job should actually be created
-					
-					function check(){
-						if (input_name==""){
-							return false
-						}
-						else if (y.indexOf(input_name) >= 0){
-							return false
-						}
-						else{
-							return true
-						}
-					}	
-						 
-                    if (check()){
-					/* Asynchronously submit the form (since synchronously submitting it has a weird issue
-					 * where we can't conurrently perform a GET to check job status.
-					 */
-					$('#create-job form').submit(function(e) {
-				        e.preventDefault();
-				        $.ajax({
-				            type: 'POST',
-				            cache: false,
-		                    contentType: false,
-        					processData: false,
-				            url: "${createLink(controller:'pipelineJob', action:'save')}",
-				            data: new FormData(this),
 
-				        })
-                        .done(function(data, textStatus, jqXHR) {
-                            /* Manually redirect to the new job's show page (to emulate a synchronous request).
-                             */
-                            window.location.href = "${createLink(controller: 'pipelineJob', action: 'show')}?jobName="+$("#jobName").val();
-                            
-			            })
-			            .fail(function(jqXHR, textStatus, errorThrown) {
-			            	$("body").html(jqXHR.responseText);
-			            });
-					});
+                /* Asynchronously submit the form (since synchronously submitting it has a weird issue
+                 * where we can't conurrently perform a GET to check job status.
+                 */
+                var postFailed = false;
+                $('#create-job form').submit(function(e) {
+                    e.preventDefault();
+                    $.ajax({
+                        type: 'POST',
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        url: "${createLink(controller:'pipelineJob', action:'save')}",
+                        data: new FormData(this),
 
-					/* Check the job status by loading it in an iframe.  Since the job may not be created 
-					 * yet, this request might fail, so we poll until it succeeds.
-					 */
-                    var loadingPage = "${createLink(controller: 'pipelineJob', action: 'status')}?jobName="+$("#jobName").val();
-					var timeoutID = null;
+                    })
+                    .done(function(data, textStatus, jqXHR) {
+                        /* Manually redirect to the new job's show page (to emulate a synchronous request).
+                         */
+                        window.location.href = "${createLink(controller: 'pipelineJob', action: 'show')}?jobName="+$("#jobName").val();
 
-					var pollLoading = function() {
-                        $("._jsPlumb_connector").hide();
-                        $(".dependency").hide();
-                        $("._jsPlumb_endpoint").hide();
-                        jsonstream.get(
-                            loadingPage,
-                            function(message) {
+                    })
+                    .fail(function(jqXHR, textStatus, errorThrown) {
+                        $("body").html(jqXHR.responseText);
+                        postFailed = true;
+                    });
+                });
 
-                                //getting rid of numbers since they dont update, and loading image
+                /* Check the job status by loading it in an iframe.  Since the job may not be created 
+                 * yet, this request might fail, so we poll until it succeeds.
+                 */
+                var loadingPage = "${createLink(controller: 'pipelineJob', action: 'status')}?jobName="+$("#jobName").val();
+                var timeoutID = null;
 
-                                var node_content = $("#"+message.target).html();
-                                var new_content = node_content.replace(/[0-9()]/g,"");
-                                new_content = new_content.replace('<img src="${resource(dir: 'images', file: 'spin.gif')}" alt="Loading">','');
-                                $("#"+message.target).html(new_content);
+                $("._jsPlumb_connector").hide();
+                $(".dependency").hide();
+                $("._jsPlumb_endpoint").hide();
+                var pollLoading = function() {
+                    jsonstream.get(
+                        loadingPage,
+                        function(message) {
 
-                                //updating nodes
+                            //getting rid of numbers since they dont update, and loading image
 
-                                if (message.state=="done"){
-                                    $("#"+message.target).removeClass("running failed").addClass("done").show();
-                                }
-                                if (message.state=="running"){
-                                    var x = $("#"+message.target).html()
-                                    $("#"+message.target).html('<img src="${resource(dir: 'images', file: 'spin.gif')}" alt="Loading">'+x).removeClass("done failed").addClass("running").show();
-                                }
-                                if (message.state=="failed"){
-                                    $("#"+message.target).removeClass("done running").addClass("failed").show();
-                                }
+                            var node_content = $("#"+message.target).html();
+                            var new_content = node_content.replace(/[0-9()]/g,"");
+                            new_content = new_content.replace('<img src="${resource(dir: 'images', file: 'spin.gif')}" alt="Loading">','');
+                            $("#"+message.target).html(new_content);
 
-                                /* The pipeline job page has been created and we can start watching it load.
-                                 */
-                                if (timeoutID !== null) {
-                                    clearTimeout(timeoutID);
-                                }
-                            },
-                            function() {
-                                if (timeoutID === null) {
-                                    /* Poll until it's created.
-                                     */ 	
-                                    timeoutID = setTimeout(pollLoading, 1*1000);
-                                }
+                            //updating nodes
+
+                            if (message.state=="done"){
+                                $("#"+message.target).removeClass("running failed").addClass("done").show();
                             }
-                        );
-					};
-                    pollLoading();
+                            if (message.state=="running"){
+                                var x = $("#"+message.target).html()
+                                $("#"+message.target).html('<img src="${resource(dir: 'images', file: 'spin.gif')}" alt="Loading">'+x).removeClass("done failed").addClass("running").show();
+                            }
+                            if (message.state=="failed"){
+                                $("#"+message.target).removeClass("done running").addClass("failed").show();
+                            }
 
-			}});	
+                            /* The pipeline job page has been created and we can start watching it load.
+                             */
+                            if (timeoutID !== null) {
+                                clearTimeout(timeoutID);
+                            }
+                        },
+                        function() {
+                            if (postFailed) {
+                                /* Reset the graph.
+                                 */
+                                $("._jsPlumb_connector").show();
+                                $(".dependency").show();
+                                $("._jsPlumb_endpoint").show();
+                            } else if (timeoutID === null) {
+                                /* Poll until it's created.
+                                 */ 	
+                                timeoutID = setTimeout(pollLoading, 1*1000);
+                            }
+                        }
+                    );
+                };
+                pollLoading();
+
+            });	
 		});
 		
 		</r:script>

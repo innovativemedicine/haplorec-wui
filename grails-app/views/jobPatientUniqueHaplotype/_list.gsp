@@ -59,6 +59,11 @@
 			<div class="pagination">
 				<g:paginate total="${jobPatientUniqueHaplotypeInstanceTotal}" params="[jobId:jobId]"/>
 			</div>
+
+            <g:if test="${jobId != null}">
+            <g:link class="drug-report btn btn-primary" controller="pipelineJob" action="novelHaplotypeReport" id="${jobId}">${entityName} Report</g:link>
+            </g:if>
+
 		</div>
 	</body>
 </html>

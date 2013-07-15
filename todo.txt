@@ -170,7 +170,11 @@ order by job_id, gene_name, gene_snp_table.snp_id, patient_id, physical_chromoso
 
 instead, do this:
 
-select job_id, gene_name, snp_id, patient_id, physical_chromosome
+select job_id, gene_name, snp_id, allele, patient_id, physical_chromosome
 from job_patient_unique_haplotype
 join job_patient_variant using (job_id, patient_id, physical_chromosome)
 order by job_id, gene_name, snp_id, patient_id, physical_chromosome
+
+select gene_name, haplotype_name, snp_id, allele
+from gene_haplotype_variant
+order by gene_name, haplotype_name, snp_id

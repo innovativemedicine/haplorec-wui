@@ -37,9 +37,46 @@
 		<r:script>
 		
 		$(document).ready(function(){
-			$(".save").click(function(){
+		
+		//getting job list
+		
+			function joblist() {
+    			var result="";
+    			$.ajax({
+      				url:"${createLink(controller:'pipelineJob', action:'jsonList')}",
+      				async: false,  
+      				success:function(data) {
+         			result = data; 
+     				}
+   				});
+  			 return result;
+			}
+			
+			//just the names
+			
+			var y = new Array(joblist().length);
+            for(var i=0;i< joblist().length;i++){
+                    y[i]=joblist()[i].jobName;
+            }
 
-                    if (!($("#jobName").val()=="")){
+			$(".save").click(function(){
+					var input_name = $("#jobName").val()
+					
+					// checking if the job should actually be created
+					
+					function check(){
+						if (input_name==""){
+							return false
+						}
+						else if (y.indexOf(input_name) >= 0){
+							return false
+						}
+						else{
+							return true
+						}
+					}	
+						 
+                    if (check()){
 					/* Asynchronously submit the form (since synchronously submitting it has a weird issue
 					 * where we can't conurrently perform a GET to check job status.
 					 */

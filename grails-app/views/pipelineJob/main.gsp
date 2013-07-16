@@ -2,30 +2,31 @@
 
 <r:require modules="pipeline, backbone, jquery"/>
 <r:script>
-var sampleVariant;
-var samplegeno;
-var samplepheno;
+var ghmView;
 $(document).ready(function(){
-
-	var sampleVariant = new pipeline.Views.sampleinputfile({
-	    model: new Backbone.Model(${sampleVariantJSON}),
-	    el: $('#sample-variant'), 
-	});
-	sampleVariant.render();
-	var samplegeno = new pipeline.Views.sampleinputfile({
-	    model: new Backbone.Model(${samplegenoJSON}),
-	    el: $('#sample-outgeno'), 
-	});
-	samplegeno.render();
-	var samplepheno = new pipeline.Views.sampleinputfile({
-	    model: new Backbone.Model(${samplephenoJSON}),
-	    el: $('#sample-outpheno'), 
-	});
-	samplepheno.render();
-	
+    var sampleGeneHaplotypeMatrix = {
+        geneName: 'G6PD',
+        snpIds: ['rs1050828', 'rs1050829', 'rs5030868', 'rs137852328', 'rs76723693', 'rs2230037'],
+        haplotypes: [
+            { haplotypeName: 'B (wildtype)',            alleles: ['C', 'T', 'G', 'C', 'A', 'G'] },
+            { haplotypeName: 'A-202A_376G',             alleles: ['T', 'C', 'G', 'C', 'A', 'G'] },
+            { haplotypeName: 'A- 680T_376G',            alleles: ['C', 'C', 'G', 'A', 'A', 'G'] },
+            { haplotypeName: 'A-968C_376G',             alleles: ['C', 'C', 'G', 'C', 'G', 'G'] },
+            { haplotypeName: 'Mediterranean Haplotype', alleles: ['C', 'T', 'A', 'C', 'A', 'A'] },
+        ],
+        novelHaplotypes: [
+            { sampleId: 'Sample 012', physicalChromosome: 'A', alleles: ['C', 'C', null, null, null, null] },
+            { sampleId: 'Sample 012', physicalChromosome: 'B',  alleles: ['C', 'A', null, null, null, null] },
+            { sampleId: 'Sample 013', physicalChromosome: 'A',  alleles: ['T', 'C', null, null, null, null] },
+        ]
+    };
+    ghmView = new pipeline.Views.matrix({
+        model: new Backbone.Model(sampleGeneHaplotypeMatrix),
+	    el: $('#test-matrix'), 
+    });
+    ghmView.render();
+    $('table.matrix tr.rows').mouseover(function() {$(this).addClass('hovered');}).mouseout(function() {$(this).removeClass('hovered');});
 });
-
-
 </r:script>
 
 <!DOCTYPE html>
@@ -38,6 +39,7 @@ $(document).ready(function(){
         </style>
 	</head>
 	<body>
+    <div id='test-matrix'></div>
     <h3>Mapping Variants to Haplotypes:</h3>
     <p>First of all, to determine which variants belong to each side of the chromosome there must be a maximum of one heterozygote variant.</p>
     <p>This is because when the variants are recorded for each location, the physical chromosome which they came from is not stored.</p>

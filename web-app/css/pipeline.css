@@ -98,7 +98,30 @@ span.running{
 span.failed{
 	color:red;
 }
-
-
-
+table.matrix tr.novel {
+	background-color: #40E0D0;
+}
+table.matrix th {
+	text-align:left;
+	border-bottom:2pt solid black;
+}
+table.matrix td.names {
+	border-right:2pt solid black;
+}
+table.matrix th.names {
+	border-right:2pt solid black;
+}
+table.matrix td {
+	padding: 5px;
+}
+table.matrix th {
+	padding: 5px;
+}
+table.matrix tr.hovered{
+	background-color: #FF99FF;
+}
+table.matrix caption{
+	font-size:20px;
+	font-weight:bold;
+}
 

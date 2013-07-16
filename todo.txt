@@ -132,3 +132,33 @@ Stefanie:
 - merge in graph progress stuff
 - novel haplotypes stuff
 - deploy (where?)
+
+- create a JobPatientNovelHaplotype controller / views
+- create a Backbone view for GeneHaplotypeMatrix / novelHaplotypeReport data
+
+Example model data:
+[
+    geneName: 'G6PD',
+    snpIds: ['rs1050828', 'rs1050829', 'rs5030868', 'rs137852328', 'rs76723693', 'rs2230037'],
+    haplotypes: [
+        { haplotypeName: 'B (wildtype)',            alleles: ['C', 'T', 'G', 'C', 'A', 'G'] },
+        { haplotypeName: 'A-202A_376G',             alleles: ['T', 'C', 'G', 'C', 'A', 'G'] },
+        { haplotypeName: 'A- 680T_376G',            alleles: ['C', 'C', 'G', 'A', 'A', 'G'] },
+        { haplotypeName: 'A-968C_376G',             alleles: ['C', 'C', 'G', 'C', 'G', 'G'] },
+        { haplotypeName: 'Mediterranean Haplotype', alleles: ['C', 'T', 'A', 'C', 'A', 'A'] },
+    ],
+    novelHaplotypes: [
+        { sampleId: 'Sample 012', physicalChromomsome: 'A', alleles: ['C', 'C', null, null, null, null] },
+        { sampleId: 'Sample 012', physicalChromosome: 'B',  alleles: ['C', 'A', null, null, null, null] },
+        { sampleId: 'Sample 013', physicalChromosome: 'A',  alleles: ['T', 'C', null, null, null, null] },
+    ]
+]
+
+Haplotype Name	rs1050828	rs1050829	rs5030868	rs137852328	rs76723693	rs2230037
+
+- highlight row
+- horizontal line below header
+- vertical line to right of haplotype column
+- still don't know:
+  - colours
+  - where to put gene

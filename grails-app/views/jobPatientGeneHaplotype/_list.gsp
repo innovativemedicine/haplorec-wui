@@ -18,6 +18,8 @@
 					<tr>
 					
 						<g:sortableColumn property="patientId" title="${message(code: 'jobPatientGeneHaplotype.patientId.label', default: 'Patient Id')}" params="[jobId:jobId]"/>
+
+						<g:sortableColumn property="physicalChromosome" title="${message(code: 'jobPatientGeneHaplotype.physicalChromosome.label', default: 'Physical Chromosome')}" params="[jobId:jobId]"/>
 					
 						<g:sortableColumn property="geneName" title="${message(code: 'jobPatientGeneHaplotype.geneName.label', default: 'Gene Name')}" params="[jobId:jobId]"/>
 					
@@ -34,6 +36,8 @@
 					<tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
 					
 						<td>${fieldValue(bean: jobPatientGeneHaplotypeInstance, field: "patientId")}</td>
+
+						<td>${fieldValue(bean: jobPatientGeneHaplotypeInstance, field: "physicalChromosome")}</td>
 					
 						<td>${fieldValue(bean: jobPatientGeneHaplotypeInstance, field: "geneName")}</td>
 					

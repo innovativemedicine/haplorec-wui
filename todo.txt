@@ -110,3 +110,75 @@
 
 - bug: back button after selecting a single node doesn't return to a graph with an unselected node
   - router.navigate('/') => view.selectNothing (or something)
+
+- call it novel haplotype, not unique haplotype
+- disable input for Haplotypes, Genotypes, and Phenotypes (in web interface only so tests still work)
+- novel haplotype report ("take this info and spit out a table that has the haplotypes for each sample")
+  - ideally, we'd have the option of outputting the gene-haplotype matrix for a gene, with rows added for the "unknown" haplotypes of a sample (at most 2).
+    Since there could be 2, we would want to make the haplotype name "Sample <SAMPLE_ID>, Chromosome <PHYSICAL_CHROMOSOME>"
+
+    e.g.
+
+    G6PD
+
+    Haplotype                      | rs1050828 | rs1050829 | rs5030868 | rs137852328 | rs76723693 | rs2230037
+    B (wildtype)                   | C         | T         | G         | C           | A          | G
+    A-202A_376G                    | T         | C         | G         | C           | A          | G
+    A- 680T_376G                   | C         | C         | G         | A           | A          | G
+    A-968C_376G                    | C         | C         | G         | C           | G          | G
+    Mediterranean Haplotype        | C         | T         | A         | C           | A          | A
+    Sample NA22302-1, Chromosome A | T         | T         | G         |             |            | 
+    Sample NA22302-1, Chromosome B | T         | T         | A         |             |            | 
+    Sample NA22302-2, Chromosome A | T         | T         | G         |             |            | 
+    Sample NA22302-2, Chromosome B | T         | T         | G         |             |            | 
+
+    AnotherGene
+
+    Haplotype                      | rs1050828 | rs1050829 | rs5030868
+    B                              | C         | T         | G        
+    Sample NA22302-1, Chromosome A | T         | T         | G        
+    Sample NA22302-1, Chromosome B | T         | T         | A        
+    Sample NA22302-2, Chromosome A | T         | T         | G        
+    Sample NA22302-2, Chromosome B | T         | T         | G        
+
+    ...
+
+    NOTE: PharmGKB's ordering of snp's does not seem to be based on the snp name (e.g. under what ordering scheme do you have rs5030868, rs137852328, rs76723693, rs2230037); determine ordering at a 
+    later date and just order by snp_id for now...
+
+    novelHaplotypeReport
+    input: job_id
+    output: 
+    an iterable of GeneHaplotypeMatrix where 
+    GeneHaplotypeMatrix = (Gene, List<SNP>, List<Haplotype OR NovelHaplotype, List<Allele>>)
+    Haplotype = (HaplotypeName)
+    NovelHaplotype = (SampleID, PhysicalChromosome)
+    Allele = String (possibly null)
+    SNP = String (possibly null)
+
+Don't join against gene_snp to get records with null alleles since it leads to a lot of superfluous 
+and unnecessary rows. A GeneHaplotypeMatrix class can always provide an iterable interface that 
+fills in the null's without the overhead of materializing them in memory.
+
+i.e. don't do this:
+
+select job_id, gene_name, gene_snp_table.snp_id, patient_id, physical_chromosome
+from job_patient_unique_haplotype
+join job_patient_variant using (job_id, patient_id, physical_chromosome)
+right join gene_snp_table using (gene_name)
+order by job_id, gene_name, gene_snp_table.snp_id, patient_id, physical_chromosome
+
+instead, do this:
+
+select job_id, gene_name, snp_id, allele, patient_id, physical_chromosome
+from job_patient_unique_haplotype
+join job_patient_variant using (job_id, patient_id, physical_chromosome)
+order by job_id, gene_name, snp_id, patient_id, physical_chromosome
+
+select gene_name, haplotype_name, snp_id, allele
+from gene_haplotype_variant
+order by gene_name, haplotype_name, snp_id
+
+- run new pgx variants file
+- merge unique-haplotypes into master
+- merge graphprogress (up to to progress [7642caf6353a59512bbbd7cdcc24b84d384ff58d] but before haplotype matrix stuff) into master

@@ -8,6 +8,9 @@ import haplorec.util.Input
 import haplorec.util.pipeline.PipelineInput
 import haplorec.util.pipeline.Pipeline
 import haplorec.util.pipeline.Report
+import haplorec.util.pipeline.Report.GeneHaplotypeMatrix;
+import haplorec.util.pipeline.Report.GeneHaplotypeMatrix.NovelHaplotype;
+import haplorec.util.pipeline.Report.GeneHaplotypeMatrix.Haplotype;
 
 import haplorec.util.Input.InvalidInputException
 import haplorec.util.Row
@@ -221,7 +224,8 @@ class PipelineJobController {
 
         def level = dependencies.phenotypeDrugRecommendation.levels(startAt: [
             dependencies.phenotypeDrugRecommendation, 
-            dependencies.genotypeDrugRecommendation])
+            dependencies.genotypeDrugRecommendation,
+            dependencies.novelHaplotype])
         def depGraph = [
             level: level,
             dependencies: deps,
@@ -232,6 +236,9 @@ class PipelineJobController {
 
     def private report(Map kwargs = [:], Long id, generateReport) {
         if (kwargs.filename == null) { kwargs.filename = 'output.txt' }
+        if (kwargs.output == null) {
+            kwargs.output = Row.&asDSV
+        }
 
         def jobInstance = Job.get(id)
         if (!jobInstance) {
@@ -246,8 +253,8 @@ class PipelineJobController {
             response.setHeader "Content-disposition", "attachment; filename='${kwargs.filename}'"
             response.contentType = 'text/csv'
 
-            response.outputStream.withWriter { w ->
-                Row.asDSV(rows, w)
+            response.outputStream.withWriter { writer ->
+                kwargs.output(rows, writer)
             }
         }
 
@@ -271,6 +278,35 @@ class PipelineJobController {
     def phenotypeReport(Long id) {
         report(id, Report.&phenotypeDrugRecommendationReport,
             filename: 'phenotype_drug_recommendation_report.txt', 
+        )
+    }
+
+    def novelHaplotypeReport(Long id) {
+        report(id, Report.&novelHaplotypeReport,
+            filename: 'novel_haplotype_report.txt', 
+            output: { rows, writer ->
+                rows.each { geneHaplotypeMatrix ->
+                    // Output a gene header
+                    writer.append(geneHaplotypeMatrix.geneName)
+                    writer.append(System.getProperty("line.separator"))
+                    Row.asDSV(new Object() {
+                        def each(Closure f) {
+                            f(["Haplotype/SNP"] + geneHaplotypeMatrix.snpIds)
+                            geneHaplotypeMatrix.each { haplotype, alleles ->
+                                String haplotypeStr
+                                if (haplotype instanceof NovelHaplotype) {
+                                    haplotypeStr = "Sample ${haplotype.patientId}, Chromosome ${haplotype.physicalChromosome}"
+                                } else {
+                                    assert haplotype instanceof Haplotype
+                                    haplotypeStr = haplotype.haplotypeName
+                                }
+                                f([haplotypeStr] + alleles)
+                            }
+                        }
+                    }, writer)
+                    writer.append(System.getProperty("line.separator"))
+                }
+            },
         )
     }
 	

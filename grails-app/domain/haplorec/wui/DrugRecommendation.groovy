@@ -27,8 +27,9 @@ class DrugRecommendation {
 	    if (arg == null) {
 			return null
 		}
-		def n = Math.min(100, arg.length())
-		if (arg.length() > 100) {
+        def maxLength = 50
+		def n = Math.min(maxLength, arg.length())
+		if (arg.length() > maxLength) {
 			return arg.substring(0,n) + "..."
 		}
 		else {

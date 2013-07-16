@@ -1,4 +1,5 @@
 a.drug-report {
+    margin: 0.5em 0em;
 }
 
 span.property-label {
@@ -15,4 +16,49 @@ ul.nobullets{
 
 .main {
     margin-bottom: 2em;
+}
+
+th.sortable {
+    text-align: left;
+}
+
+.scaffold-list table {
+    border-collapse: separate;
+    border-spacing: 1em 0;
+    margin-left: -1em;
+}
+
+.step, .currentStep {
+    padding-right: 0.5em;
+}
+
+.prevLink, .nextLink {
+    display: block;
+}
+
+.delete-form {
+    margin: 0;
+}
+
+.align-center {
+    vertical-align: middle;
+}
+
+.job-header {
+    display: table;
+    width: 100%;
+    padding-bottom: 1.5em;
+}
+
+.job-header * {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.job-header h1 {
+    text-align: left;
+}
+
+.job-header div {
+    text-align: right;
 }

@@ -16,12 +16,17 @@
 				<li><g:link class="create" action="create"><g:message code="default.new.label" args="[entityName]" /></g:link></li>
 			</ul>
 		</div>
-		<div id="list-jobPatientNovelHaplotype" class="content scaffold-list" role="main">
         --%>
+		<div id="list-jobPatientNovelHaplotype" class="content scaffold-list" role="main">
 			<h1><g:message code="default.list.label" args="[entityName]" /></h1>
 			<g:if test="${flash.message}">
 			<div class="message" role="status">${flash.message}</div>
 			</g:if>
+
+            <g:if test="${jobId != null}">
+            <g:link class="drug-report btn btn-primary" controller="pipelineJob" action="novelHaplotypeReport" id="${jobId}">${entityName} Report</g:link>
+            </g:if>
+
 			<table>
 				<thead>
 					<tr>
@@ -59,10 +64,6 @@
 			<div class="pagination">
 				<g:paginate total="${jobPatientNovelHaplotypeInstanceTotal}" params="[jobId:jobId]"/>
 			</div>
-
-            <g:if test="${jobId != null}">
-            <g:link class="drug-report btn btn-primary" controller="pipelineJob" action="novelHaplotypeReport" id="${jobId}">${entityName} Report</g:link>
-            </g:if>
 
 		</div>
 	</body>

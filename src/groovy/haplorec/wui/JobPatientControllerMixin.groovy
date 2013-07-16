@@ -15,7 +15,7 @@ class JobPatientControllerMixin {
 
 	private def jobPatientListModel = { Class domainClass, Integer max, Long jobId ->
 		log.error("PARAMS == $params")
-		params.max = Math.min(max ?: 10, 100)
+		params.max = Math.min(max ?: 25, 1000)
 		// strip the package name if there is any
 		def domain = (domainClass.name =~ /\.?(\w+)$/)[0][1]
 		def domainLower = domain.replaceAll(/^\w/, { it.toLowerCase() })

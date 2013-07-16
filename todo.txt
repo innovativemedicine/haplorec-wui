@@ -178,3 +178,7 @@ order by job_id, gene_name, snp_id, patient_id, physical_chromosome
 select gene_name, haplotype_name, snp_id, allele
 from gene_haplotype_variant
 order by gene_name, haplotype_name, snp_id
+
+- run new pgx variants file
+- merge unique-haplotypes into master
+- merge graphprogress (up to to progress [7642caf6353a59512bbbd7cdcc24b84d384ff58d] but before haplotype matrix stuff) into master

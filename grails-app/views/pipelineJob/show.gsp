@@ -27,21 +27,24 @@ $(document).ready(function(){
 	</head>
 	<body>
 		<div id="show-job" class="content scaffold-show" role="main">
-			<h1>
-				<g:if test="${jobInstance?.jobName}">
-                <span class="property-value" aria-labelledby="jobName-label"><g:fieldValue bean="${jobInstance}" field="jobName"/></span>
-                </g:if>
-                <g:else>
-                <g:message code="default.show.label" args="[entityName]" />
-                </g:else>
-            </h1>
-
-			<g:form>
-				<fieldset class="buttons">
-					<g:hiddenField name="id" value="${jobInstance?.id}" />
-					<g:actionSubmit class="delete btn btn-danger" action="delete" value="${message(code: 'custom.button.delete.label', default: 'Delete', args: [entityName])}" onclick="return confirm('${message(code: 'default.button.delete.confirm.message', default: 'Are you sure?')}');" />
-				</fieldset>
-			</g:form>
+            <div class="job-header">
+                <h1>
+                    <g:if test="${jobInstance?.jobName}">
+                    <span class="property-value" aria-labelledby="jobName-label"><g:fieldValue bean="${jobInstance}" field="jobName"/></span>
+                    </g:if>
+                    <g:else>
+                    <g:message code="default.show.label" args="[entityName]" />
+                    </g:else>
+                </h1>
+                <div>
+                    <g:form class='delete-form pull-right align-center'>
+                    <fieldset class="buttons">
+                        <g:hiddenField name="id" value="${jobInstance?.id}" />
+                        <g:actionSubmit class="delete btn btn-danger delete-btn align-center" action="delete" value="${message(code: 'custom.button.delete.label', default: 'Delete', args: [entityName])}" onclick="return confirm('${message(code: 'default.button.delete.confirm.message', default: 'Are you sure?')}');" />
+                    </fieldset>
+                    </g:form>
+                </div>
+            </div>
 
 			<g:if test="${flash.message}">
 			<div class="message" role="status">${flash.message}</div>

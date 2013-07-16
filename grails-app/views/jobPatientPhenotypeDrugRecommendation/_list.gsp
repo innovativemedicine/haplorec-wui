@@ -24,6 +24,10 @@
 			<div class="message" role="status">${flash.message}</div>
 			</g:if>
 
+            <g:if test="${jobId != null}">
+            <g:link class="drug-report btn btn-primary" controller="pipelineJob" action="phenotypeReport" id="${jobId}">${entityName} Report</g:link>
+            </g:if>
+
 			<table>
 				<thead>
 					<tr>
@@ -81,10 +85,6 @@
 			<div class="pagination">
 				<g:paginate total="${jobPatientPhenotypeDrugRecommendationInstanceTotal}" params="[jobId:jobId]"/>
 			</div>
-
-            <g:if test="${jobId != null}">
-            <g:link class="drug-report btn btn-primary" controller="pipelineJob" action="phenotypeReport" id="${jobId}">${entityName} Report</g:link>
-            </g:if>
 
 		</div>
 	</body>

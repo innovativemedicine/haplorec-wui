@@ -26,6 +26,12 @@ $(document).ready(function(){
     });
     ghmView.render();
     $('table.matrix tr.rows').mouseover(function() {$(this).addClass('hovered');}).mouseout(function() {$(this).removeClass('hovered');});
+    $(".haps").scroll(function () { 
+    	$(".matinfo").scrollTop($(".haps").scrollTop());
+    });
+	$(".matinfo").scroll(function () { 
+    	$(".haps").scrollTop($(".matinfo").scrollTop());
+    });
 });
 </r:script>
 

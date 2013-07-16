@@ -1,6 +1,6 @@
 <%@ page import="haplorec.wui.Job" %>
 
-<r:require modules="pipeline, backbone, jquery"/>
+<r:require modules="pipeline, backbone, jquery, jsonstream"/>
 <r:script>
 var g, gView;
 $(document).ready(function(){
@@ -15,6 +15,11 @@ $(document).ready(function(){
     };
     gView.render();
     Backbone.history.start();
+    
+    // TODO: remove this; it's to facilitate testing of pipelineJob/status
+    jsonstream.get('${createLink(controller:'pipelineJob', action:'status')}?jobId=${jobInstance.id}', function(message) {
+	    console.log(message)
+    });
 });
 </r:script>
 
@@ -24,6 +29,7 @@ $(document).ready(function(){
 		<meta name="layout" content="main">
 		<g:set var="entityName" value="${message(code: 'job.label', default: 'Job')}" />
 		<title><g:message code="default.show.label" args="[entityName]" /></title>
+	
 	</head>
 	<body>
 		<div id="show-job" class="content scaffold-show" role="main">
@@ -119,6 +125,46 @@ $(document).ready(function(){
 			
 			</ol>
             --%>
+  
 		</div>
+		<r:script>
+		$(document).ready(function(){
+				$("._jsPlumb_connector").hide();
+				$(".dependency").hide();
+				$("._jsPlumb_endpoint").hide();
+				jsonstream.get(
+					'${createLink(controller:'pipelineJob', action:'status')}?jobId=${jobInstance.id}',
+						function(message){
+						
+							//getting rid of loading image
+							
+							var y = $("#"+message.target).html().replace('<img src="${resource(dir: 'images', file: 'spin.gif')}" alt="Loading">','');
+							$("#"+message.target).html(y)
+							
+							//updating nodes
+							
+							if (message.state=="done"){
+								$("#"+message.target).removeClass("running failed").addClass("done").show();
+							}
+							if (message.state=="running"){
+								var x = $("#"+message.target).html()
+								$("#"+message.target).html('<img src="${resource(dir: 'images', file: 'spin.gif')}" alt="Loading">'+x).removeClass("done failed").addClass("running").show();
+							}
+							if (message.state=="failed"){
+								$("#"+message.target).removeClass("done running").addClass("failed").show();
+							}
+							
+							//showing complete graph
+							
+							if ($(".dependency").length==$(".done").length){
+								$("._jsPlumb_connector").show();
+								$("._jsPlumb_endpoint").show();
+							}
+						}
+				);
+				
+		});	
+		
+		</r:script>
 	</body>
 </html>

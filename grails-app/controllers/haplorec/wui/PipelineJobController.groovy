@@ -51,8 +51,9 @@ class PipelineJobController {
 
     def create() {
         // [jobInstance: new Job(params), dependencyGraphJSON: dependencyGraphJSON()]
-        
+		
     	[jobInstance: new Job(params), dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator, context: grailsApplication.mainContext,sampleInputs:true)]
+
 		}
 	
 	
@@ -90,18 +91,50 @@ class PipelineJobController {
 
         def jobInstance = new Job(params)
         if (!jobInstance.save(flush: true)) {
-            render(view: "create", model: [jobInstance: jobInstance, dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator)])
+			log.error('bad pipeline job')
+			render(view: "create", model: [jobInstance: jobInstance, dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator)])
+            /* Return a status code other than 200 so that the client can handle invalid input errors appropriately.
+             */
+            response.status = 400
             return
         }
 
         try {
             // Run the pipeline
             withSql(dataSource) { sql ->
-                Pipeline.drugRecommendations(inputs + [jobId: jobInstance.id], sql)
+                def jobId = jobInstance.id
+                def (_, job) = Pipeline.pipelineJob(inputs + [jobId: jobInstance.id], sql)
+                def beforeBuild = { d ->
+                    def jobState = new JobState(job: jobInstance, target: d.target, state: 'running')
+                    log.error("before build: ${jobState.properties}")
+                    jobState.save(flush: true)
+                }
+                def afterBuild = { d ->
+                    def jobState = JobState.jobTarget(jobId, d.target).get()
+                    jobState.state = 'done'
+                    log.error("after build: ${jobState.properties}")
+                    jobState.save(flush: true)
+                }
+                def onFail = { d, e ->
+                    def jobState = JobState.jobTarget(jobId, d.target).get()
+                    jobState.state = 'failed'
+                    log.error("failed: ${jobState.properties}")
+                    jobState.save(flush: true)
+                }
+                job.values().each { dependency ->
+                    dependency.beforeBuild += beforeBuild 
+                    dependency.afterBuild += afterBuild 
+                    dependency.onFail += onFail
+                }
+                Set<Dependency> built = []
+                job.phenotypeDrugRecommendation.build(built)
+                job.genotypeDrugRecommendation.build(built)
             } 
         } catch (InvalidInputException e) {
 			jobInstance.refresh()
-            jobInstance.delete(flush: true)
+            // Don't delete the job on failure, since otherwise /pipelineJob/status might miss this occurence (race 
+            // condition).
+            // jobInstance.delete(flush: true)
             jobInstance.errors.reject('job.errors.invalidInput', e.message)
             render(view: "create", model: [jobInstance: jobInstance, dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator)])
             return
@@ -111,8 +144,8 @@ class PipelineJobController {
         redirect(action: "show", id: jobInstance.id)
     }
 
-    def show(Long id) {
-        def jobInstance = Job.get(id)
+    def show(Long id, String jobName) {
+        def jobInstance = getJob(id, jobName) { identifier -> }
         if (!jobInstance) {
             flash.message = message(code: 'default.not.found.message', args: [message(code: 'job.label', default: 'Job'), id])
             redirect(action: "list")
@@ -121,12 +154,12 @@ class PipelineJobController {
 
         def json
         withSql(dataSource) { sql ->
-            json = dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator, sql: sql, job_id: id, counts: true)
+            json = dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator, sql: sql, job_id: jobInstance.id, counts: true)
         }
 
         [jobInstance: jobInstance, dependencyGraphJSON: json]
     }
-
+	
     def edit(Long id) {
         def jobInstance = Job.get(id)
         if (!jobInstance) {
@@ -326,5 +359,102 @@ class PipelineJobController {
 		 samplephenoJSON: ( [header: y[0], rows: y[1,2..y.size()-1] ] as JSON ),
 		 samplegenoJSON: ( [header: z[0], rows: z[1,2..z.size()-1] ] as JSON ),]
 	}
+
+    // TOOD: remove this, it just to make testing jsonparse.js easy
+    def jsonstream() {
+        response.contentType = 'application/json'
+        def json = { message ->
+            "{\"message\":\"$message\"}\n"
+        }
+        def sendMessage = { msg, timeout ->
+            response.outputStream << json("$msg message; sleeping for $timeout seconds...")
+            response.outputStream.flush()
+            if (timeout != 0) {
+                sleep(timeout*1000)
+            }
+        }
+        sendMessage('first', 3)
+        sendMessage('second', 2)
+        sendMessage('third', 1)
+        sendMessage('last', 0)
+    }
+
+    private Job getJob(Long jobId, String jobName, Closure notFound) {
+        def jobInstance = null
+        if (jobId != null) {
+            jobInstance = Job.get(jobId)
+            if (!jobInstance) {
+                notFound(jobId)
+            }
+        } else if (jobName != null) {
+            jobInstance = Job.findByJobName(jobName)
+            if (!jobInstance) {
+                notFound(jobName)
+            }
+        } else {
+            notFound(null)
+        }
+        return jobInstance
+    }
+
+    def status(Long jobId, String jobName) {
+
+        def jobInstance = getJob(jobId, jobName) { identifier ->
+            response.status = 404
+        }
+        if (!jobInstance) {
+            return
+        }
+
+        response.contentType = 'application/json'
+		response.outputStream.flush()
+        def pollTimeout = 1 
+         
+        def (_, dependencies) = Pipeline.dependencyGraph() 
+		
+        def jobDone = {rows ->
+			
+            return (
+				//there is a row in rows with row.state == 'failed'
+				//( [row.target for row in rows where row.state == 'done'] as Set ) ==
+				//( [d.target for d in dependencies] as Set )
+			     rows.find{ it.state == 'failed' } != null ||
+			     (rows.findAll{it.state=='done'}.collect{it.target} as Set) == dependencies.keySet()
+            )
+			
+        }
+
+        // convert a JobState object to JSON
+        def json = { jobState ->
+            def jobStateProps = ['target', 'state'].inject([:]) { m, prop ->
+              m[prop] = jobState[prop]
+              m
+            }
+            (jobStateProps as JSON).toString()
+        }
+
+		def request_timeout = 10
+        def start_time = System.currentTimeMillis()
+		def rows=[]
+        withSql(dataSource) { sql ->
+            while (true) {
+    			def new_rows = sql.rows('select * from job_state where job_id = :jobId order by id', [jobId:jobInstance.id])
+    			if ((rows.collect{it.state}!=new_rows.collect{it.state})){
+    				response.outputStream <<  new_rows.findAll{!(it in rows)}.collect { json(it) + '\n' }.join('')
+                    response.outputStream.flush()
+					
+    				rows = new_rows
+    			}
+                log.error("state: ${rows.collect{it.state}}")
+    			def time_passed = start_time - System.currentTimeMillis()
+    			if (jobDone(rows) || time_passed >= request_timeout*60*1000) {
+                    log.error("its done or failed")
+                    break
+    			}
+    			sleep(pollTimeout*1000)
+            }
+        }
+         
+    }
 
 }

@@ -2,7 +2,7 @@
  */
 
 .dependency {
-    background: #CFDEE3;
+    background: #CFDEE3; 
     padding: 10px;
     border: 2px solid #00BFFF;
     -webkit-border-radius: 10px;
@@ -91,5 +91,13 @@ table.sample-input-file td {
 p.dump{
 	color: blue;
 }
+span.running{
+	opacity: 0.5;
+}
+span.failed{
+	color:red;
+}
+
+
 
 

@@ -8,14 +8,15 @@ import haplorec.util.Input
 import haplorec.util.pipeline.PipelineInput
 import haplorec.util.pipeline.Pipeline
 import haplorec.util.pipeline.Report
-import haplorec.util.pipeline.Report.GeneHaplotypeMatrix;
-import haplorec.util.pipeline.Report.GeneHaplotypeMatrix.NovelHaplotype;
-import haplorec.util.pipeline.Report.GeneHaplotypeMatrix.Haplotype;
+import haplorec.util.pipeline.Report.GeneHaplotypeMatrix
+import haplorec.util.pipeline.Report.GeneHaplotypeMatrix.NovelHaplotype
+import haplorec.util.pipeline.Report.GeneHaplotypeMatrix.Haplotype
+import haplorec.util.dependency.Dependency
 
 import haplorec.util.Input.InvalidInputException
 import haplorec.util.Row
 
-import org.codehaus.groovy.grails.web.mapping.LinkGenerator;
+import org.codehaus.groovy.grails.web.mapping.LinkGenerator
 import org.springframework.dao.DataIntegrityViolationException
 import javax.sql.DataSource
 import groovy.sql.Sql
@@ -126,9 +127,7 @@ class PipelineJobController {
                     dependency.afterBuild += afterBuild 
                     dependency.onFail += onFail
                 }
-                Set<Dependency> built = []
-                job.phenotypeDrugRecommendation.build(built)
-                job.genotypeDrugRecommendation.build(built)
+                Pipeline.buildAll(job)
             } 
         } catch (InvalidInputException e) {
 			jobInstance.refresh()

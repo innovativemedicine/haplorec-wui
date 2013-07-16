@@ -27,7 +27,9 @@ var jsonstream = (function(m) {
 
         function readMessages() {
             if (xhr.status != 200) {
-                onError();
+                if (typeof onError !== 'undefined') {
+                    onError();
+                }
             }
             var L = xhr.responseText.length
             while (l < L && xhr.responseText[l] != '\n'){ 

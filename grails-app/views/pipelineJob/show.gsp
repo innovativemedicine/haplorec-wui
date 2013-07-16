@@ -15,11 +15,6 @@ $(document).ready(function(){
     };
     gView.render();
     Backbone.history.start();
-    
-    // TODO: remove this; it's to facilitate testing of pipelineJob/status
-    jsonstream.get('${createLink(controller:'pipelineJob', action:'status')}?jobId=${jobInstance.id}', function(message) {
-	    console.log(message)
-    });
 });
 </r:script>
 

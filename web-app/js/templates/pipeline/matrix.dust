@@ -1,28 +1,16 @@
-<div>
-	<div class="haplo leftpart">
+<div style="display:inline-block;">
 		<table class="matrix hap">
+			<thead>
 			<tr>
 				<th class="names">Haplotype/SNP</th>
 			</tr>
-		</table>
-	</div>
-	<div class="labels rightpart">
-		<table class="matrix">
-			<tr>
-				{#snpIds}
-					<th class="fixedcell">{.}</th>
-				{/snpIds}
-			</tr>
-		</table>
-	</div>
-</div>
-<div>
-	<div class="haps leftpart bottompart">
-		<table class="matrix hap">
+			
+		</thead>
+		<tbody class="haps">
 			{#haplotypes}
 				<tr class="rows">
 					{#.}
-						<td >{haplotypeName}</td>
+						<td>{haplotypeName}</td>
 					{/.}
 				</tr>
 			{/haplotypes}
@@ -33,15 +21,24 @@
 					{/.}
 				</tr>
 			{/novelHaplotypes}
+		</tbody>
 		</table>
-	</div>
-	<div class="matinfo bottompart rightpart">
+</div>
+<div style="display:inline-block;">
 		<table class="matrix">
+		<thead class="labels" style='width:800px'>
+			<tr>
+				{#snpIds}
+					<th class="rightside">{.}</th>
+				{/snpIds}
+			</tr>
+		</thead>
+		<tbody class="matinfo" style='width:800px'>	
 			{#haplotypes}
 				<tr class="rows">
 					{#.}
 						{#alleles}
-							<td class="fixedcell" >{.}</td>
+							<td class="rigthside" >{.}</td>
 						{/alleles}
 					{/.}
 				</tr>
@@ -50,13 +47,13 @@
 				<tr class="novel rows">
 					{#.}
 						{#alleles}
-							<td class="fixedcell">{.}</td>
+							<td class="rightside">{.}</td>
 						{/alleles}
 					{/.}
 				</tr>
 			{/novelHaplotypes}
+		</tbody>
 		</table>
-	</div>
 </div>
 
 

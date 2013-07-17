@@ -6,18 +6,18 @@ var ghmView;
 $(document).ready(function(){
     var sampleGeneHaplotypeMatrix = {
         geneName: 'G6PD',
-        snpIds: ['rs1050828', 'rs1050829', 'rs5030868', 'rs137852328', 'rs76723693', 'rs2230037'],
+        snpIds: ['rs1050828', 'rs1050829', 'rs5030868', 'rs137852328', 'rs76723693', 'rs2230037', 'rs2230037', 'rs2230037', 'rs2230037', 'rs2230037', 'rs2230037', 'rs2230037'],
         haplotypes: [
-            { haplotypeName: 'B (wildtype)',            alleles: ['C', 'T', 'G', 'C', 'A', 'G'] },
-            { haplotypeName: 'A-202A_376G',             alleles: ['T', 'C', 'G', 'C', 'A', 'G'] },
-            { haplotypeName: 'A- 680T_376G',            alleles: ['C', 'C', 'G', 'A', 'A', 'G'] },
-            { haplotypeName: 'A-968C_376G',             alleles: ['C', 'C', 'G', 'C', 'G', 'G'] },
-            { haplotypeName: 'Mediterranean Haplotype', alleles: ['C', 'T', 'A', 'C', 'A', 'A'] },
+            { haplotypeName: 'B (wildtype)',            alleles: ['C', 'T', 'G', 'C', 'A', 'G', 'A', 'G', 'A', 'G', 'A', 'G'] },
+            { haplotypeName: 'A-202A_376G',             alleles: ['T', 'C', 'G', 'C', 'A', 'G', 'A', 'G', 'A', 'G', 'A', 'G'] },
+            { haplotypeName: 'A- 680T_376G',            alleles: ['C', 'C', 'G', 'A', 'A', 'G', 'A', 'G', 'A', 'G', 'A', 'G'] },
+            { haplotypeName: 'A-968C_376G',             alleles: ['C', 'C', 'G', 'C', 'G', 'G', 'A', 'G', 'A', 'G', 'A', 'G'] },
+            { haplotypeName: 'Mediterranean Haplotype', alleles: ['C', 'T', 'A', 'C', 'A', 'A', 'A', 'G', 'A', 'G', 'A', 'G'] },
         ],
         novelHaplotypes: [
-            { sampleId: 'Sample 012', physicalChromosome: 'A', alleles: ['C', 'C', null, null, null, null] },
-            { sampleId: 'Sample 012', physicalChromosome: 'B',  alleles: ['C', 'A', null, null, null, null] },
-            { sampleId: 'Sample 013', physicalChromosome: 'A',  alleles: ['T', 'C', null, null, null, null] },
+            { sampleId: 'Sample 012', physicalChromosome: 'A', alleles: ['C', 'C', null, null, null, null, null, null, null, null, null, null] },
+            { sampleId: 'Sample 012', physicalChromosome: 'B',  alleles: ['C', 'A', null, null, null, null, null, null, null, null, null, null] },
+            { sampleId: 'Sample 013', physicalChromosome: 'A',  alleles: ['T', 'C', null, null, null, null, null, null, null, null, null, null] },
         ]
     };
     ghmView = new pipeline.Views.matrix({
@@ -32,6 +32,20 @@ $(document).ready(function(){
 	$(".matinfo").scroll(function () { 
     	$(".haps").scrollTop($(".matinfo").scrollTop());
     });
+    $(".labels").scroll(function () { 
+    	$(".matinfo").scrollLeft($(".labels").scrollLeft());
+    });
+	$(".matinfo").scroll(function () { 
+    	$(".labels").scrollLeft($(".matinfo").scrollLeft());
+    });
+    function cell_size(classname){
+    	var max_header= Math.max.apply(Math, $('th.'+classname).map(function(){ return $(this).width(); }).get());
+    	var max_body= Math.max.apply(Math, $('td.'+classname).map(function(){ return $(this).width(); }).get());
+    	var max_cell= Math.max(max_header, max_body);
+		$("td."+classname).css("min-width",max_cell);
+		$("th."+classname).css("min-width",max_cell);
+	}	
+	cell_size("rightside");
 });
 </r:script>
 

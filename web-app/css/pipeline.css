@@ -110,30 +110,7 @@ table.matrix tr.hovered{
 }
 table.hap {
 	border-right:2pt solid black;
-	width:100%;
-}
-table.matrix{
 
-	overflow:auto;
-}
-.leftpart{
-	display:inline-block;
-	width:30%;
-}
-.rightpart{
-	display:inline-block;
-	width:70%;
-	overflow:auto;
-}
-.bottompart{
-	height:200px;
-	overflow:auto;
-}
-table.matrix th.fixedcell {
-	width:100px;
-}
-table.matrix td.fixedcell {
-	width:100px;
 }
 table.matrix th {
 	padding:5px;
@@ -141,3 +118,13 @@ table.matrix th {
 table.matrix td {
 	padding:5px;
 }
+table.matrix tbody{
+	display: block;
+	overflow:auto;
+	height:200px;
+}
+table.matrix thead.labels{
+	display: block;
+	overflow:auto;
+}
+

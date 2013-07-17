@@ -11,6 +11,7 @@
 		<r:require modules="application"/>
 		<g:layoutHead/>
 		<r:layoutResources />
+        <link rel="icon" type="image/ico" href="${resource(dir: 'images', file: 'favicon.ico')}"/>
 	</head>	
 	<body>
 		<div class="container">

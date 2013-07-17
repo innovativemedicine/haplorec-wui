@@ -1,4 +1,4 @@
-<table id="t1" class="matrix hap" style="width:26.9%;">
+<table id="t1" class="matrix hap">
 	<thead>
 		<tr>
 			<th class="leftside">Haplotype/SNP</th>
@@ -22,7 +22,7 @@
 		{/novelHaplotypes}
 	</tbody>
 </table>
-<table id="t2" class="matrix" style="width:72%;">
+<table id="t2" class="matrix">
 	<thead class="labels">
 		<tr>
 			{#snpIds}

@@ -130,4 +130,9 @@ table.matrix thead.labels{
 table.matrix{
 	display:inline-block;
 }
-
+table#t1{
+	max-width:30%;
+}
+table#t2{
+	max-width:70%;
+}

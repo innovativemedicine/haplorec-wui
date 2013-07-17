@@ -123,7 +123,7 @@ table.matrix tbody{
 	overflow:auto;
 	height:200px;
 }
-table.matrix thead.labels{
+table.matrix thead{
 	display: block;
 	overflow:auto;
 }
@@ -131,7 +131,7 @@ table.matrix{
 	display:inline-block;
 }
 table#t1{
-	max-width:30%;
+	max-width:29%;
 }
 table#t2{
 	max-width:70%;

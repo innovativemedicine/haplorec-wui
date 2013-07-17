@@ -179,7 +179,7 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
             var that = this;
             
             //highlighting
-            this.$("#t1 tr").hover(
+            this.$("#t1 tr.rows").hover(
         	        function(){
         	            $(this).addClass('active');
         	            $('#t2 tr:eq(' + $('#t1 tr').index($(this)) + ')').addClass('active');
@@ -189,7 +189,7 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
         	            $('#t2 tr:eq(' + $('#t1 tr').index($(this)) + ')').removeClass('active');
         	        }
         	    );
-        	this.$("#t2 tr").hover(
+        	this.$("#t2 tr.rows").hover(
         	        function(){
         	            $(this).addClass('active');
         	            $('#t1 tr:eq(' + $('#t2 tr').index($(this)) + ')').addClass('active');

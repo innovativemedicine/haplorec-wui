@@ -172,9 +172,17 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
 	m.Views.sampleinputfile = m.Views.Dust.extend({
 		template : "pipeline/sampleinputfile",
 	});
+
 	m.Views.matrix = m.Views.Dust.extend({
 		template : "pipeline/matrix",
+		_init : function() {
+            var that = this;
+            this.$('.haps').scroll(function () {
+                that.$(".matinfo").scrollTop(that.$(".haps").scrollTop());
+            });
+		},
 	});
+
 	m.Views.DependencyFile = m.Views.Dust.extend({
 		template : "pipeline/dependencyFile",
 		className : "dependency-file",

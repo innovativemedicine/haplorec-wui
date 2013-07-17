@@ -105,7 +105,7 @@ table.matrix th {
 	text-align:left;
 	border-bottom:2pt solid black;
 }
-table.matrix tr.hovered{
+table.matrix tr.active{
 	background-color: #FF99FF;
 }
 table.hap {
@@ -126,5 +126,8 @@ table.matrix tbody{
 table.matrix thead.labels{
 	display: block;
 	overflow:auto;
+}
+table.matrix{
+	display:inline-block;
 }
 

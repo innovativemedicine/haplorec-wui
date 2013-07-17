@@ -177,9 +177,53 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
 		template : "pipeline/matrix",
 		_init : function() {
             var that = this;
+            
+            //highlighting
+            this.$("#t1 tr").hover(
+        	        function(){
+        	            $(this).addClass('active');
+        	            $('#t2 tr:eq(' + $('#t1 tr').index($(this)) + ')').addClass('active');
+        	        },
+        	        function(){
+        	            $(this).removeClass('active');
+        	            $('#t2 tr:eq(' + $('#t1 tr').index($(this)) + ')').removeClass('active');
+        	        }
+        	    );
+        	this.$("#t2 tr").hover(
+        	        function(){
+        	            $(this).addClass('active');
+        	            $('#t1 tr:eq(' + $('#t2 tr').index($(this)) + ')').addClass('active');
+        	        },
+        	        function(){
+        	            $(this).removeClass('active');
+        	            $('#t1 tr:eq(' + $('#t2 tr').index($(this)) + ')').removeClass('active');
+        	        }
+        	    );
+        	
+        	//scrolling
+            this.$('table.matrix tr.rows').mouseover(function() {$(this).addClass('hovered');}).mouseout(function() {$(this).removeClass('hovered');});
             this.$('.haps').scroll(function () {
                 that.$(".matinfo").scrollTop(that.$(".haps").scrollTop());
             });
+            this.$('.matinfo').scroll(function () {
+                that.$(".haps").scrollTop(that.$(".matinfo").scrollTop());
+            });
+            this.$('.labels').scroll(function () {
+                that.$(".matinfo").scrollLeft(that.$(".labels").scrollLeft());
+            });
+            this.$('.matinfo').scroll(function () {
+                that.$(".labels").scrollLeft(that.$(".matinfo").scrollLeft());
+            });
+            //cell size
+            function cell_size(classname){
+            	var max_header= Math.max.apply(Math, that.$('th.'+classname).map(function(){ return $(this).width(); }).get());
+            	var max_body= Math.max.apply(Math, that.$('td.'+classname).map(function(){ return $(this).width(); }).get());
+            	var max_cell= Math.max(max_header, max_body);
+        		that.$("td."+classname).css("min-width",max_cell);
+        		that.$("th."+classname).css("min-width",max_cell);
+        	}
+            cell_size("rightside");
+        	cell_size("leftside");
 		},
 	});
 

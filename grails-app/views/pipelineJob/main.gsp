@@ -25,27 +25,6 @@ $(document).ready(function(){
 	    el: $('#test-matrix'), 
     });
     ghmView.render();
-    $('table.matrix tr.rows').mouseover(function() {$(this).addClass('hovered');}).mouseout(function() {$(this).removeClass('hovered');});
-    $(".haps").scroll(function () { 
-    	$(".matinfo").scrollTop($(".haps").scrollTop());
-    });
-	$(".matinfo").scroll(function () { 
-    	$(".haps").scrollTop($(".matinfo").scrollTop());
-    });
-    $(".labels").scroll(function () { 
-    	$(".matinfo").scrollLeft($(".labels").scrollLeft());
-    });
-	$(".matinfo").scroll(function () { 
-    	$(".labels").scrollLeft($(".matinfo").scrollLeft());
-    });
-    function cell_size(classname){
-    	var max_header= Math.max.apply(Math, $('th.'+classname).map(function(){ return $(this).width(); }).get());
-    	var max_body= Math.max.apply(Math, $('td.'+classname).map(function(){ return $(this).width(); }).get());
-    	var max_cell= Math.max(max_header, max_body);
-		$("td."+classname).css("min-width",max_cell);
-		$("th."+classname).css("min-width",max_cell);
-	}	
-	cell_size("rightside");
 });
 </r:script>
 

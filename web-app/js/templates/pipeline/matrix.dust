@@ -1,0 +1,62 @@
+<div>
+	<div class="haplo leftpart">
+		<table class="matrix hap">
+			<tr>
+				<th class="names">Haplotype/SNP</th>
+			</tr>
+		</table>
+	</div>
+	<div class="labels rightpart">
+		<table class="matrix">
+			<tr>
+				{#snpIds}
+					<th class="fixedcell">{.}</th>
+				{/snpIds}
+			</tr>
+		</table>
+	</div>
+</div>
+<div>
+	<div class="haps leftpart bottompart">
+		<table class="matrix hap">
+			{#haplotypes}
+				<tr class="rows">
+					{#.}
+						<td >{haplotypeName}</td>
+					{/.}
+				</tr>
+			{/haplotypes}
+			{#novelHaplotypes}
+				<tr class="novel rows">
+					{#.}
+						<td>{sampleId}, Physical Chromosome {physicalChromosome}</td>
+					{/.}
+				</tr>
+			{/novelHaplotypes}
+		</table>
+	</div>
+	<div class="matinfo bottompart rightpart">
+		<table class="matrix">
+			{#haplotypes}
+				<tr class="rows">
+					{#.}
+						{#alleles}
+							<td class="fixedcell" >{.}</td>
+						{/alleles}
+					{/.}
+				</tr>
+			{/haplotypes}
+			{#novelHaplotypes}
+				<tr class="novel rows">
+					{#.}
+						{#alleles}
+							<td class="fixedcell">{.}</td>
+						{/alleles}
+					{/.}
+				</tr>
+			{/novelHaplotypes}
+		</table>
+	</div>
+</div>
+
+

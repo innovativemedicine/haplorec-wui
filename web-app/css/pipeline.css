@@ -105,21 +105,39 @@ table.matrix th {
 	text-align:left;
 	border-bottom:2pt solid black;
 }
-table.hap {
-	border-right:2pt solid black;
-}
-table.matrix td {
-	padding: 5px;
-}
-table.matrix th {
-	padding: 5px;
-}
 table.matrix tr.hovered{
 	background-color: #FF99FF;
 }
-table.matrix caption{
-	text-align:left;
-	font-size:20px;
-	font-weight:bold;
+table.hap {
+	border-right:2pt solid black;
+	width:100%;
 }
+table.matrix{
 
+	overflow:auto;
+}
+.leftpart{
+	display:inline-block;
+	width:30%;
+}
+.rightpart{
+	display:inline-block;
+	width:70%;
+	overflow:auto;
+}
+.bottompart{
+	height:200px;
+	overflow:auto;
+}
+table.matrix th.fixedcell {
+	width:100px;
+}
+table.matrix td.fixedcell {
+	width:100px;
+}
+table.matrix th {
+	padding:5px;
+}
+table.matrix td {
+	padding:5px;
+}

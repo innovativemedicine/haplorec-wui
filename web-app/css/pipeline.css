@@ -131,7 +131,9 @@ table.matrix thead{
 	display: block;
 }
 table.matrix tbody.haps{
-	overflow:auto;
+    /* Always show the horizontal scrollbar in the Haplotype column to prevent weird misalignment scroll bug.
+     */
+	overflow-x:scroll;
 	overflow-y:hidden;
 }
 table.matrix {

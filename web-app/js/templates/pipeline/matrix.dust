@@ -1,7 +1,7 @@
 <table id="t1" class="matrix hap">
 	<thead class="hapsnp">
 		<tr>
-			<th class="leftside">Haplotype/SNP</th>
+			<th class="leftside">Haplotype</th>
 		</tr>
 		
 	</thead>

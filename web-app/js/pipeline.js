@@ -224,7 +224,23 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
         	}
             cell_size("rightside");
         	cell_size("leftside");
+
+            this.$('.scrollbar').css('width', this.$('table.allele-matrix').width());
+            this.$('.dummy-content').css('width', this.$('table.allele-matrix tbody tr').width());
+            this._mimicHorizScroll('.scrollbar', 'table.allele-matrix');
 		},
+        _mimicVertScroll: function (target, mimicer) {
+            var that = this;
+            this.$(target).scroll(function () {
+                that.$(mimicer).scrollTop(that.$(target).scrollTop());
+            });
+        },
+        _mimicHorizScroll: function (target, mimicer) {
+            var that = this;
+            this.$(target).scroll(function () {
+                that.$(mimicer).scrollLeft(that.$(target).scrollLeft());
+            });
+        },
 	});
 
 	m.Views.DependencyFile = m.Views.Dust.extend({

@@ -120,19 +120,34 @@ table.matrix td {
 }
 table.matrix tbody{
 	display: block;
-	overflow:auto;
-	height:200px;
+	/* max-height:20em; */
+	max-height:10em;
 }
+
+table.matrix tbody, table.matrix thead {
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+
 table.matrix thead{
 	display: block;
-	overflow:auto;
 }
-table.matrix{
-	display:inline-block;
+table.matrix, div.allele-matrix {
+    display: inline-block;
+    vertical-align: top;
 }
 table#t1{
 	max-width:29%;
 }
 table#t2{
 	max-width:70%;
+}
+
+.scrollbar {
+    height: 2em;
+	overflow-x: auto;
+	overflow-y: hidden;
+}
+.dummy-content {
+    height: 2em;
 }

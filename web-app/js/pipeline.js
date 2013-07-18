@@ -214,6 +214,9 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
             this.$('.matinfo').scroll(function () {
                 that.$(".labels").scrollLeft(that.$(".matinfo").scrollLeft());
             });
+            this.$('.haps').scroll(function () {
+                that.$(".hapsnp").scrollLeft(that.$(".haps").scrollLeft());
+            });
             //cell size
             function cell_size(classname){
             	var max_header= Math.max.apply(Math, that.$('th.'+classname).map(function(){ return $(this).width(); }).get());
@@ -227,9 +230,9 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
 
             this.$('.scrollbar').css('width', this.$('table.allele-matrix').width());
             this.$('.dummy-content').css('width', this.$('table.allele-matrix tbody tr').width());
-            this._mimicHorizScroll('.scrollbar', 'table.allele-matrix');
+            //this._mimicHorizScroll('.scrollbar', 'table.allele-matrix');
 		},
-        _mimicVertScroll: function (target, mimicer) {
+        /*_mimicVertScroll: function (target, mimicer) {
             var that = this;
             this.$(target).scroll(function () {
                 that.$(mimicer).scrollTop(that.$(target).scrollTop());
@@ -240,7 +243,7 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
             this.$(target).scroll(function () {
                 that.$(mimicer).scrollLeft(that.$(target).scrollLeft());
             });
-        },
+        },*/
 	});
 
 	m.Views.DependencyFile = m.Views.Dust.extend({

@@ -1,5 +1,5 @@
 <table id="t1" class="matrix hap">
-	<thead>
+	<thead class="hapsnp">
 		<tr>
 			<th class="leftside">Haplotype/SNP</th>
 		</tr>
@@ -22,38 +22,33 @@
 		{/novelHaplotypes}
 	</tbody>
 </table>
-<div class='allele-matrix'>
-    <table id="t2" class="matrix allele-matrix">
-        <thead class="labels">
-            <tr>
-                {#snpIds}
-                    <th class="rightside">{.}</th>
-                {/snpIds}
+<table id="t2" class="matrix allele-matrix">
+    <thead class="labels">
+        <tr>
+            {#snpIds}
+                <th class="rightside">{.}</th>
+            {/snpIds}
+        </tr>
+    </thead>
+    <tbody class="matinfo">	
+        {#haplotypes}
+            <tr class="rows">
+                {#.}
+                    {#alleles}
+                        <td class="rigthside" >{.}</td>
+                    {/alleles}
+                {/.}
             </tr>
-        </thead>
-        <tbody class="matinfo">	
-            {#haplotypes}
-                <tr class="rows">
-                    {#.}
-                        {#alleles}
-                            <td class="rigthside" >{.}</td>
-                        {/alleles}
-                    {/.}
-                </tr>
-            {/haplotypes}
-            {#novelHaplotypes}
-                <tr class="novel rows">
-                    {#.}
-                        {#alleles}
-                            <td class="rightside">{.}</td>
-                        {/alleles}
-                    {/.}
-                </tr>
-            {/novelHaplotypes}
-        </tbody>
-    </table>
-    <div class='scrollbar'>
-        <div class='dummy-content'>
-        </div>
-    </div>
-</div>
+        {/haplotypes}
+        {#novelHaplotypes}
+            <tr class="novel rows">
+                {#.}
+                    {#alleles}
+                        <td class="rightside">{.}</td>
+                    {/alleles}
+                {/.}
+            </tr>
+        {/novelHaplotypes}
+    </tbody>
+</table>
+    

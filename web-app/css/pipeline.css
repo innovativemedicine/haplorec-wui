@@ -130,6 +130,11 @@ table.matrix thead{
 	overflow: hidden;
 	display: block;
 }
+table.matrix thead.labels {
+    /* Always show the vertical scrollbar in the snp labels row to prevent weird misalignment scroll bug.
+     */
+	overflow-y: scroll;
+}
 table.matrix tbody.haps{
     /* Always show the horizontal scrollbar in the Haplotype column to prevent weird misalignment scroll bug.
      */

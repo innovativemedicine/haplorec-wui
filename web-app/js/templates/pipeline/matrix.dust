@@ -1,11 +1,11 @@
-<table id="t1" class="matrix hap">
-	<thead class="hapsnp">
+<table class="matrix rightBorder leftTable">
+	<thead class="haplotypeTitle">
 		<tr>
 			<th class="leftside">Haplotype</th>
 		</tr>
 		
 	</thead>
-	<tbody class="haps">
+	<tbody class="haplotypes">
 		{#haplotypes}
 			<tr class="rows">
 				{#.}
@@ -22,15 +22,15 @@
 		{/novelHaplotypes}
 	</tbody>
 </table>
-<table id="t2" class="matrix allele-matrix">
-    <thead class="labels">
+<table class="matrix rightTable">
+    <thead class="snp">
         <tr>
             {#snpIds}
                 <th class="rightside">{.}</th>
             {/snpIds}
         </tr>
     </thead>
-    <tbody class="matinfo">	
+    <tbody class="alleles">	
         {#haplotypes}
             <tr class="rows">
                 {#.}

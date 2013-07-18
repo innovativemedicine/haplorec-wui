@@ -179,43 +179,42 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
             var that = this;
             
             //highlighting
-            this.$("#t1 tr.rows").hover(
+            this.$(".leftTable tr.rows").hover(
         	        function(){
         	            $(this).addClass('active');
-        	            $('#t2 tr:eq(' + $('#t1 tr').index($(this)) + ')').addClass('active');
+        	            $('.rightTable tr:eq(' + $('.leftTable tr').index($(this)) + ')').addClass('active');
         	        },
         	        function(){
         	            $(this).removeClass('active');
-        	            $('#t2 tr:eq(' + $('#t1 tr').index($(this)) + ')').removeClass('active');
+        	            $('.rightTable tr:eq(' + $('.leftTable tr').index($(this)) + ')').removeClass('active');
         	        }
         	    );
-        	this.$("#t2 tr.rows").hover(
+        	this.$(".rightTable tr.rows").hover(
         	        function(){
         	            $(this).addClass('active');
-        	            $('#t1 tr:eq(' + $('#t2 tr').index($(this)) + ')').addClass('active');
+        	            $('.leftTable tr:eq(' + $('.rightTable tr').index($(this)) + ')').addClass('active');
         	        },
         	        function(){
         	            $(this).removeClass('active');
-        	            $('#t1 tr:eq(' + $('#t2 tr').index($(this)) + ')').removeClass('active');
+        	            $('.leftTable tr:eq(' + $('.rightTable tr').index($(this)) + ')').removeClass('active');
         	        }
         	    );
         	
         	//scrolling
-            this.$('table.matrix tr.rows').mouseover(function() {$(this).addClass('hovered');}).mouseout(function() {$(this).removeClass('hovered');});
-            this.$('.haps').scroll(function () {
-                that.$(".matinfo").scrollTop(that.$(".haps").scrollTop());
+            this.$('.haplotypes').scroll(function () {
+                that.$(".alleles").scrollTop(that.$(".haplotypes").scrollTop());
             });
-            this.$('.matinfo').scroll(function () {
-                that.$(".haps").scrollTop(that.$(".matinfo").scrollTop());
+            this.$('.alleles').scroll(function () {
+                that.$(".haplotypes").scrollTop(that.$(".alleles").scrollTop());
             });
-            this.$('.labels').scroll(function () {
-                that.$(".matinfo").scrollLeft(that.$(".labels").scrollLeft());
+            this.$('.snp').scroll(function () {
+                that.$(".alleles").scrollLeft(that.$(".snp").scrollLeft());
             });
-            this.$('.matinfo').scroll(function () {
-                that.$(".labels").scrollLeft(that.$(".matinfo").scrollLeft());
+            this.$('.alleles').scroll(function () {
+                that.$(".snp").scrollLeft(that.$(".alleles").scrollLeft());
             });
-            this.$('.haps').scroll(function () {
-                that.$(".hapsnp").scrollLeft(that.$(".haps").scrollLeft());
+            this.$('.haplotypes').scroll(function () {
+                that.$(".haplotypeTitle").scrollLeft(that.$(".haplotypes").scrollLeft());
             });
             //cell size
             function cell_size(classname){
@@ -227,23 +226,7 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
         	}
             cell_size("rightside");
         	cell_size("leftside");
-
-            this.$('.scrollbar').css('width', this.$('table.allele-matrix').width());
-            this.$('.dummy-content').css('width', this.$('table.allele-matrix tbody tr').width());
-            //this._mimicHorizScroll('.scrollbar', 'table.allele-matrix');
 		},
-        /*_mimicVertScroll: function (target, mimicer) {
-            var that = this;
-            this.$(target).scroll(function () {
-                that.$(mimicer).scrollTop(that.$(target).scrollTop());
-            });
-        },
-        _mimicHorizScroll: function (target, mimicer) {
-            var that = this;
-            this.$(target).scroll(function () {
-                that.$(mimicer).scrollLeft(that.$(target).scrollLeft());
-            });
-        },*/
 	});
 
 	m.Views.DependencyFile = m.Views.Dust.extend({

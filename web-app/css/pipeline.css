@@ -108,9 +108,8 @@ table.matrix th {
 table.matrix tr.active{
 	background-color: #FF99FF;
 }
-table.hap {
+table.rightBorder {
 	border-right:2pt solid black;
-
 }
 table.matrix th {
 	padding:5px;
@@ -123,19 +122,19 @@ table.matrix tbody{
 	max-height:15em;
 }
 
-table.matrix tbody.matinfo{
+table.matrix tbody.alleles{
 	overflow: auto;
 }
 table.matrix thead{
 	overflow: hidden;
 	display: block;
 }
-table.matrix thead.labels {
+table.matrix thead.snp {
     /* Always show the vertical scrollbar in the snp labels row to prevent weird misalignment scroll bug.
      */
 	overflow-y: scroll;
 }
-table.matrix tbody.haps{
+table.matrix tbody.haplotypes{
     /* Always show the horizontal scrollbar in the Haplotype column to prevent weird misalignment scroll bug.
      */
 	overflow-x:scroll;
@@ -146,9 +145,9 @@ table.matrix {
     display: inline-block;
     vertical-align: top;
 }
-table#t1{
+table.leftTable{
 	max-width:29%;
 }
-table#t2{
+table.rightTable{
 	max-width:70%;
 }

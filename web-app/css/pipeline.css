@@ -97,7 +97,56 @@ span.running{
 span.failed{
 	color:red;
 }
+table.matrix tr.novel {
+	background-color: #40E0D0;
+}
+table.matrix th {
+	text-align:left;
+	border-bottom:2pt solid black;
+}
+table.matrix tr.active{
+	background-color: #FF99FF;
+}
+table.rightBorder {
+	border-right:2pt solid black;
+}
+table.matrix th {
+	padding:5px;
+}
+table.matrix td {
+	padding:5px;
+}
+table.matrix tbody{
+	display: block;
+	max-height:15em;
+}
 
-
-
-
+table.matrix tbody.alleles{
+	overflow: auto;
+}
+table.matrix thead{
+	overflow: hidden;
+	display: block;
+}
+table.matrix thead.snp {
+    /* Always show the vertical scrollbar in the snp labels row to prevent weird misalignment scroll bug.
+     */
+	overflow-y: scroll;
+}
+table.matrix tbody.haplotypes{
+    /* Always show the horizontal scrollbar in the Haplotype column to prevent weird misalignment scroll bug.
+     */
+	overflow-x:scroll;
+	overflow-y:hidden;
+}
+table.matrix {
+	white-space: nowrap;
+    display: inline-block;
+    vertical-align: top;
+}
+table.leftTable{
+	max-width:29%;
+}
+table.rightTable{
+	max-width:70%;
+}

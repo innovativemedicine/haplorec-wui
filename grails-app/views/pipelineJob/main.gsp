@@ -1,32 +1,6 @@
 <%@ page import="haplorec.wui.Job" %>
 
 <r:require modules="pipeline, backbone, jquery"/>
-<r:script>
-var sampleVariant;
-var samplegeno;
-var samplepheno;
-$(document).ready(function(){
-
-	var sampleVariant = new pipeline.Views.sampleinputfile({
-	    model: new Backbone.Model(${sampleVariantJSON}),
-	    el: $('#sample-variant'), 
-	});
-	sampleVariant.render();
-	var samplegeno = new pipeline.Views.sampleinputfile({
-	    model: new Backbone.Model(${samplegenoJSON}),
-	    el: $('#sample-outgeno'), 
-	});
-	samplegeno.render();
-	var samplepheno = new pipeline.Views.sampleinputfile({
-	    model: new Backbone.Model(${samplephenoJSON}),
-	    el: $('#sample-outpheno'), 
-	});
-	samplepheno.render();
-	
-});
-
-
-</r:script>
 
 <!DOCTYPE html>
 <html>

@@ -15,6 +15,7 @@ $(document).ready(function(){
     };
     gView.render();
     Backbone.history.start();
+
 });
 </r:script>
 

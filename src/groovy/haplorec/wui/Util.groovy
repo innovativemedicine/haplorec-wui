@@ -2,6 +2,8 @@ package haplorec.wui
 
 import grails.converters.JSON;
 import haplorec.util.pipeline.Dependency;
+import javax.sql.DataSource
+import groovy.sql.Sql
 
 class Util {
 
@@ -11,4 +13,13 @@ class Util {
 		return props
 	}
 	
+    def private static withSql(DataSource d, Closure f) {
+        Sql sql = new Sql(d)
+        try {
+            f(sql)
+        } finally {
+            sql.close()
+        }
+    }
+
 }

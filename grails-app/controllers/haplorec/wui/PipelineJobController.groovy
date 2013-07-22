@@ -27,19 +27,19 @@ class PipelineJobController {
 	def grailsApplication
 
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
-	
+
 	// http://grails.org/doc/latest/guide/theWebLayer.html#commandObjects
 	@grails.validation.Validateable
 	static class DependencyInputCommand {
 		String datatype
 		byte[] input
-		
+
 		static constraints = {
 			datatype validator: { haplorec.util.pipeline.PipelineInput.inputTables.contains(it?.toString()) }
 			input size: 0..5*1024*1024
 		}
 	}
-	
+
     def index() {
 		log.error(PipelineInput.inputTables)
         redirect(action: "list", params: params)
@@ -52,12 +52,12 @@ class PipelineJobController {
 
     def create() {
         // [jobInstance: new Job(params), dependencyGraphJSON: dependencyGraphJSON()]
-		
+
     	[jobInstance: new Job(params), dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator, context: grailsApplication.mainContext,sampleInputs:true)]
 
 		}
-	
-	
+
+
 	def jsonList() {
 		render ( 
             Job.list().collect { job ->
@@ -72,7 +72,7 @@ class PipelineJobController {
 
     def save() {
         log.error("SAVE PARAMS: $params")
-		
+
 		// inputs['variants'] == [file1, file2, ...]
 		Map inputs = new LinkedHashMap();
 		params.each { p, v ->
@@ -155,10 +155,9 @@ class PipelineJobController {
         withSql(dataSource) { sql ->
             json = dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator, sql: sql, job_id: jobInstance.id, counts: true)
         }
-
         [jobInstance: jobInstance, dependencyGraphJSON: json]
     }
-	
+
     def edit(Long id) {
         def jobInstance = Job.get(id)
         if (!jobInstance) {
@@ -217,10 +216,10 @@ class PipelineJobController {
             redirect(action: "show", id: id)
         }
     }
-	
-	
+
+
     def private static dependencyGraphJSON(Map kwargs = [:])  {
-		
+
         if (kwargs.counts == null) { kwargs.counts = false }
 		if (kwargs.sampleInputs == null) { kwargs.sampleInputs = false }
         def (tbl, dependencies) = Pipeline.dependencyGraph()
@@ -341,7 +340,7 @@ class PipelineJobController {
             },
         )
     }
-	
+
 	def main() {
 		def rowgetter = { filename ->
 			def rows = []
@@ -410,9 +409,9 @@ class PipelineJobController {
         def pollTimeout = 1 
          
         def (_, dependencies) = Pipeline.dependencyGraph() 
-		
+
         def jobDone = {rows ->
-			
+
             return (
 				//there is a row in rows with row.state == 'failed'
 				//( [row.target for row in rows where row.state == 'done'] as Set ) ==
@@ -420,7 +419,7 @@ class PipelineJobController {
 			     rows.find{ it.state == 'failed' } != null ||
 			     (rows.findAll{it.state=='done'}.collect{it.target} as Set) == dependencies.keySet()
             )
-			
+
         }
 
         // convert a JobState object to JSON
@@ -441,7 +440,7 @@ class PipelineJobController {
     			if ((rows.collect{it.state}!=new_rows.collect{it.state})){
     				response.outputStream <<  new_rows.findAll{!(it in rows)}.collect { json(it) + '\n' }.join('')
                     response.outputStream.flush()
-					
+
     				rows = new_rows
     			}
                 log.error("state: ${rows.collect{it.state}}")

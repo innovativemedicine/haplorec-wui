@@ -1,5 +1,6 @@
 
 <%@ page import="haplorec.wui.JobPatientNovelHaplotype" %>
+
 <!DOCTYPE html>
 <html>
 	<head>

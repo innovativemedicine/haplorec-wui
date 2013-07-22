@@ -1,3 +1,4 @@
+<h3>{geneName}</h3>
 <table class="matrix rightBorder leftTable">
 	<thead class="haplotypeTitle">
 		<tr>
@@ -16,7 +17,7 @@
 		{#novelHaplotypes}
 			<tr class="novel rows">
 				{#.}
-					<td class="leftside">{sampleId}, Physical Chromosome {physicalChromosome}</td>
+					<td class="leftside">Sample {sampleId}, Physical Chromosome {physicalChromosome}</td>
 				{/.}
 			</tr>
 		{/novelHaplotypes}

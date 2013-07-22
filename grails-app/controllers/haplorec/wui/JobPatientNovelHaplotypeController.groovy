@@ -1,9 +1,18 @@
 package haplorec.wui
 
+import grails.converters.JSON
 import org.springframework.dao.DataIntegrityViolationException
+import haplorec.wui.Util
+import javax.sql.DataSource
+import haplorec.util.pipeline.Report
+import haplorec.util.pipeline.Report.GeneHaplotypeMatrix
+import haplorec.util.pipeline.Report.GeneHaplotypeMatrix.NovelHaplotype
+import haplorec.util.pipeline.Report.GeneHaplotypeMatrix.Haplotype
+
 
 @Mixin(JobPatientControllerMixin)
 class JobPatientNovelHaplotypeController {
+    DataSource dataSource
 
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 
@@ -11,9 +20,38 @@ class JobPatientNovelHaplotypeController {
         redirect(action: "list", params: params)
     }
 
-	def list(Integer max, Long jobId) { jobPatientList(JobPatientNovelHaplotype, max, jobId) }
+    private def geneHaplotypeMatrixJSON(geneHaplotypeMatrix) {
+        def matrix = [:]
+		matrix=[geneName: geneHaplotypeMatrix.geneName, snpIds:geneHaplotypeMatrix.snpIds,haplotypes:[],novelHaplotypes:[]]
+        geneHaplotypeMatrix.each { haplotype, alleles ->
+            /* Add attributes mimicing JSON structure to matrix.
+             */
+            if (haplotype instanceof NovelHaplotype) {
+                matrix.novelHaplotypes=matrix.novelHaplotypes+[[sampleId: haplotype.patientId, physicalChromosome: haplotype.physicalChromosome, alleles: alleles]]
+            } else {
+                matrix.haplotypes=matrix.haplotypes+[[haplotypeName: haplotype.haplotypeName, alleles: alleles]]
+            }
+        }
+        return matrix as JSON
+    }
 
-	def listTemplate(Integer max, Long jobId) { jobPatientListTemplate(JobPatientNovelHaplotype, max, jobId) }
+    private def addMatrixJSON(model) {
+            def matrices = []
+            /* Add matrixJSON to model.
+             */
+            Util.withSql(dataSource) { sql ->
+                Report.novelHaplotypeReport([sqlParams: [job_id: model.jobId]], sql).each { geneHaplotypeMatrix ->
+                    matrices.add(geneHaplotypeMatrixJSON(geneHaplotypeMatrix))
+                }
+            }
+            model.matrixJSON = matrices
+    }
+
+	def list(Integer max, Long jobId) { 
+        jobPatientList(JobPatientNovelHaplotype, max, jobId, withModel: this.&addMatrixJSON) 
+    }
+
+	def listTemplate(Integer max, Long jobId) { jobPatientListTemplate(JobPatientNovelHaplotype, max, jobId, withModel: this.&addMatrixJSON) }
 
     def create() {
         [jobPatientNovelHaplotypeInstance: new JobPatientNovelHaplotype(params)]

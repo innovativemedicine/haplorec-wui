@@ -220,17 +220,17 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
             function cell_size(classname){
             	var max_header= that.$('th.'+classname).map(function(){ return $(this).width();});
             	var max_body= that.$('td.'+classname).map(function(){ return $(this).width();});
-            	var y = new Array(max_header.length);
+            	var max_width = new Array(max_header.length);
                 for(var i=0;i< max_header.length;i++){
-                    y[i]=Math.max(max_header[i],max_body[i]);
+                    max_width[i]=Math.max(max_header[i],max_body[i]);
                 }
                 that.$("td."+classname).map(function(){
-        			var n = $(this).index()
-        			$(this).css("min-width",y[n])
+        			var column = $(this).index()
+        			$(this).css("min-width",max_width[column])
         			});
                 that.$("th."+classname).map(function(){
-        			var n = $(this).index()
-        			$(this).css("min-width",y[n])
+        			var column = $(this).index()
+        			$(this).css("min-width",max_width[column])
         			});
         	}
             cell_size("rightside");
@@ -246,34 +246,25 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
 			var geneNameList = this.model.get('geneNameList');
 
             var that = this;
-            var renderNextGene = function (matrixIndex, cName) {
+            var renderNextGene = function (matrixIndex, geneName) {
                 currentGene = new pipeline.Views.matrix({
                     model: new Backbone.Model(matrices[matrixIndex]),
-                    el: that.$('.'+cName),
+                    el: that.$('.'+geneName),
                 });
                 currentGene.render();
             }
-			
             for (var i=0; i < matrices.length; i++){
             	renderNextGene(i,geneNameList[i]);	
             }
-            
-            this.$(".matrixView").hide();
-            var w = $("select").val(); 
-            this.$("."+w).show();
-            
+            function changeGene(){
+	            that.$(".matrixView").hide();
+	            var currentGene = that.$("select").val(); 
+	            that.$("."+currentGene).show();
+            }
+            changeGene();
             this.$("select").change(function(){
-            	$(".matrixView").hide();
-                var w = $("select").val(); 
-                $("."+w).show();
+            	changeGene();
             });
-            //renderNextGene(0);
-			
-			/*this.$("select").change(function(){
-                var currentGeneName = $(this).val();
-                var matrixIndex = geneNameList.indexOf(currentGeneName);
-                renderNextGene(matrixIndex);
-            });*/
         },
 	});
 

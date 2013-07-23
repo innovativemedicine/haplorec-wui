@@ -174,7 +174,6 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
 	});
 
 	m.Views.matrix = m.Views.Dust.extend({
-		el : '.matrixView',
 		template : "pipeline/matrix",
 		_init : function() {
             var that = this;
@@ -236,22 +235,24 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
 			var currentGene;
 			var matrices = this.model.get('matrices');
 			var geneNameList = this.model.get('geneNameList');
+
+            var that = this;
+            var renderNextGene = function (matrixIndex) {
+                currentGene = new pipeline.Views.matrix({
+                    model: new Backbone.Model(matrices[matrixIndex]),
+                    el: that.$('.matrixView'),
+                });
+                currentGene.render();
+            }
 			
-			currentGene = new pipeline.Views.matrix({
-	             model: new Backbone.Model(matrices[0]),
-	             el:$('.matrixView'),
-	         });
-			currentGene.render();
+            renderNextGene(0);
 			
 			this.$("select").change(function(){
-				var currentGeneName = $(this).val();
-				var matrixIndex = geneNameList.indexOf(currentGeneName);
-				currentGene = new pipeline.Views.matrix({
-		             model: new Backbone.Model(matrices[matrixIndex]),
-		         });
-				currentGene.render();
-			  });
-			},
+                var currentGeneName = $(this).val();
+                var matrixIndex = geneNameList.indexOf(currentGeneName);
+                renderNextGene(matrixIndex);
+            });
+        },
 	});
 
 	m.Views.DependencyFile = m.Views.Dust.extend({

@@ -241,17 +241,16 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
 	m.Views.matrixList = m.Views.Dust.extend({
 		template: "pipeline/novelHaplotypeReport",
 		_init: function(){
-			var currentGene;
 			var matrices = this.model.get('matrices');
 			var geneNameList = this.model.get('geneNameList');
 
             var that = this;
             var renderNextGene = function (matrixIndex, geneName) {
-                currentGene = new pipeline.Views.matrix({
+                var matrixView = new pipeline.Views.matrix({
                     model: new Backbone.Model(matrices[matrixIndex]),
                     el: that.$('.'+geneName),
                 });
-                currentGene.render();
+                matrixView.render();
             }
             for (var i=0; i < matrices.length; i++){
             	renderNextGene(i,geneNameList[i]);	
@@ -262,9 +261,7 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
 	            that.$("."+currentGene).show();
             }
             changeGene();
-            this.$("select").change(function(){
-            	changeGene();
-            });
+            this.$("select").change(changeGene);
         },
 	});
 

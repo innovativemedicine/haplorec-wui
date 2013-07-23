@@ -1,0 +1,8 @@
+<select>
+	{#geneNameList}
+		<option>{.}</option>
+	{/geneNameList}
+</select>
+
+	<div class="matrixView">
+	</div>

@@ -6,24 +6,11 @@
 var ghmView;
 $(document).ready(function(){
 	var matrixList = ${matrixJSON}
-	ghmView = new pipeline.Views.matrix({
-	             model: new Backbone.Model(matrixList[0]),
-	             el: $('#test-matrix'), 
+	ghmView = new pipeline.Views.matrixList({
+	             model: new Backbone.Model(matrixList),
+	             el:$('#matrices'),
 	         });
 	ghmView.render();
-	var geneNameList = matrixList.map(function(geneMatrix){return "<option class='gene'>"+geneMatrix.geneName+"</option>";})
-	var geneNameString = geneNameList.join("");
-	
-	$(".geneSelector").html(geneNameString);
-	
-	$(".geneSelector").change(function(){
-		var n = geneNameList.indexOf("<option class='gene'>"+$('.geneSelector').val()+"</option>");
-	    ghmView = new pipeline.Views.matrix({
-	             model: new Backbone.Model(matrixList[n]),
-	             el: $('#test-matrix'), 
-	         });
-	     ghmView.render();
-     });
 });
 </r:script>
 
@@ -58,9 +45,7 @@ $(document).ready(function(){
             </g:if>
 
 		</div>
-		<select class="geneSelector">
-		</select>
-		<div id="test-matrix"></div>
+		<div id="matrices"></div>
         <r:layoutResources/>
 	</body>
 </html>

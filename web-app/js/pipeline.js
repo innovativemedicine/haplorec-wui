@@ -174,6 +174,7 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
 	});
 
 	m.Views.matrix = m.Views.Dust.extend({
+		el : '.matrixView',
 		template : "pipeline/matrix",
 		_init : function() {
             var that = this;
@@ -227,6 +228,30 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
             cell_size("rightside");
         	cell_size("leftside");
 		},
+	});
+	
+	m.Views.matrixList = m.Views.Dust.extend({
+		template: "pipeline/novelHaplotypeReport",
+		_init: function(){
+			var currentGene;
+			var matrices = this.model.get('matrices');
+			var geneNameList = this.model.get('geneNameList');
+			
+			currentGene = new pipeline.Views.matrix({
+	             model: new Backbone.Model(matrices[0]),
+	             el:$('.matrixView'),
+	         });
+			currentGene.render();
+			
+			this.$("select").change(function(){
+				var currentGeneName = $(this).val();
+				var matrixIndex = geneNameList.indexOf(currentGeneName);
+				currentGene = new pipeline.Views.matrix({
+		             model: new Backbone.Model(matrices[matrixIndex]),
+		         });
+				currentGene.render();
+			  });
+			},
 	});
 
 	m.Views.DependencyFile = m.Views.Dust.extend({

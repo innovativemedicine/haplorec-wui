@@ -32,7 +32,7 @@ class JobPatientNovelHaplotypeController {
                 matrix.haplotypes=matrix.haplotypes+[[haplotypeName: haplotype.haplotypeName, alleles: alleles]]
             }
         }
-        return matrix as JSON
+        return matrix
     }
 
     private def addMatrixJSON(model) {
@@ -44,7 +44,7 @@ class JobPatientNovelHaplotypeController {
                     matrices.add(geneHaplotypeMatrixJSON(geneHaplotypeMatrix))
                 }
             }
-            model.matrixJSON = matrices
+            model.matrixJSON = ([geneNameList: matrices.collect{it.geneName}, matrices: matrices] as JSON)
     }
 
 	def list(Integer max, Long jobId) { 

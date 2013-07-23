@@ -3,6 +3,7 @@
 		<option>{.}</option>
 	{/geneNameList}
 </select>
-
-	<div class="matrixView">
+{#matrices}
+	<div class="matrixView {geneName}">
 	</div>
+{/matrices}

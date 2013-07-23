@@ -237,21 +237,34 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
 			var geneNameList = this.model.get('geneNameList');
 
             var that = this;
-            var renderNextGene = function (matrixIndex) {
+            var renderNextGene = function (matrixIndex, cName) {
                 currentGene = new pipeline.Views.matrix({
                     model: new Backbone.Model(matrices[matrixIndex]),
-                    el: that.$('.matrixView'),
+                    el: that.$('.'+cName),
                 });
                 currentGene.render();
             }
 			
-            renderNextGene(0);
+            for (var i=0; i < matrices.length; i++){
+            	renderNextGene(i,geneNameList[i]);	
+            }
+            
+            this.$(".matrixView").hide();
+            var w = $("select").val(); 
+            this.$("."+w).show();
+            
+            this.$("select").change(function(){
+            	$(".matrixView").hide();
+                var w = $("select").val(); 
+                $("."+w).show();
+            });
+            //renderNextGene(0);
 			
-			this.$("select").change(function(){
+			/*this.$("select").change(function(){
                 var currentGeneName = $(this).val();
                 var matrixIndex = geneNameList.indexOf(currentGeneName);
                 renderNextGene(matrixIndex);
-            });
+            });*/
         },
 	});
 

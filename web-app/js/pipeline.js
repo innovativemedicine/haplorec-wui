@@ -218,14 +218,23 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
             });
             //cell size
             function cell_size(classname){
-            	var max_header= Math.max.apply(Math, that.$('th.'+classname).map(function(){ return $(this).width(); }).get());
-            	var max_body= Math.max.apply(Math, that.$('td.'+classname).map(function(){ return $(this).width(); }).get());
-            	var max_cell= Math.max(max_header, max_body);
-        		that.$("td."+classname).css("min-width",max_cell);
-        		that.$("th."+classname).css("min-width",max_cell);
+            	var max_header= that.$('th.'+classname).map(function(){ return $(this).width();});
+            	var max_body= that.$('td.'+classname).map(function(){ return $(this).width();});
+            	var y = new Array(max_header.length);
+                for(var i=0;i< max_header.length;i++){
+                    y[i]=Math.max(max_header[i],max_body[i]);
+                }
+                that.$("td."+classname).map(function(){
+        			var n = $(this).index()
+        			$(this).css("min-width",y[n])
+        			});
+                that.$("th."+classname).map(function(){
+        			var n = $(this).index()
+        			$(this).css("min-width",y[n])
+        			});
         	}
             cell_size("rightside");
-        	cell_size("leftside");
+            cell_size("leftside");
 		},
 	});
 	

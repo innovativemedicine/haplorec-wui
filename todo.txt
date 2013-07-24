@@ -185,3 +185,27 @@ order by gene_name, haplotype_name, snp_id
 
 - disable input for all but variants node
 - change icon from default .ico
+
+documentation:
+
+guidelines:
+- what is the feature (from the user's perspective)
+- paragraph (as concise as possible) describing how its implemented at a very high level
+- what sourcecode files does this feature depend on; for each file:
+  - what portion of the feature is this sourcefile responsible for
+  - show some blurb of important code from the sourcefile (possibly), and describe what the code does at a 
+    high level; this might be a summary of what the comments already say 
+    OR
+    - just point them in the direction of the important part of that file if its already well described
+
+steps:
+1. add inline comments to code you want to document
+2. write documentation (follow guidelines above)
+3. make a picture to illustrate a concept not already obvious from 1/2
+
+- stefanie
+  - incremental pipeline job status updates
+    - PipelineJobController.groovy
+      - status
+    - jsonstream.js
+    - pipelineJob/show.gsp

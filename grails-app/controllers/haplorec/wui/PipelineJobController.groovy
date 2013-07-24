@@ -395,9 +395,29 @@ class PipelineJobController {
         return jobInstance
     }
 
+    /* Render a response consisting of newline separated JSON objects:
+     * { target: "variant", state: "running" }
+     * { target: "variant", state: "done" }
+     * { target: "geneHaplotype", state: "running" }
+     * ...
+     *
+     * Each JSON object represents a state update to a target in the pipeline, where the possible 
+     * states are 'running', 'done', and 'failed' (refer to src/sql/mysql/haplorec_wui.sql for the 
+     * meaning of the states).
+     *
+     * The response will continue to render (in one long GET request) if the job is in the midst of 
+     * processing, and the client will incrementally receive the state updates as the job processes.
+     *
+     * 
+     *
+     */
     def status(Long jobId, String jobName) {
 
         def jobInstance = getJob(jobId, jobName) { identifier ->
+            /* The default HTTP reponse for grails renders an error page, but the status code is 
+             * still "200 OK". Send back an error code so the client knows to keep polling until the 
+             * Job gets created.
+             */
             response.status = 404
         }
         if (!jobInstance) {
@@ -413,16 +433,14 @@ class PipelineJobController {
         def jobDone = {rows ->
 
             return (
-				//there is a row in rows with row.state == 'failed'
-				//( [row.target for row in rows where row.state == 'done'] as Set ) ==
-				//( [d.target for d in dependencies] as Set )
 			     rows.find{ it.state == 'failed' } != null ||
 			     (rows.findAll{it.state=='done'}.collect{it.target} as Set) == dependencies.keySet()
             )
 
         }
 
-        // convert a JobState object to JSON
+        /* Convert a JobState object to JSON.
+         */
         def json = { jobState ->
             def jobStateProps = ['target', 'state'].inject([:]) { m, prop ->
               m[prop] = jobState[prop]

@@ -376,7 +376,8 @@ class PipelineJobController {
         sendMessage('third', 1)
         sendMessage('last', 0)
     }
-
+    /*Checks if the job exists 
+     */
     private Job getJob(Long jobId, String jobName, Closure notFound) {
         def jobInstance = null
         if (jobId != null) {
@@ -420,6 +421,7 @@ class PipelineJobController {
              */
             response.status = 404
         }
+         */
         if (!jobInstance) {
             return
         }
@@ -430,11 +432,13 @@ class PipelineJobController {
          
         def (_, dependencies) = Pipeline.dependencyGraph() 
 
+        /*Checks if the Job is done or if one of the dependencies failed by checking states
+         */
         def jobDone = {rows ->
 
             return (
 			     rows.find{ it.state == 'failed' } != null ||
-			     (rows.findAll{it.state=='done'}.collect{it.target} as Set) == dependencies.keySet()
+			     (rows.findAll{it.state == 'done'}.collect{it.target} as Set) == dependencies.keySet()
             )
 
         }
@@ -452,6 +456,10 @@ class PipelineJobController {
 		def request_timeout = 10
         def start_time = System.currentTimeMillis()
 		def rows=[]
+
+        /*Ouputs any new or changed rows from job_state table, and
+         *stops if jobDone returns true or time exceeds 10 minutes
+         */
         withSql(dataSource) { sql ->
             while (true) {
     			def new_rows = sql.rows('select * from job_state where job_id = :jobId order by id', [jobId:jobInstance.id])
@@ -461,7 +469,7 @@ class PipelineJobController {
 
     				rows = new_rows
     			}
-                log.error("state: ${rows.collect{it.state}}")
+
     			def time_passed = start_time - System.currentTimeMillis()
     			if (jobDone(rows) || time_passed >= request_timeout*60*1000) {
                     log.error("its done or failed")

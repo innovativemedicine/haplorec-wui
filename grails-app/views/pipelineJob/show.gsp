@@ -124,6 +124,10 @@ $(document).ready(function(){
   
 		</div>
 		<r:script>
+		/* Hiding the enitre dependency graph
+		 * using jsonstream.get() to show each dependency as it switches between states
+		 * and to show the entire dependency graph if all the dependencies are done
+		 */
 		$(document).ready(function(){
 				$("._jsPlumb_connector").hide();
 				$(".dependency").hide();
@@ -132,13 +136,13 @@ $(document).ready(function(){
 					'${createLink(controller:'pipelineJob', action:'status')}?jobId=${jobInstance.id}',
 						function(message){
 						
-							//getting rid of loading image
-							
+							/* Hiding loading spinner
+							 */
 							var y = $("#"+message.target).html().replace('<img src="${resource(dir: 'images', file: 'spin.gif')}" alt="Loading">','');
 							$("#"+message.target).html(y)
 							
-							//updating nodes
-							
+							/* Updating dependency's class with it's state
+							 */
 							if (message.state=="done"){
 								$("#"+message.target).removeClass("running failed").addClass("done").show();
 							}
@@ -150,8 +154,8 @@ $(document).ready(function(){
 								$("#"+message.target).removeClass("done running").addClass("failed").show();
 							}
 							
-							//showing complete graph
-							
+							/* showing complete graph
+							 */
 							if ($(".dependency").length==$(".done").length){
 								$("._jsPlumb_connector").show();
 								$("._jsPlumb_endpoint").show();

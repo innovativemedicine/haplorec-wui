@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>jsonstream.js &mdash; haplorec-wui-documentation 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="haplorec-wui-documentation 0.0.1 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="index.html">haplorec-wui-documentation 0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="jsonstream-js">
+<h1>jsonstream.js<a class="headerlink" href="#jsonstream-js" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">jsonstream</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">m</span><span class="p">)</span> <span class="p">{</span>
+	<span class="s1">&#39;use strict&#39;</span><span class="p">;</span>
+
+    <span class="cm">/* Reading a response consisting of newline separated JSON objects:</span>
+<span class="cm">     * { target: &quot;variant&quot;, state: &quot;running&quot; }</span>
+<span class="cm">     * { target: &quot;variant&quot;, state: &quot;done&quot; }</span>
+<span class="cm">     * { target: &quot;geneHaplotype&quot;, state: &quot;running&quot; }</span>
+<span class="cm">     * ...</span>
+<span class="cm">     * from a web page and applying a function to each line</span>
+<span class="cm">     *</span>
+<span class="cm">     * Using a XMLHTTPRequest to perform a asynchronous http request. </span>
+<span class="cm">     * readMessages() is applied with the handlers onprogress and onloadend</span>
+<span class="cm">     * readMessages() breaks up the response into individual lines </span>
+<span class="cm">     * and then applies the input function onMessage to each line</span>
+<span class="cm">     * </span>
+<span class="cm">     */</span>
+    <span class="nx">m</span><span class="p">.</span><span class="nx">get</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">onMessage</span><span class="p">,</span> <span class="nx">onError</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="kd">var</span> <span class="nx">xhr</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">XMLHttpRequest</span><span class="p">();</span>
+        <span class="nx">xhr</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="nx">url</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span> 
+        <span class="nx">xhr</span><span class="p">.</span><span class="nx">onprogress</span> <span class="o">=</span> <span class="nx">readMessages</span><span class="p">;</span>
+        <span class="nx">xhr</span><span class="p">.</span><span class="nx">onloadend</span> <span class="o">=</span> <span class="nx">readMessages</span><span class="p">;</span>
+        <span class="nx">xhr</span><span class="p">.</span><span class="nx">onerror</span> <span class="o">=</span> <span class="nx">onError</span><span class="p">;</span>
+        <span class="nx">xhr</span><span class="p">.</span><span class="nx">send</span><span class="p">();</span>
+        
+        <span class="kd">var</span> <span class="nx">l</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> 
+        <span class="kd">var</span> <span class="nx">begin</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+        <span class="kd">function</span> <span class="nx">readMessages</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">xhr</span><span class="p">.</span><span class="nx">status</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">onError</span> <span class="o">!==</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">onError</span><span class="p">();</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="kd">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">xhr</span><span class="p">.</span><span class="nx">responseText</span><span class="p">.</span><span class="nx">length</span>
+
+            <span class="cm">/* Finding the end of the next line</span>
+<span class="cm">             */</span>
+            <span class="k">while</span> <span class="p">(</span><span class="nx">l</span> <span class="o">&lt;</span> <span class="nx">L</span> <span class="o">&amp;&amp;</span> <span class="nx">xhr</span><span class="p">.</span><span class="nx">responseText</span><span class="p">[</span><span class="nx">l</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;\n&#39;</span><span class="p">){</span> 
+                <span class="nx">l</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">l</span> <span class="o">&lt;</span> <span class="nx">L</span><span class="p">){</span> 
+                <span class="kd">var</span> <span class="nx">message</span> <span class="o">=</span> <span class="nx">xhr</span><span class="p">.</span><span class="nx">responseText</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="nx">begin</span><span class="p">,</span> <span class="nx">l</span><span class="p">);</span>
+                <span class="nx">onMessage</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">message</span><span class="p">));</span>
+
+                <span class="cm">/* read past newline delimiter </span>
+<span class="cm">                 */</span>
+                <span class="nx">l</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+
+                <span class="cm">/* mark the beginning of the next message</span>
+<span class="cm">                 */</span> 
+                <span class="nx">begin</span> <span class="o">=</span> <span class="nx">l</span><span class="p">;</span>
+                
+                <span class="cm">/* there might still be messages available to read</span>
+<span class="cm">                 */</span>
+                <span class="nx">readMessages</span><span class="p">();</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+
+    <span class="k">return</span> <span class="nx">m</span><span class="p">;</span>
+    
+<span class="p">})(</span><span class="nx">jsonstream</span> <span class="o">||</span> <span class="p">{});</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/Jsonstream.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="index.html">haplorec-wui-documentation 0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Stefanie Mikloska.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>

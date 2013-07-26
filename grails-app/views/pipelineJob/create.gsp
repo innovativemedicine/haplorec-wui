@@ -35,10 +35,11 @@
 			</g:uploadForm> 
 		</div>
 		<r:script>
-		
+        /* Using asynchronous POST to submit form
+         * poll to see if the server has started creating the job
+         * then show progress just like in show page
+         */
 		$(document).ready(function(){
-		
-		//getting job list
 		
 			$(".save").click(function(){
 
@@ -83,15 +84,15 @@
                         loadingPage,
                         function(message) {
 
-                            //getting rid of numbers since they dont update, and loading image
-
+                            /* getting rid of numbers since they dont update, and loading image
+                             */    
                             var node_content = $("#"+message.target).html();
                             var new_content = node_content.replace(/[0-9()]/g,"");
                             new_content = new_content.replace('<img src="${resource(dir: 'images', file: 'spin.gif')}" alt="Loading">','');
                             $("#"+message.target).html(new_content);
 
-                            //updating nodes
-
+                            /* updating nodes
+                             */
                             if (message.state=="done"){
                                 $("#"+message.target).removeClass("running failed").addClass("done").show();
                             }

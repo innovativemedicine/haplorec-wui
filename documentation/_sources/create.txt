@@ -1,6 +1,0 @@
-pipelineJob/create.gsp
-****************************
-
-.. literalinclude:: ../grails-app/views/pipelineJob/create.gsp
-    :language: javascript
-    :lines: 38-130

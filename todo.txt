@@ -209,3 +209,7 @@ steps:
       - status
     - jsonstream.js
     - pipelineJob/show.gsp
+
+
+- create makefile with doc target that builds html sphinx documentation
+- 

@@ -23,25 +23,25 @@ import groovy.sql.Sql
 
 class PipelineJobController {
     DataSource dataSource
-	LinkGenerator grailsLinkGenerator
-	def grailsApplication
+    LinkGenerator grailsLinkGenerator
+    def grailsApplication
 
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 
-	// http://grails.org/doc/latest/guide/theWebLayer.html#commandObjects
-	@grails.validation.Validateable
-	static class DependencyInputCommand {
-		String datatype
-		byte[] input
+    // http://grails.org/doc/latest/guide/theWebLayer.html#commandObjects
+    @grails.validation.Validateable
+    static class DependencyInputCommand {
+        String datatype
+        byte[] input
 
-		static constraints = {
-			datatype validator: { haplorec.util.pipeline.PipelineInput.inputTables.contains(it?.toString()) }
-			input size: 0..5*1024*1024
-		}
-	}
+        static constraints = {
+            datatype validator: { haplorec.util.pipeline.PipelineInput.inputTables.contains(it?.toString()) }
+            input size: 0..5*1024*1024
+        }
+    }
 
     def index() {
-		log.error(PipelineInput.inputTables)
+        log.error(PipelineInput.inputTables)
         redirect(action: "list", params: params)
     }
 
@@ -53,13 +53,13 @@ class PipelineJobController {
     def create() {
         // [jobInstance: new Job(params), dependencyGraphJSON: dependencyGraphJSON()]
 
-    	[jobInstance: new Job(params), dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator, context: grailsApplication.mainContext,sampleInputs:true)]
+        [jobInstance: new Job(params), dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator, context: grailsApplication.mainContext,sampleInputs:true)]
 
-		}
+        }
 
 
-	def jsonList() {
-		render ( 
+    def jsonList() {
+        render ( 
             Job.list().collect { job ->
                 def props = [
                     id: job.id,
@@ -68,32 +68,32 @@ class PipelineJobController {
                 return props
             }
         as JSON )
-	}
+    }
 
     def save() {
         log.error("SAVE PARAMS: $params")
 
-		// inputs['variants'] == [file1, file2, ...]
-		Map inputs = new LinkedHashMap();
-		params.each { p, v ->
-			def m = (p =~ /^[^\d]+/)
-			if (m.getCount() == 1) {
-				def inputTable = m[0]
-				if (PipelineInput.inputTables.contains(inputTable)) {
+        // inputs['variants'] == [file1, file2, ...]
+        Map inputs = new LinkedHashMap();
+        params.each { p, v ->
+            def m = (p =~ /^[^\d]+/)
+            if (m.getCount() == 1) {
+                def inputTable = m[0]
+                if (PipelineInput.inputTables.contains(inputTable)) {
                     def inputKey = inputTable + 's'
                     if (!inputs.containsKey(inputTable)) {
                         inputs[inputKey] = []
                     }
-					inputs[inputKey].push(new BufferedReader(new InputStreamReader(v.getInputStream())))
-				}
-			}
-		}
-		log.error("INPUT PARAMS: $inputs")
+                    inputs[inputKey].push(new BufferedReader(new InputStreamReader(v.getInputStream())))
+                }
+            }
+        }
+        log.error("INPUT PARAMS: $inputs")
 
         def jobInstance = new Job(params)
         if (!jobInstance.save(flush: true)) {
-			log.error('bad pipeline job')
-			render(view: "create", model: [jobInstance: jobInstance, dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator)])
+            log.error('bad pipeline job')
+            render(view: "create", model: [jobInstance: jobInstance, dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator)])
             /* Return a status code other than 200 so that the client can handle invalid input errors appropriately.
              */
             response.status = 400
@@ -130,7 +130,7 @@ class PipelineJobController {
                 Pipeline.buildAll(job)
             } 
         } catch (InvalidInputException e) {
-			jobInstance.refresh()
+            jobInstance.refresh()
             // Don't delete the job on failure, since otherwise /pipelineJob/status might miss this occurence (race 
             // condition).
             // jobInstance.delete(flush: true)
@@ -221,27 +221,27 @@ class PipelineJobController {
     def private static dependencyGraphJSON(Map kwargs = [:])  {
 
         if (kwargs.counts == null) { kwargs.counts = false }
-		if (kwargs.sampleInputs == null) { kwargs.sampleInputs = false }
+        if (kwargs.sampleInputs == null) { kwargs.sampleInputs = false }
         def (tbl, dependencies) = Pipeline.dependencyGraph()
         List deps = dependencies.values().collect { d ->
             Util.makeRenderable(d) 
         } 
         if (kwargs.counts) {
             deps.each { d ->
-				// add counts for tables
+                // add counts for tables
                 d['count'] = kwargs.sql.rows("select count(*) as count from ${d.table} where job_id = :job_id", kwargs)[0]['count']
-				d['jobId'] = kwargs.job_id
-				d['listUrl'] = kwargs.grailsLinkGenerator.link(controller: d.table.replaceAll(/_([a-z])/, { it[0][1].toUpperCase() }), action: "listTemplate") 
+                d['jobId'] = kwargs.job_id
+                d['listUrl'] = kwargs.grailsLinkGenerator.link(controller: d.table.replaceAll(/_([a-z])/, { it[0][1].toUpperCase() }), action: "listTemplate") 
             }
         }
 
-		if (kwargs.sampleInputs) {
-			deps.each { d ->
-				// add sample input for each dependency
-				def filename = "/sample_input/${d.target}.txt"
-				def rows = []
+        if (kwargs.sampleInputs) {
+            deps.each { d ->
+                // add sample input for each dependency
+                def filename = "/sample_input/${d.target}.txt"
+                def rows = []
                 try {
-					def absoluteFilename = kwargs.context.getResource(filename).getFile().getCanonicalPath()
+                    def absoluteFilename = kwargs.context.getResource(filename).getFile().getCanonicalPath()
                     Input.dsv(absoluteFilename, asList: true).each { row ->
                         rows.add(row) // row is a list of strings, e.g. [PLATE, EXPERIMENT, CHIP, WELL_POSITION, ASSAY_ID, GENOTYPE_ID, DESCRIPTION, SAMPLE_ID, ENTRY_OPERATOR]
                     } 
@@ -250,8 +250,8 @@ class PipelineJobController {
                 } catch (FileNotFoundException e) {
                     // don't add rows / headers since we don't have a sample input file
                 } 
-			}
-		}
+            }
+        }
 
         def level = dependencies.phenotypeDrugRecommendation.levels(startAt: [
             dependencies.phenotypeDrugRecommendation, 
@@ -341,22 +341,22 @@ class PipelineJobController {
         )
     }
 
-	def main() {
-		def rowgetter = { filename ->
-			def rows = []
-			def absoluteFilename = grailsApplication.mainContext.getResource(filename).getFile().getCanonicalPath()
-			Input.dsv(absoluteFilename, asList: true).each { row ->
-				rows.add(row)
+    def main() {
+        def rowgetter = { filename ->
+            def rows = []
+            def absoluteFilename = grailsApplication.mainContext.getResource(filename).getFile().getCanonicalPath()
+            Input.dsv(absoluteFilename, asList: true).each { row ->
+                rows.add(row)
             }
-			return rows
+            return rows
         }
-		def x = rowgetter("/sample_input/variant.txt")
-		def y = rowgetter("/sample_output/phenotype_drug_recommendation_report.txt")
-		def z = rowgetter("/sample_output/genotype_drug_recommendation_report.txt")
-		[sampleVariantJSON: ( [header:x[0], rows: x[1,2..x.size()-1] ] as JSON ),
-		 samplephenoJSON: ( [header: y[0], rows: y[1,2..y.size()-1] ] as JSON ),
-		 samplegenoJSON: ( [header: z[0], rows: z[1,2..z.size()-1] ] as JSON ),]
-	}
+        def x = rowgetter("/sample_input/variant.txt")
+        def y = rowgetter("/sample_output/phenotype_drug_recommendation_report.txt")
+        def z = rowgetter("/sample_output/genotype_drug_recommendation_report.txt")
+        [sampleVariantJSON: ( [header:x[0], rows: x[1,2..x.size()-1] ] as JSON ),
+         samplephenoJSON: ( [header: y[0], rows: y[1,2..y.size()-1] ] as JSON ),
+         samplegenoJSON: ( [header: z[0], rows: z[1,2..z.size()-1] ] as JSON ),]
+    }
 
     // TOOD: remove this, it just to make testing jsonparse.js easy
     def jsonstream() {
@@ -428,7 +428,7 @@ class PipelineJobController {
         }
 
         response.contentType = 'application/json'
-		response.outputStream.flush()
+        response.outputStream.flush()
         def pollTimeout = 1 
          
         def (_, dependencies) = Pipeline.dependencyGraph() 
@@ -438,8 +438,8 @@ class PipelineJobController {
         def jobDone = {rows ->
 
             return (
-			     rows.find{ it.state == 'failed' } != null ||
-			     (rows.findAll{it.state == 'done'}.collect{it.target} as Set) == dependencies.keySet()
+                 rows.find{ it.state == 'failed' } != null ||
+                 (rows.findAll{it.state == 'done'}.collect{it.target} as Set) == dependencies.keySet()
             )
 
         }
@@ -454,29 +454,29 @@ class PipelineJobController {
             (jobStateProps as JSON).toString()
         }
 
-		def request_timeout = 10
+        def request_timeout = 10
         def start_time = System.currentTimeMillis()
-		def rows=[]
+        def rows=[]
 
         /*Ouputs any new or changed rows from job_state table, and
          *stops if jobDone returns true or time exceeds 10 minutes
          */
         withSql(dataSource) { sql ->
             while (true) {
-    			def new_rows = sql.rows('select * from job_state where job_id = :jobId order by id', [jobId:jobInstance.id])
-    			if ((rows.collect{it.state}!=new_rows.collect{it.state})){
-    				response.outputStream <<  new_rows.findAll{!(it in rows)}.collect { json(it) + '\n' }.join('')
+                def new_rows = sql.rows('select * from job_state where job_id = :jobId order by id', [jobId:jobInstance.id])
+                if ((rows.collect{it.state}!=new_rows.collect{it.state})){
+                    response.outputStream <<  new_rows.findAll{!(it in rows)}.collect { json(it) + '\n' }.join('')
                     response.outputStream.flush()
 
-    				rows = new_rows
-    			}
+                    rows = new_rows
+                }
 
-    			def time_passed = start_time - System.currentTimeMillis()
-    			if (jobDone(rows) || time_passed >= request_timeout*60*1000) {
+                def time_passed = start_time - System.currentTimeMillis()
+                if (jobDone(rows) || time_passed >= request_timeout*60*1000) {
                     log.error("its done or failed")
                     break
-    			}
-    			sleep(pollTimeout*1000)
+                }
+                sleep(pollTimeout*1000)
             }
         }
          

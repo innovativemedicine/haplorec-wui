@@ -216,4 +216,20 @@ steps:
 - use relative paths in sphinx, not hardcoded ones
 - add inline code for important functions
 
-- 
+- stuff left to document:
+  - conventions / patterns of project
+    - e.g. for each job_patient_* table there is a list.gsp _list.gsp view used for displaying results of a target in a 
+      PipelineJob
+  - tools used
+    - dustjs
+    - Backbone
+    - jsPlumb
+  - how to use tools in the project
+    - how to add new dustjs / backbone views to project (e.g. add a line to ApplicationResources.groovy, general pattern of 
+      using pipeline.Views.Dust)
+  - dependency graph
+    - layout algorithm description
+    - layout algorithm pseudocode
+  - m.Views.matrix
+    - general idea of what the code does (max widths and what have you)
+    - makeing stuff scroll together

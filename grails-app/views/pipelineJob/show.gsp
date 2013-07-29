@@ -124,6 +124,7 @@ $(document).ready(function(){
   
 		</div>
 		<r:script>
+		//SPHINX insert
 		/* Hiding the enitre dependency graph
 		 * using jsonstream.get() to show each dependency as it switches between states
 		 * and to show the entire dependency graph if all the dependencies are done
@@ -164,7 +165,7 @@ $(document).ready(function(){
 				);
 				
 		});	
-		
+		//SPHINX end insert
 		</r:script>
 	</body>
 </html>

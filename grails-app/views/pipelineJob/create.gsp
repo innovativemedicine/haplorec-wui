@@ -35,6 +35,7 @@
 			</g:uploadForm> 
 		</div>
 		<r:script>
+        // SPHINX insert
         /* Using asynchronous POST to submit form
          * poll to see if the server has started creating the job
          * then show progress just like in show page
@@ -129,7 +130,7 @@
 
             });	
 		});
-		
+		// SPHINX end insert
 		</r:script>
 	</body>
 </html>

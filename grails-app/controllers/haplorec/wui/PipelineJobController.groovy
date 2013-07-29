@@ -395,7 +395,7 @@ class PipelineJobController {
         }
         return jobInstance
     }
-
+    // SPHINX insert
     /* Render a response consisting of newline separated JSON objects:
      * { target: "variant", state: "running" }
      * { target: "variant", state: "done" }
@@ -412,6 +412,7 @@ class PipelineJobController {
      * 
      *
      */
+     
     def status(Long jobId, String jobName) {
 
         def jobInstance = getJob(jobId, jobName) { identifier ->
@@ -421,7 +422,7 @@ class PipelineJobController {
              */
             response.status = 404
         }
-         */
+        
         if (!jobInstance) {
             return
         }
@@ -480,5 +481,6 @@ class PipelineJobController {
         }
          
     }
+    // SPHINX end insert
 
 }

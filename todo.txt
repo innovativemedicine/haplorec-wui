@@ -211,5 +211,9 @@ steps:
     - pipelineJob/show.gsp
 
 
-- create makefile with doc target that builds html sphinx documentation
+- create a makefile (called Makefile, in the root directory) with a doc target that builds html sphinx documentation (i.e. runs your sphinx-build command)
+- make the pseudocode show in a 'grid/terminal' style font (fixed-width)
+- use relative paths in sphinx, not hardcoded ones
+- add inline code for important functions
+
 - 

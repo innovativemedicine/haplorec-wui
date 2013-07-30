@@ -233,3 +233,18 @@ steps:
   - m.Views.matrix
     - general idea of what the code does (max widths and what have you)
     - makeing stuff scroll together
+
+- features:
+  - scraping data from PharmGKB (stefanie)
+    - python script that uses some scraping framework 
+      to fill the tables used in various stages of the 
+      pipeline; namely:
+      - drug_recommendation
+      - gene_phenotype_drug_recommendation
+      - gene_haplotype_variant
+      - genotype_phenotype
+      - genotype_drug_recommendation
+  - broad overview of project (me)
+  - DependencyGraph 
+    - _levelToTargets: a mapping a "level" in the graph 
+      to a list of targets at that level

@@ -24,3 +24,16 @@ target
 .classpath
 *.class
 *.pyc
+/documentation
+
+# vim files
+*~
+.*.s??
+*.sw?
+*.vim
+
+# ctags
+tags
+
+# python
+*.pyc

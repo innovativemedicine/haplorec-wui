@@ -9,7 +9,7 @@ How the graph layout is created
 Calculating the level of each node
 ++++++++++++++++++++++++++++++++++
 
-The level of a node is the length of the shortest path, which starts from the node and ends with a node with no dependents.
+The level of a node is the length of the shortest path from that node to a node with no dependents.
 
 The path length is equal to the number of arrows/ line connectors.
 
@@ -22,6 +22,8 @@ For example in the graph bellow the variant node has these paths to level zero n
     - (Variant -> Haplotypes -> Genotypes -> Phenotypes -> Phenotype Drug Recommendation) length 4
 
 Therefore the node variant has level 2.
+
+TODO: reference Dependency.groovy
 
 The code for calculating node levels is in pipeline.js under the DependencyGraph model.
 

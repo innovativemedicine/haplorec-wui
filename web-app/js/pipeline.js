@@ -177,7 +177,16 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
         _init : function() {
             var that = this;
             
-            //highlighting
+            /* Since two tables are used to create the matrix,
+             * must match up highlighting the rows, and scrolling
+             * so the matrix acts like one table
+             */
+
+            /* Highlighting
+             * If the mouse is on a row on one side of the matrix, add active class to highlight 
+             * and use the row's index to highlight the row with the same index
+             * on the other side of the matrix
+             */
             this.$(".leftTable tr.rows").hover(
                     function(){
                         $(this).addClass('active');
@@ -199,15 +208,16 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
                     }
                 );
             
-            //scrolling
-            this.$('.haplotypes').scroll(function () {
-                that.$(".alleles").scrollTop(that.$(".haplotypes").scrollTop());
-            });
+            /* Scrolling
+             * Matching up scrolling of alleles left and right with snp
+             * and up and down with haplotypes
+             * Also matching up scrolling of haplotypes left and right with haplotypeTitle
+             *
+             * note you cannot scroll up and down on haplotypes unless you are scrolling on alleles
+             * the same with left and right on snp
+             */
             this.$('.alleles').scroll(function () {
                 that.$(".haplotypes").scrollTop(that.$(".alleles").scrollTop());
-            });
-            this.$('.snp').scroll(function () {
-                that.$(".alleles").scrollLeft(that.$(".snp").scrollLeft());
             });
             this.$('.alleles').scroll(function () {
                 that.$(".snp").scrollLeft(that.$(".alleles").scrollLeft());
@@ -215,7 +225,10 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
             this.$('.haplotypes').scroll(function () {
                 that.$(".haplotypeTitle").scrollLeft(that.$(".haplotypes").scrollLeft());
             });
-            //cell size
+            
+            /* Cell size
+             * find if the tbody cell or the thead cell is larger and set both to the max for each coloumn
+             */
             function cell_size(classname){
                 var max_header= that.$('th.'+classname).map(function(){ return $(this).width();});
                 var max_body= that.$('td.'+classname).map(function(){ return $(this).width();});
@@ -237,6 +250,7 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
         },
     });
     
+    //SPHINX matrixList start
     m.Views.matrixList = m.Views.Dust.extend({
         template: "pipeline/novelHaplotypeReport",
         _init: function(){
@@ -263,6 +277,7 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
             this.$("select").change(changeGene);
         },
     });
+    //SPHINX matrixList end
 
     m.Views.DependencyFile = m.Views.Dust.extend({
         template : "pipeline/dependencyFile",

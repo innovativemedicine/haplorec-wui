@@ -5,8 +5,8 @@
 
 Job Status Feature
 ******************
-The Job Status feature allows the user to see the progress of a new Job being created.
-It shows each part of the dependency graph as it loads on the job's create and show page.
+
+The Job Status feature allows the user to see the progress of a new Job being created. It shows each part of the dependency graph as it loads on the job's create and show page.
 
 Assumed Background
 ==================
@@ -71,4 +71,4 @@ Relevant Code
     PipelineJob
     show
     create
-    Jsonstream
+    Jsonstream 

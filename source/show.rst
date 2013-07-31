@@ -3,4 +3,5 @@ pipelineJob/show.gsp
 
 .. literalinclude:: ../grails-app/views/pipelineJob/show.gsp
     :language: javascript
-    :lines: 127-166
+    :start-after: SPHINX insert
+    :end-before: SPHINX end insert 

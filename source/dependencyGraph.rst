@@ -1,0 +1,76 @@
+Dependency Graph
+****************
+
+The dependency graph is displayed for each job and on the create page.
+
+How the graph layout is created
+===============================
+
+Calculating the level of each node
+++++++++++++++++++++++++++++++++++
+
+The level of a node is the length of the shortest path, which starts from the node and ends with a node with no dependents.
+
+The path length is equal to the number of arrows/ line connectors.
+
+This implies nodes with no dependents have level zero.
+
+For example in the graph bellow the variant node has these paths to level zero nodes
+
+    - (Variant -> Haplotypes -> Novel Haplotypes) length 2
+    - (Variant -> Haplotypes -> Genotypes -> Genotype Drug Recommendation) length 3
+    - (Variant -> Haplotypes -> Genotypes -> Phenotypes -> Phenotype Drug Recommendation) length 4
+
+Therefore the node variant has level 2.
+
+The code for calculating node levels is in pipeline.js under the DependencyGraph model.
+
+.. toctree::
+    pipelineJs
+
+Positioning of the Nodes
+++++++++++++++++++++++++
+
+The nodes of the graph are displayed in an m-by-n grid.
+
+.. figure::  pictures/graphGrid.png
+   :align:   center
+ 
+
+n **=** number of columns **=** var numlevels **=** (maximum node level) + 1 
+
+m **=** number of rows **=** the maximum number of nodes in a level
+
+column number of node = (n - 1) - node's level 
+
+(column width) :sub:`i` **=** maximum node width in column i
+
+(row height) :sub:`j` **=** maximum node height in row j
+
+horizontal space between columns =
+
+.. figure::  pictures/eq1.png
+   :align:   center
+
+vertical space between rows =
+
+.. figure::  pictures/eq2.png
+   :align:   center
+
+Issues you may encounter
+++++++++++++++++++++++++
+
+The node's level is used to determine which column it goes in, but which row the node is placed is arbitrary.
+This causes issues in the appearance of the graph. Some cases are if a node depends on two other nodes in its column or
+if a node depends on another node in the same level but they are not placed in adjacent rows.
+
+For example if Phenotypes, Genotypes, and Haplotypes have the same level, and Phentoypes is dependent on genotypes and 
+haplotypes the graph may appear like this:
+
+.. figure:: pictures/messedGraph.png
+    :align: center
+
+What the dependency graph does with input files
+===============================================
+...
+

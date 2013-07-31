@@ -6,18 +6,14 @@
 
 
 Welcome to haplorec-wui's documentation!
-======================================================
+========================================
 
 Contents:
 
 .. toctree::
 
     jobStatus
+    tools
+    dependencyGraph
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
 

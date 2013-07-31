@@ -71,9 +71,6 @@
                     });
                 });
 
-                /* Check the job status by loading it in an iframe.  Since the job may not be created 
-                 * yet, this request might fail, so we poll until it succeeds.
-                 */
                 var loadingPage = "${createLink(controller: 'pipelineJob', action: 'status')}?jobName="+$("#jobName").val();
                 var timeoutID = null;
 

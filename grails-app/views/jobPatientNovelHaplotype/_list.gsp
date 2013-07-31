@@ -3,6 +3,7 @@
 
 <r:require modules="pipeline, backbone, jquery, jsonstream"/>
 <r:script>
+// SPHINX start
 var ghmView;
 $(document).ready(function(){
 	var matrixList = ${matrixJSON}
@@ -12,6 +13,7 @@ $(document).ready(function(){
 	         });
 	ghmView.render();
 });
+//SPHINX end
 </r:script>
 
 <!DOCTYPE html>

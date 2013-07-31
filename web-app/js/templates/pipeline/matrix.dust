@@ -17,7 +17,7 @@
 		{#novelHaplotypes}
 			<tr class="novel rows">
 				{#.}
-					<td class="leftside">Sample {sampleId}, Physical Chromosome {physicalChromosome}</td>
+					<td class="leftside">{sampleId}, chr{physicalChromosome} ({hetCombo}/{hetCombos})</td>
 				{/.}
 			</tr>
 		{/novelHaplotypes}

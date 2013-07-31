@@ -5,9 +5,9 @@ import org.springframework.dao.DataIntegrityViolationException
 import haplorec.wui.Util
 import javax.sql.DataSource
 import haplorec.util.pipeline.Report
-import haplorec.util.pipeline.Report.GeneHaplotypeMatrix
-import haplorec.util.pipeline.Report.GeneHaplotypeMatrix.NovelHaplotype
-import haplorec.util.pipeline.Report.GeneHaplotypeMatrix.Haplotype
+import haplorec.util.data.GeneHaplotypeMatrix
+import haplorec.util.data.GeneHaplotypeMatrix.NovelHaplotype
+import haplorec.util.data.GeneHaplotypeMatrix.Haplotype
 
 
 @Mixin(JobPatientControllerMixin)
@@ -27,7 +27,13 @@ class JobPatientNovelHaplotypeController {
             /* Add attributes mimicing JSON structure to matrix.
              */
             if (haplotype instanceof NovelHaplotype) {
-                matrix.novelHaplotypes.add([sampleId: haplotype.patientId, physicalChromosome: haplotype.physicalChromosome, alleles: alleles])
+                matrix.novelHaplotypes.add([
+                    sampleId: haplotype.patientId,
+                    physicalChromosome: haplotype.physicalChromosome,
+                    hetCombo: haplotype.hetCombo ?: 1,
+                    hetCombos: haplotype.hetCombos ?: 1,
+                    alleles: alleles,
+                ])
             } else {
                 matrix.haplotypes.add([haplotypeName: haplotype.haplotypeName, alleles: alleles])
             }

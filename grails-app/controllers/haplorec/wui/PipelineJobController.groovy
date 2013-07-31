@@ -8,9 +8,9 @@ import haplorec.util.Input
 import haplorec.util.pipeline.PipelineInput
 import haplorec.util.pipeline.Pipeline
 import haplorec.util.pipeline.Report
-import haplorec.util.pipeline.Report.GeneHaplotypeMatrix
-import haplorec.util.pipeline.Report.GeneHaplotypeMatrix.NovelHaplotype
-import haplorec.util.pipeline.Report.GeneHaplotypeMatrix.Haplotype
+import haplorec.util.data.GeneHaplotypeMatrix
+import haplorec.util.data.GeneHaplotypeMatrix.NovelHaplotype
+import haplorec.util.data.GeneHaplotypeMatrix.Haplotype
 import haplorec.util.dependency.Dependency
 
 import haplorec.util.Input.InvalidInputException
@@ -322,11 +322,11 @@ class PipelineJobController {
                     writer.append(System.getProperty("line.separator"))
                     Row.asDSV(new Object() {
                         def each(Closure f) {
-                            f(["Haplotype/SNP"] + geneHaplotypeMatrix.snpIds)
+                            f(["Haplotype"] + geneHaplotypeMatrix.snpIds)
                             geneHaplotypeMatrix.each { haplotype, alleles ->
                                 String haplotypeStr
                                 if (haplotype instanceof NovelHaplotype) {
-                                    haplotypeStr = "Sample ${haplotype.patientId}, Chromosome ${haplotype.physicalChromosome}"
+                                    haplotypeStr = "${haplotype.patientId}, chr${haplotype.physicalChromosome} (${haplotype.hetCombo ?: 1}/${haplotype.hetCombos ?: 1})"
                                 } else {
                                     assert haplotype instanceof Haplotype
                                     haplotypeStr = haplotype.haplotypeName

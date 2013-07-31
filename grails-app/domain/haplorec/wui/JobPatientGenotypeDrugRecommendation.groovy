@@ -3,6 +3,8 @@ package haplorec.wui
 class JobPatientGenotypeDrugRecommendation implements Serializable {
 
 	String patientId
+    Integer hetCombo
+    Integer hetCombos
 	Job job
 	DrugRecommendation drugRecommendation
 
@@ -20,5 +22,7 @@ class JobPatientGenotypeDrugRecommendation implements Serializable {
 
 	static constraints = {
 		patientId maxSize: 50
+        hetCombo nullable: true
+        hetCombos nullable: true
 	}
 }

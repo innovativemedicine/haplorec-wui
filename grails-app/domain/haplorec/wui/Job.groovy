@@ -6,6 +6,7 @@ class Job {
 
 	static hasMany = [jobPatientNovelHaplotypes: JobPatientNovelHaplotype,
                       jobStates: JobState,
+                      jobPatientHetVariants: JobPatientHetVariant,
 					  jobPatientGenotypeDrugRecommendations: JobPatientGenotypeDrugRecommendation,
 	                  jobPatientPhenotypeDrugRecommendations: JobPatientPhenotypeDrugRecommendation,
 	                  jobPatientGeneHaplotypes: JobPatientGeneHaplotype,

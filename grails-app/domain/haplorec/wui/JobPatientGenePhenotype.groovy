@@ -4,6 +4,8 @@ package haplorec.wui
 class JobPatientGenePhenotype implements Serializable {
 
 	String patientId
+    Integer hetCombo
+    Integer hetCombos
 	String geneName
 	String phenotypeName
 	Job job
@@ -22,6 +24,8 @@ class JobPatientGenePhenotype implements Serializable {
 
 	static constraints = {
 		patientId nullable: true, maxSize: 50
+        hetCombo nullable: true
+        hetCombos nullable: true
 		geneName nullable: true, maxSize: 50
 		phenotypeName nullable: true, maxSize: 50
 	}

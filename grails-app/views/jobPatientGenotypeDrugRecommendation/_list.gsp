@@ -33,6 +33,8 @@
 					
 						<g:sortableColumn property="patientId" title="${message(code: 'jobPatientGenotypeDrugRecommendation.patientId.label', default: 'Patient Id')}" params="[jobId:jobId]"/>
 
+						<g:sortableColumn property="hetCombo" title="${message(code: 'jobPatientGenotypeDrugRecommendation.hetCombo.label', default: 'Het Combo')}" />
+
                         <%-- join drugRecommendation
 						<th><g:message code="jobPatientGenotypeDrugRecommendation.drugRecommendation.label" default="Drug Recommendation" /></th>
                         --%>
@@ -58,6 +60,8 @@
 					<tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
 					
 						<td>${fieldValue(bean: jobPatientGenotypeDrugRecommendationInstance, field: "patientId")}</td>
+
+						<td>${fieldValue(bean: jobPatientGenotypeDrugRecommendationInstance, field: "hetCombo") ?: 1} / ${fieldValue(bean: jobPatientGenotypeDrugRecommendationInstance, field: "hetCombos") ?: 1}</td>
 					
                         <%-- join drugRecommendation
 						<td>${fieldValue(bean: jobPatientGenotypeDrugRecommendationInstance, field: "drugRecommendation")}</td>

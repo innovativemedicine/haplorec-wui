@@ -185,3 +185,7 @@ order by gene_name, haplotype_name, snp_id
 
 - disable input for all but variants node
 - change icon from default .ico
+
+- add wui stuff (het_combo, new hetVariant table, make the graph look ok)
+  - add het_combo / het_combos to GeneHaplotypeMatrix.novelHaplotypeReport
+  - add het_combo / het_combos to report functions (add het_combo to join fields for job_patient tables, except for the variant table)

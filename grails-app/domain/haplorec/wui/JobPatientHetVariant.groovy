@@ -1,14 +1,14 @@
 package haplorec.wui
 
 @Mixin(JobPatientDomainMixin)
-class JobPatientGeneHaplotype implements Serializable {
+class JobPatientHetVariant implements Serializable {
 
 	String patientId
     Integer hetCombo
     Integer hetCombos
 	String physicalChromosome
-	String geneName
-	String haplotypeName
+	String snpId
+	String allele
 	Job job
 
     static namedQueries = {
@@ -28,7 +28,7 @@ class JobPatientGeneHaplotype implements Serializable {
         hetCombo nullable: true
         hetCombos nullable: true
 		physicalChromosome nullable: true, maxSize: 50
-		geneName nullable: true, maxSize: 50
-		haplotypeName nullable: true, maxSize: 50
+		snpId nullable: true, maxSize: 50
+		allele nullable: true, maxSize: 50
 	}
 }

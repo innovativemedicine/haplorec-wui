@@ -20,6 +20,8 @@
 						<g:sortableColumn property="patientId" title="${message(code: 'jobPatientGeneHaplotype.patientId.label', default: 'Patient Id')}" params="[jobId:jobId]"/>
 
 						<g:sortableColumn property="physicalChromosome" title="${message(code: 'jobPatientGeneHaplotype.physicalChromosome.label', default: 'Physical Chromosome')}" params="[jobId:jobId]"/>
+
+						<g:sortableColumn property="hetCombo" title="${message(code: 'jobPatientGeneHaplotype.hetCombo.label', default: 'Het Combo')}" params="[jobId:jobId]"/>
 					
 						<g:sortableColumn property="geneName" title="${message(code: 'jobPatientGeneHaplotype.geneName.label', default: 'Gene Name')}" params="[jobId:jobId]"/>
 					
@@ -38,6 +40,8 @@
 						<td>${fieldValue(bean: jobPatientGeneHaplotypeInstance, field: "patientId")}</td>
 
 						<td>${fieldValue(bean: jobPatientGeneHaplotypeInstance, field: "physicalChromosome")}</td>
+
+						<td>${fieldValue(bean: jobPatientGeneHaplotypeInstance, field: "hetCombo") ?: 1} / ${fieldValue(bean: jobPatientGeneHaplotypeInstance, field: "hetCombos") ?: 1}</td>
 					
 						<td>${fieldValue(bean: jobPatientGeneHaplotypeInstance, field: "geneName")}</td>
 					

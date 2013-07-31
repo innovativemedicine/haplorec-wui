@@ -34,6 +34,8 @@
 					
 						<g:sortableColumn property="patientId" title="${message(code: 'jobPatientPhenotypeDrugRecommendation.patientId.label', default: 'Patient Id')}" params="[jobId:jobId]"/>
 
+						<g:sortableColumn property="hetCombo" title="${message(code: 'jobPatientPhenotypeDrugRecommendation.hetCombo.label', default: 'Het Combo')}" />
+
                         <%-- join drugRecommendation
 						<th><g:message code="jobPatientPhenotypeDrugRecommendation.drugRecommendation.label" default="Drug Recommendation" /></th>
                         --%>
@@ -59,6 +61,8 @@
 					<tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
 					
 						<td>${fieldValue(bean: jobPatientPhenotypeDrugRecommendationInstance, field: "patientId")}</td>
+
+						<td>${fieldValue(bean: jobPatientPhenotypeDrugRecommendationInstance, field: "hetCombo") ?: 1} / ${fieldValue(bean: jobPatientPhenotypeDrugRecommendationInstance, field: "hetCombos") ?: 1}</td>
 					
                         <%-- join drugRecommendation
 						<td>${fieldValue(bean: jobPatientPhenotypeDrugRecommendationInstance, field: "drugRecommendation")}</td>

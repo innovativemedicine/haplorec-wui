@@ -28,8 +28,10 @@ class PipelineJobController {
 
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 
-    // http://grails.org/doc/latest/guide/theWebLayer.html#commandObjects
+    /* http://grails.org/doc/latest/guide/theWebLayer.html#commandObjects
+     */
     @grails.validation.Validateable
+
     static class DependencyInputCommand {
         String datatype
         byte[] input
@@ -41,7 +43,6 @@ class PipelineJobController {
     }
 
     def index() {
-        log.error(PipelineInput.inputTables)
         redirect(action: "list", params: params)
     }
 
@@ -51,13 +52,12 @@ class PipelineJobController {
     }
 
     def create() {
-        // [jobInstance: new Job(params), dependencyGraphJSON: dependencyGraphJSON()]
-
         [jobInstance: new Job(params), dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator, context: grailsApplication.mainContext,sampleInputs:true)]
+    }
 
-        }
-
-
+    /* Changes the list of jobs to a JSON list
+     * each job is converted to {id: job.id, jobName: job.jobName}
+     */
     def jsonList() {
         render ( 
             Job.list().collect { job ->
@@ -70,10 +70,17 @@ class PipelineJobController {
         as JSON )
     }
 
+    /* The save function has been altered from the generated save function 
+     * -to add input files to the inputs map based on target
+     * -for each target define methods beforeBuild, afterBuild, onFail
+     * -then build each node
+     * -once all the nodes are done being built redirct to show page of that job
+     */
     def save() {
         log.error("SAVE PARAMS: $params")
 
-        // inputs['variants'] == [file1, file2, ...]
+        /* inputs['variants'] == [file1, file2, ...]
+         */ 
         Map inputs = new LinkedHashMap();
         params.each { p, v ->
             def m = (p =~ /^[^\d]+/)
@@ -101,7 +108,8 @@ class PipelineJobController {
         }
 
         try {
-            // Run the pipeline
+            /* Run the pipeline
+             */ 
             withSql(dataSource) { sql ->
                 def jobId = jobInstance.id
                 def (_, job) = Pipeline.pipelineJob(inputs + [jobId: jobInstance.id], sql)
@@ -122,6 +130,8 @@ class PipelineJobController {
                     log.error("failed: ${jobState.properties}")
                     jobState.save(flush: true)
                 }
+
+
                 job.values().each { dependency ->
                     dependency.beforeBuild += beforeBuild 
                     dependency.afterBuild += afterBuild 
@@ -131,9 +141,10 @@ class PipelineJobController {
             } 
         } catch (InvalidInputException e) {
             jobInstance.refresh()
-            // Don't delete the job on failure, since otherwise /pipelineJob/status might miss this occurence (race 
-            // condition).
-            // jobInstance.delete(flush: true)
+            /* Don't delete the job on failure, since otherwise /pipelineJob/status might miss this occurence (race 
+             * condition).
+             * jobInstance.delete(flush: true)
+             */
             jobInstance.errors.reject('job.errors.invalidInput', e.message)
             render(view: "create", model: [jobInstance: jobInstance, dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator)])
             return
@@ -151,6 +162,8 @@ class PipelineJobController {
             return
         }
 
+        /* Defining the dependency graph with current job 
+         */
         def json
         withSql(dataSource) { sql ->
             json = dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator, sql: sql, job_id: jobInstance.id, counts: true)
@@ -217,7 +230,13 @@ class PipelineJobController {
         }
     }
 
-
+    /* Defining dependencyGraphJSON
+     * takes in map
+     * Dispalys Counts on the node if map.counts=true
+     * Displays Sample Input files if map.sampleInputs = true
+     * running function levels on the dependencies
+     * returns JSON of dependency Graph, which includes level and dependencies
+     */
     def private static dependencyGraphJSON(Map kwargs = [:])  {
 
         if (kwargs.counts == null) { kwargs.counts = false }
@@ -228,7 +247,8 @@ class PipelineJobController {
         } 
         if (kwargs.counts) {
             deps.each { d ->
-                // add counts for tables
+                /* add counts for tables
+                 */
                 d['count'] = kwargs.sql.rows("select count(*) as count from ${d.table} where job_id = :job_id", kwargs)[0]['count']
                 d['jobId'] = kwargs.job_id
                 d['listUrl'] = kwargs.grailsLinkGenerator.link(controller: d.table.replaceAll(/_([a-z])/, { it[0][1].toUpperCase() }), action: "listTemplate") 
@@ -237,18 +257,22 @@ class PipelineJobController {
 
         if (kwargs.sampleInputs) {
             deps.each { d ->
-                // add sample input for each dependency
+                /* add sample input for each dependency
+                 */ 
                 def filename = "/sample_input/${d.target}.txt"
                 def rows = []
                 try {
                     def absoluteFilename = kwargs.context.getResource(filename).getFile().getCanonicalPath()
                     Input.dsv(absoluteFilename, asList: true).each { row ->
-                        rows.add(row) // row is a list of strings, e.g. [PLATE, EXPERIMENT, CHIP, WELL_POSITION, ASSAY_ID, GENOTYPE_ID, DESCRIPTION, SAMPLE_ID, ENTRY_OPERATOR]
+                        rows.add(row) 
+                        /* row is a list of strings, e.g. [PLATE, EXPERIMENT, CHIP, WELL_POSITION, ASSAY_ID, GENOTYPE_ID, DESCRIPTION, SAMPLE_ID, ENTRY_OPERATOR]
+                         */
                     } 
                     d['header']=rows[0]
                     d['rows'] = rows[1,2..rows.size()-1]
                 } catch (FileNotFoundException e) {
-                    // don't add rows / headers since we don't have a sample input file
+                    /* don't add rows/ headers since we don't have a sample input file
+                     */
                 } 
             }
         }
@@ -265,6 +289,9 @@ class PipelineJobController {
         return depGraph as JSON
     }
 
+    /* Report Function
+     * Outputs report as text file 
+     */ 
     def private report(Map kwargs = [:], Long id, generateReport) {
         if (kwargs.filename == null) { kwargs.filename = 'output.txt' }
         if (kwargs.output == null) {
@@ -300,6 +327,8 @@ class PipelineJobController {
         }
     }
 
+    /* Creating reports for genotypeDrugRecommendation, phenotypeDrugRecommendation and novelHaplotypes
+     */
     def genotypeReport(Long id) {
         report(id, Report.&genotypeDrugRecommendationReport,
             filename: 'genotype_drug_recommendation_report.txt', 
@@ -312,12 +341,16 @@ class PipelineJobController {
         )
     }
 
+    /* novelHaplotypeReport
+     * pieces geneHaplotypeMatrix back together and outputs it
+     */
     def novelHaplotypeReport(Long id) {
         report(id, Report.&novelHaplotypeReport,
             filename: 'novel_haplotype_report.txt', 
             output: { rows, writer ->
                 rows.each { geneHaplotypeMatrix ->
-                    // Output a gene header
+                    /* Output a gene header
+                     */
                     writer.append(geneHaplotypeMatrix.geneName)
                     writer.append(System.getProperty("line.separator"))
                     Row.asDSV(new Object() {
@@ -341,42 +374,10 @@ class PipelineJobController {
         )
     }
 
-    def main() {
-        def rowgetter = { filename ->
-            def rows = []
-            def absoluteFilename = grailsApplication.mainContext.getResource(filename).getFile().getCanonicalPath()
-            Input.dsv(absoluteFilename, asList: true).each { row ->
-                rows.add(row)
-            }
-            return rows
-        }
-        def x = rowgetter("/sample_input/variant.txt")
-        def y = rowgetter("/sample_output/phenotype_drug_recommendation_report.txt")
-        def z = rowgetter("/sample_output/genotype_drug_recommendation_report.txt")
-        [sampleVariantJSON: ( [header:x[0], rows: x[1,2..x.size()-1] ] as JSON ),
-         samplephenoJSON: ( [header: y[0], rows: y[1,2..y.size()-1] ] as JSON ),
-         samplegenoJSON: ( [header: z[0], rows: z[1,2..z.size()-1] ] as JSON ),]
-    }
+    def main() {}
 
-    // TOOD: remove this, it just to make testing jsonparse.js easy
-    def jsonstream() {
-        response.contentType = 'application/json'
-        def json = { message ->
-            "{\"message\":\"$message\"}\n"
-        }
-        def sendMessage = { msg, timeout ->
-            response.outputStream << json("$msg message; sleeping for $timeout seconds...")
-            response.outputStream.flush()
-            if (timeout != 0) {
-                sleep(timeout*1000)
-            }
-        }
-        sendMessage('first', 3)
-        sendMessage('second', 2)
-        sendMessage('third', 1)
-        sendMessage('last', 0)
-    }
-    /*Checks if the job exists 
+    /* Checks if the job exists 
+     * and returns jobInstance if the Job exits
      */
     private Job getJob(Long jobId, String jobName, Closure notFound) {
         def jobInstance = null
@@ -458,8 +459,8 @@ class PipelineJobController {
         def start_time = System.currentTimeMillis()
         def rows=[]
 
-        /*Ouputs any new or changed rows from job_state table, and
-         *stops if jobDone returns true or time exceeds 10 minutes
+        /* Ouputs any new or changed rows from job_state table, and
+         * stops if jobDone returns true or time exceeds 10 minutes
          */
         withSql(dataSource) { sql ->
             while (true) {

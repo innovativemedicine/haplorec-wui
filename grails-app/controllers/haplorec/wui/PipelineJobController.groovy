@@ -289,8 +289,15 @@ class PipelineJobController {
         return depGraph as JSON
     }
 
-    /* Report Function
-     * Outputs report as text file 
+    /** Outputs a report as text file (for the current response).
+     *
+     * Optional:
+     * @param id a job_id
+     * @param kwargs.filename the name of the output file (HTTP header)
+     * @param kwargs.output a function of type ( iterable, java.io.Writer -> void ) that writes the 
+     * iterable to the response output stream
+     * @param generateReport a function from haplorec.util.pipeline.Report (which generates the 
+     * iterable passed to kwargs.output
      */ 
     def private report(Map kwargs = [:], Long id, generateReport) {
         if (kwargs.filename == null) { kwargs.filename = 'output.txt' }

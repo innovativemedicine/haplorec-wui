@@ -248,3 +248,11 @@ steps:
   - DependencyGraph 
     - _levelToTargets: a mapping a "level" in the graph 
       to a list of targets at that level
+
+- add runtime check in Pipeline.groovy that input from pipelineInput conforms to pipelineInput's 
+  'input' contract. 
+- handle bad input data from stream/filehandle
+  - quoted data
+  - data with tabs
+  - data with nulls where there shouldn't be
+  - poorly typed data causing MySQL exceptions

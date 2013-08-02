@@ -20,6 +20,8 @@ class JobPatientNovelHaplotypeController {
         redirect(action: "list", params: params)
     }
 
+    /* Creates map from input geneHaplotypeMatrix and returns the map
+     */
     private def geneHaplotypeMatrixJSON(geneHaplotypeMatrix) {
         def matrix = [:]
 		matrix=[geneName: geneHaplotypeMatrix.geneName, snpIds:geneHaplotypeMatrix.snpIds,haplotypes:[],novelHaplotypes:[]]
@@ -43,13 +45,15 @@ class JobPatientNovelHaplotypeController {
 
     private def addMatrixJSON(model) {
             def matrices = []
-            /* Add matrixJSON to model.
+            /* For each geneHaplotypeMatrix, geneHaplotypeMatrixJSON is applied to it and it is added to the list matrices
              */
             Util.withSql(dataSource) { sql ->
                 Report.novelHaplotypeReport([sqlParams: [job_id: model.jobId]], sql).each { geneHaplotypeMatrix ->
                     matrices.add(geneHaplotypeMatrixJSON(geneHaplotypeMatrix))
                 }
             }
+            /* adding matrixJSON(includes list of geneNames and a list of matrices) to the model
+             */
             model.matrixJSON = ([geneNameList: matrices.collect{it.geneName}, matrices: matrices] as JSON)
     }
 

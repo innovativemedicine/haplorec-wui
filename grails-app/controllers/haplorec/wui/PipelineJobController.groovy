@@ -73,8 +73,8 @@ class PipelineJobController {
     /* The save function has been altered from the generated save function 
      * -to add input files to the inputs map based on target
      * -for each target define methods beforeBuild, afterBuild, onFail
-     * -then build each node
-     * -once all the nodes are done being built redirct to show page of that job
+     * -then build each target
+     * -once all the targets are done being built redirct to show page of that job
      */
     def save() {
         log.error("SAVE PARAMS: $params")
@@ -232,7 +232,7 @@ class PipelineJobController {
 
     /* Defining dependencyGraphJSON
      * takes in map
-     * Dispalys Counts on the node if map.counts=true
+     * Dispalys Counts on the target if map.counts=true
      * Displays Sample Input files if map.sampleInputs = true
      * running function levels on the dependencies
      * returns JSON of dependency Graph, which includes level and dependencies
@@ -348,13 +348,16 @@ class PipelineJobController {
         )
     }
 
-    /* novelHaplotypeReport
-     * pieces geneHaplotypeMatrix back together and outputs it
+    /* Takes in id and outputs data from each gene's geneHaplotypeMatrix
+     * as a textfile
      */
     def novelHaplotypeReport(Long id) {
         report(id, Report.&novelHaplotypeReport,
             filename: 'novel_haplotype_report.txt', 
             output: { rows, writer ->
+
+                /* for each gene
+                 */
                 rows.each { geneHaplotypeMatrix ->
                     /* Output a gene header
                      */
@@ -362,6 +365,8 @@ class PipelineJobController {
                     writer.append(System.getProperty("line.separator"))
                     Row.asDSV(new Object() {
                         def each(Closure f) {
+                            /* Ouput Haplotype header and snpIds headers on one line
+                             */
                             f(["Haplotype"] + geneHaplotypeMatrix.snpIds)
                             geneHaplotypeMatrix.each { haplotype, alleles ->
                                 String haplotypeStr
@@ -371,6 +376,10 @@ class PipelineJobController {
                                     assert haplotype instanceof Haplotype
                                     haplotypeStr = haplotype.haplotypeName
                                 }
+                                /* For each haplotype and alleles pair
+                                 * output haplotypestr under the Haplotype Header and 
+                                 * the alleles under the snpIds headers
+                                 */
                                 f([haplotypeStr] + alleles)
                             }
                         }

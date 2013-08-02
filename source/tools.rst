@@ -49,7 +49,7 @@ Rendering the view in jobPatientNovelHaplotype _list.gsp with matrixJSON as the 
 jsPlumb
 =======
 
-Used for connecting the nodes in the dependency Graph 
+Used for connecting the targets in the dependency Graph 
     - http://jsplumbtoolkit.com/doc/home.html
     - http://jsplumbtoolkit.com/jquery/flowchartConnectorsDemo.html
 

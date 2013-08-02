@@ -15,5 +15,5 @@ Contents:
     jobStatus
     tools
     dependencyGraph
-
+    createTarget
 

@@ -25,7 +25,7 @@ The Process
 When the user fills out the create page and clicks the create button the client sends out two request concurrently.
 
 * a asynchronous POST to the pipelineJob/create?jobName=somejob.
-    Once the server receives the POST request it starts to create the job by building the dependencies.
+    Once the server receives the POST request it starts to create the job by building the targets.
 
     .. sourcecode:: sql
 

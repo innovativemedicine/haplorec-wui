@@ -38,6 +38,7 @@ grails.project.dependency.resolution = {
 		
     }
 
+    // SPHINX grails-deps
     plugins {
         runtime ":hibernate:$grailsVersion"
         runtime ":jquery:1.8.0"
@@ -65,4 +66,5 @@ grails.project.dependency.resolution = {
         // debugging
         compile ":console:1.2"
     }
+    // SPHINX end grails-deps
 }

@@ -1,0 +1,5 @@
+Jinja2==2.6
+oursql==0.9.3.1
+funcparserlib==0.3.6
+MySQL-python==1.2.4
+Scrapy==0.16.4

@@ -5,15 +5,18 @@
 
 
 
-Welcome to haplorec-wui's documentation!
-========================================
+Haplorec
+======================================================
 
 Contents:
 
 .. toctree::
+    :maxdepth: 2
 
+    getting_started
     jobStatus
     tools
     dependencyGraph
     createTarget
+    scraping_pharmgkb
 

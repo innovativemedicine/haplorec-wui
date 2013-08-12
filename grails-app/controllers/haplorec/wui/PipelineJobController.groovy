@@ -262,7 +262,7 @@ class PipelineJobController {
                 } 
             }
         }
-
+		
         Map<Dependency, Integer> level = Dependency.levels(dependencies.values())
 		Map<Dependency, Integer> rowLevel = Dependency.rowLvls(dependencies.values() as Set)
 		

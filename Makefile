@@ -11,5 +11,5 @@ help:
 
 doc:
 	sphinx-apidoc --force projects/haplorec/src/python/pharmgkb -o source/apidoc 
-	sphinx-build -b html source documentation
+	sphinx-build -b html srcDoc documentation
 

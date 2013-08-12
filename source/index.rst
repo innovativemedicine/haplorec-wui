@@ -20,3 +20,9 @@ Contents:
     createTarget
     scraping_pharmgkb
 
+API:
+
+.. toctree::
+
+    apidoc/modules
+

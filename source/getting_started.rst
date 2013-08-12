@@ -52,7 +52,7 @@ Groovy dependencies
 
 **haplorec**
 
-If you're wanting to work on the haplorec repository using `GGTS <http://grails.org/products/ggts>`, 
+If you're wanting to work on the haplorec repository using `GGTS <http://grails.org/products/ggts>`_, 
 it's recommended you checkout the repository separately:
 
 .. code-block:: sh 
@@ -61,7 +61,7 @@ it's recommended you checkout the repository separately:
 
 Assuming you're going this route, you need to install the following dependencies:
 
-* JUnit 4 - http://junit.org/ (hamcrest-core-1.3.jar and junit-4.11.jar)
+* JUnit 4 - http://junit.org/ (hamcrest-core.jar and junit.jar)
 * MySQL driver - http://dev.mysql.com/downloads/connector/j/ (mysql-connector-java-5.1.24-bin.jar) 
 
 Stick the jars in a folder, then in Eclipse right-click the jars and add them to your build path.  

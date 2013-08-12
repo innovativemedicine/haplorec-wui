@@ -6,8 +6,8 @@ The dependency graph is displayed for each job and on the create page.
 How the graph layout is created
 ===============================
 
-Calculating the level of each node
-++++++++++++++++++++++++++++++++++
+Calculating the level of each node (Column Level)
++++++++++++++++++++++++++++++++++++++++++++++++++
 
 The level of a node is the length of the shortest path from that node to a node with no dependents.
 
@@ -23,12 +23,34 @@ For example in the graph bellow the variant node has these paths to level zero n
 
 Therefore the node variant has level 2.
 
-TODO: reference Dependency.groovy
-
-The code for calculating node levels is in pipeline.js under the DependencyGraph model.
+The code for calculating the column level can be found here in the levels function:
 
 .. toctree::
-    pipelineJs
+    Dependency
+
+Calculating the Row Level of each node
+++++++++++++++++++++++++++++++++++++++
+
+The following is used to calculate the row levels of each column's nodes:
+
+1. The nodes that do not depend on any other nodes in the column are found and assigned unique groups by alphabetical order
+
+2. For these nodes, numberNodes is applied to them which assigns vertical numbers to all the dependants using Depth first search
+
+.. figure:: pictures/dfs.png
+   :align: center
+
+3. numberNodes also assigns the starting node's group level to all the dependant nodes
+
+4. The nodes are then sorted into groups and then sorted by vertical number 
+5. The groups are joined into one list
+6. The list is then converted to a map, which maps Dependency to rowLevel
+
+The code for calculating the row levels can be found here in the rowLvls function:
+
+.. toctree::
+    Dependency
+
 
 Positioning of the Nodes
 ++++++++++++++++++++++++
@@ -62,15 +84,20 @@ vertical space between rows =
 Issues you may encounter
 ++++++++++++++++++++++++
 
-The node's level is used to determine which column it goes in, but which row the node is placed is arbitrary.
-This causes issues in the appearance of the graph. Some cases are if a node depends on two other nodes in its column or
-if a node depends on another node in the same level but they are not placed in adjacent rows.
+Although the nodes are placed by their column level and row level, an issue arises when two nodes depend on one starting node in the same column.
 
-For example if Phenotypes, Genotypes, and Haplotypes have the same level, and Phentoypes is dependent on genotypes and 
-haplotypes the graph may appear like this:
+For example if both Genotypes and Phenotypes are dependant of Haplotypes the Graph will apper like so. The line connecting Haplotypes and Phenotypes goes 
+straight through Genotypes instead of going around it. jsPlumb Library may have curved lines that will go around the nodes.
 
 .. figure:: pictures/messedGraph.png
     :align: center
+
+Another issue is if a node's column level is less than its dependant's, meaning its column number is greater than its dependant's column number.
+
+
+For example the dependencies A,B,C, and D with dependants[A]=[B,D], dependants[B]=[C], dependants[C]=[D], dependants[D]=[] 
+will have columnLevels [D:0,A:1,C:1,B:2].
+This means B will appear on the left of A, even though B depends on A.
 
 What the dependency graph does with input files
 ===============================================

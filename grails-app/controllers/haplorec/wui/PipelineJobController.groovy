@@ -28,20 +28,6 @@ class PipelineJobController {
 
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 
-    /* http://grails.org/doc/latest/guide/theWebLayer.html#commandObjects
-     */
-    @grails.validation.Validateable
-
-    static class DependencyInputCommand {
-        String datatype
-        byte[] input
-
-        static constraints = {
-            datatype validator: { haplorec.util.pipeline.PipelineInput.inputTables.contains(it?.toString()) }
-            input size: 0..5*1024*1024
-        }
-    }
-
     def index() {
         redirect(action: "list", params: params)
     }
@@ -276,13 +262,13 @@ class PipelineJobController {
                 } 
             }
         }
-
-        def level = dependencies.phenotypeDrugRecommendation.levels(startAt: [
-            dependencies.phenotypeDrugRecommendation, 
-            dependencies.genotypeDrugRecommendation,
-            dependencies.novelHaplotype])
+		
+        Map<Dependency, Integer> level = Dependency.levels(dependencies.values())
+		Map<Dependency, Integer> rowLevel = Dependency.rowLvls(dependencies.values() as Set)
+		
         def depGraph = [
             level: level,
+			rowLevel: rowLevel,
             dependencies: deps,
         ]
 

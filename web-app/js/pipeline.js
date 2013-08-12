@@ -127,10 +127,18 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
         // iterate over the dependencies in reverse breadth-first-search
         // fashion
         reverseBFS : function(f) {
+        	var rmap=this.get('rowLevel');
             for ( var l = this.get('numLevels') - 1; l >= 0; l--) {
                 var targets = this._levelToTargets[l];
-                for ( var j = 0; j < targets.length; j += 1) {
-                    f(l, this._dmap[targets[j]]);
+                
+                //Sort targets by their rowLevel
+                var tarSort = Array(targets.length);
+                for (var n=0; n < tarSort.length; n++){
+                	tarSort[rmap[targets[n]]]=targets[n]
+                }
+                
+                for ( var j = 0; j < tarSort.length; j += 1) {
+                    f(l, this._dmap[tarSort[j]]);
                 }
             }
         },
@@ -138,10 +146,18 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
         // iterate over the dependencies in reverse breadth-first-search
         // fashion
         BFS : function(f) {
+        	var rmap=this.get('rowLevel');
             for ( var l = 0; l < this.get('numLevels'); l++) {
                 var targets = this._levelToTargets[l];
-                for ( var j = 0; j < targets.length; j += 1) {
-                    f(l, this._dmap[targets[j]]);
+                
+                //Sort targets by their rowLevel
+                var tarSort = Array(targets.length);
+                for (var n=0; n < tarSort.length; n++){
+                	tarSort[rmap[targets[n]]]=targets[n]
+                }
+                
+                for ( var j = 0; j < tarSort.length; j += 1) {
+                    f(l, this._dmap[tarSort[j]]);
                 }
             }
         },

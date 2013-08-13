@@ -319,8 +319,8 @@ class PipelineJobController {
         try {
             f(sql)
         } finally {
-            sql.close()
-        }
+                sql.close()
+            }
     }
 
     /* Creating reports for genotypeDrugRecommendation, phenotypeDrugRecommendation and novelHaplotypes
@@ -467,23 +467,24 @@ class PipelineJobController {
         /* Ouputs any new or changed rows from job_state table, and
          * stops if jobDone returns true or time exceeds 10 minutes
          */
-        withSql(dataSource) { sql ->
-            while (true) {
-                def new_rows = sql.rows('select * from job_state where job_id = :jobId order by id', [jobId:jobInstance.id])
-                if ((rows.collect{it.state}!=new_rows.collect{it.state})){
-                    response.outputStream <<  new_rows.findAll{!(it in rows)}.collect { json(it) + '\n' }.join('')
-                    response.outputStream.flush()
-
-                    rows = new_rows
-                }
-
-                def time_passed = start_time - System.currentTimeMillis()
-                if (jobDone(rows) || time_passed >= request_timeout*60*1000) {
-                    log.error("its done or failed")
-                    break
-                }
-                sleep(pollTimeout*1000)
+        while (true) {
+            def new_rows
+            withSql(dataSource) { sql ->
+                new_rows = sql.rows('select * from job_state where job_id = :jobId order by id', [jobId:jobInstance.id])
             }
+            log.error("${jobInstance.jobName} - $new_rows")
+            if ((rows.collect{it.state}!=new_rows.collect{it.state})){
+                response.outputStream << new_rows.findAll{!(it in rows)}.collect { json(it) + '\n' }.join('')
+                response.outputStream.flush()
+                rows = new_rows
+            }
+
+            def time_passed = start_time - System.currentTimeMillis()
+            if (jobDone(rows) || time_passed >= request_timeout*60*1000) {
+                log.error("its done or failed")
+                break
+            }
+            sleep(pollTimeout*1000)
         }
          
     }

@@ -51,6 +51,29 @@ The code for calculating the row levels can be found here in the rowLvls functio
 .. toctree::
     Dependency
 
+Hard Coding Column Level and Row Level
+++++++++++++++++++++++++++++++++++++++
+
+In the case that you would want to set the position of a target, it can be hard coded when defining the depGraph model in:
+
+.. toctree::
+    PipelineJobDepGraph
+
+Instead of
+
+.. sourcecode:: groovy 
+ 
+    Map<Dependency, Integer> level = Dependency.levels(dependencies.values())
+    Map<Dependency, Integer> rowLevel = Dependency.rowLvls(dependencies.values() as Set)
+
+Assign the columnLevel and rowLevel based on how you would like the graph to appear
+
+.. sourcecode:: groovy
+     
+    Map<Dependency, Integer> level = [dependency1: columnLevel, ..., dependencyN:columnLevel]
+    Map<Dependency, Integer> rowLevel = [dependency1: rowLevel, ..., dependencyN: rowLevel]
+
+Remember the column number of a target = ( total number of columns - 1) - target's column level
 
 Positioning of the targets
 ++++++++++++++++++++++++++
@@ -66,6 +89,8 @@ n **=** number of columns **=** var numlevels **=** (maximum target level) + 1
 m **=** number of rows **=** the maximum number of targets in a level
 
 column number of target = (n - 1) - target's level 
+
+row number of target = target's rowLevel
 
 (column width) :sub:`i` **=** maximum target width in column i
 

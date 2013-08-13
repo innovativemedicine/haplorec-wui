@@ -223,6 +223,8 @@ class PipelineJobController {
      * running function levels on the dependencies
      * returns JSON of dependency Graph, which includes level and dependencies
      */
+	
+	//SPHINX depGraph start
     def private static dependencyGraphJSON(Map kwargs = [:])  {
 
         if (kwargs.counts == null) { kwargs.counts = false }
@@ -274,6 +276,7 @@ class PipelineJobController {
 
         return depGraph as JSON
     }
+	//SPHINX depGraph end
 
     /** Outputs a report as text file (for the current response).
      *

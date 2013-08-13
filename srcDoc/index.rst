@@ -19,6 +19,7 @@ Contents:
     dependencyGraph
     createTarget
     scraping_pharmgkb
+    databaseDiagram
 
 API:
 

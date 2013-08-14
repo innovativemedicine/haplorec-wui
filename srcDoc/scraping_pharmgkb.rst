@@ -10,19 +10,19 @@ The pharmgkb Scraper
 ====================
 The scraper does the following:
 
-* **GeneDrugPairSpider:** Start at the `gene-drug pairs page <http://www.pharmgkb.org/page/cpicGeneDrugPairs>`_  which lists gene-pages and drug-pages for which there are CPIC guidelines.  Crawl to the gene-pages, since they will (possibly) contain drug recommendations.
+* :class:`.GeneDrugPairSpider`: Start at the `gene-drug pairs page <http://www.pharmgkb.org/page/cpicGeneDrugPairs>`_  which lists gene-pages and drug-pages for which there are CPIC guidelines.  Crawl to the gene-pages, since they will (possibly) contain drug recommendations.
 
-* **GeneSpider:**
+* :class:`.GeneSpider`:
 
   * Extract *gene_haplotype_variant* records from the "Haplotypes" tab of the gene-page
 
   * For each drug with a "Lookup your guideline" dialog:
 
-    * **GeneHaplotypeSpider:** GET the json that generated that dialog, which contains the haplotypes for this gene
+    * :class:`.GeneHaplotypeSpider`: GET the json that generated that dialog, which contains the haplotypes for this gene
 
     * For each haplotype pair, GET the drug recommendation:
 
-      * **HaplotypeGenotypeSpider:** From the drug recommendation, extract a *genotype_phenotype* record, a *drug_recommendation* record, and a *genotype_drug_recommedation* record
+      * :class:`.HaplotypeGenotypeSpider`: From the drug recommendation, extract a *genotype_phenotype* record, a *drug_recommendation* record, and a *genotype_drug_recommedation* record
 
 API
 ===

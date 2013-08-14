@@ -3,19 +3,8 @@ Getting Started
 
 haplorec is divided into two repositories:
 
-**haplorec**: the backend
-  * scraping data from pharmgkb
-  * validating pipeline input
-  * running stages of the pipeline for a specific job
-  * saving results of each pipeline stage into the appropriate table
-  * generating reports for a job
-  * algorithms for mapping a dependency graph onto a cartesian coordinate system
-
-**haplorec-wui**: web user interface
-  * creating a job from input files
-  * viewing the status of a running job
-  * viewing the results of different stages
-  * downloading reports for a job
+#. **haplorec**: backend
+#. **haplorec-wui**: web user interface
 
 haplorec is referenced as a git submodule in haplorec-wui (under projects/haplorec).  So, when you 
 checkout haplorec-wui, make sure to do:

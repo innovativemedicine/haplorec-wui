@@ -10,6 +10,6 @@ help:
 	@$(MAKE_SCRIPTS)/usage.py
 
 doc:
-	sphinx-apidoc --force projects/haplorec/src/python/pharmgkb -o source/apidoc 
+	sphinx-apidoc --force projects/haplorec/src/python/pharmgkb -o srcDoc/apidoc 
 	sphinx-build -b html srcDoc documentation
 

@@ -26,7 +26,7 @@ Therefore the target variant has level 2.
 The code for calculating the column level can be found here in the levels function:
 
 .. toctree::
-    Dependency
+    src-link/Dependency
 
 Calculating the Row Level of each target
 ++++++++++++++++++++++++++++++++++++++++
@@ -49,7 +49,7 @@ The following is used to calculate the row levels of each column's targets:
 The code for calculating the row levels can be found here in the rowLvls function:
 
 .. toctree::
-    Dependency
+    src-link/Dependency
 
 Hard Coding Column Level and Row Level
 ++++++++++++++++++++++++++++++++++++++
@@ -57,7 +57,7 @@ Hard Coding Column Level and Row Level
 In the case that you would want to set the position of a target, it can be hard coded when defining the depGraph model in:
 
 .. toctree::
-    PipelineJobDepGraph
+    src-link/PipelineJobDepGraph
 
 Instead of
 

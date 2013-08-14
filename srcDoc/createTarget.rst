@@ -45,7 +45,7 @@ Sample Code for Variant target
 ===============================
 
 .. toctree::
-    JobPatientVariant
-    JobPatientVariantController
-    Variant_list
-    Variantlist
+    src-link/JobPatientVariant
+    src-link/JobPatientVariantController
+    src-link/Variant_list
+    src-link/Variantlist

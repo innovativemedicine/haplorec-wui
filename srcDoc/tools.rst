@@ -17,7 +17,7 @@ novelHaplotypeReport.dust template:
 Add the template to 
 
 .. toctree::
-    ApplicationResources
+    src-link/ApplicationResources
 
 .. code-block:: groovy
 
@@ -61,6 +61,6 @@ Relevant Code
 
 .. toctree::
 
-    pipelineJs
+    src-link/pipelineJs
 
 

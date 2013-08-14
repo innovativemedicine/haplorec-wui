@@ -68,7 +68,7 @@ Relevant Code
 
 .. toctree::
     
-    PipelineJob
+    src-link/PipelineJob
     show
     create
-    Jsonstream 
+    src-link/Jsonstream 

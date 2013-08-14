@@ -14,12 +14,12 @@ Contents:
     :maxdepth: 2
 
     getting_started
+    overview
     jobStatus
     tools
     dependencyGraph
     createTarget
     scraping_pharmgkb
-    databaseDiagram
 
 API:
 

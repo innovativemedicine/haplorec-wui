@@ -8,22 +8,27 @@
 Haplorec
 ======================================================
 
-Contents:
+**General:**
 
 .. toctree::
     :maxdepth: 2
 
     getting_started
     overview
-    jobStatus
-    tools
-    dependencyGraph
-    createTarget
-    scraping_pharmgkb
 
-API:
+**haplorec:**
 
 .. toctree::
+    :maxdepth: 2
 
-    apidoc/modules
+    scraping_pharmgkb
 
+**haplorec-wui:**
+
+.. toctree::
+    :maxdepth: 2
+
+    createTarget
+    dependencyGraph
+    jobStatus
+    tools

@@ -2,7 +2,7 @@
 
 Scraping PharmGKB
 *****************
-The web python crawling framework `scrapy <http://scrapy.org/>`_ was used for scraping data from PharmGKB. The `scrapy documentation <http://doc.scrapy.org/>`_ provides a useful overview of scrapy basics.
+The python web crawling framework `scrapy <http://scrapy.org/>`_ was used for scraping data from PharmGKB. The `scrapy documentation <http://doc.scrapy.org/>`_ provides a useful overview of scrapy basics.
 
 This code belongs to the haplorec repo.
 

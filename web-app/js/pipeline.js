@@ -520,7 +520,11 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
 
     m.Views.Dependency = m.Views.Dust.extend({
         /* Render a view for a dependency node in the graph.
-         * The model is a m.Dependency.
+         * The model is a m.Dependency. In addition to dependsOn, the model should define the follow 
+         * attributes:
+         * {
+         *     name: "Some Fancy Name To Display",
+         * }
          */
         template : "pipeline/dependency",
         className : "dependency",
@@ -924,8 +928,19 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
 
     });
 
-    // TOOD: refactor onclick file additions into this class
     m.Views.DependencyGraphForm = m.Views.DependencyGraph.extend({
+        /* Render a dependency graph which is also a form for submitting input files for various 
+         * nodes in the graph (which permit it). Uses m.Views.DependencyFile's to render <input ..> 
+         * elements for targets.
+         *
+         * The model is a m.DependencyGraph.  The m.Dependency models should also define the 
+         * following attributes:
+         * {
+         *     // specifies whether to allow a file upload or not for this dependency 
+         *     fileUpload: true OR false,
+         * }
+         */
+
         DependencyView : m.Views.Dependency.extend({
             _init : function() {
                 if (!this.model.get('fileUpload')) {
@@ -937,6 +952,32 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
         }),
 
         initialize : function(options) {
+            /* Modify this.$el, which currently is <div id="dependency-graph"></div>, like so:
+             *
+             *  // ===> Stuff from m.Views.DependencyGraph...
+             *  // this.outerEl
+             *  <div id="dependency-graph" class="dependency-graph-outer">
+             *      // this.$el
+             *      <div class="dependency-graph-inner">
+             *          // rendered DependencyView's
+             *          <div id="targetName1">...</div>
+             *          <div id="targetName2">...</div>
+             *      </div>
+             *      // ===> End of stuff from m.Views.DependencyGraph...
+             *      // this.dependencySampleInputContainer
+             *      <div></div>
+             *      // this.dependencyFilesContainer
+             *      <div class="dependency-files-container">
+             *          // this.dependencyFilesHeader
+             *          <div id="dependency-file-header">
+             *              <span>Data</span>
+             *              <span>File</span>
+             *              <span></span>
+             *              // rendered DependencyFile's
+             *          </div>
+             *      </div>
+             *  </div>
+             */
             this.constructor.__super__.initialize.apply(this, [options]);
 
             this.dependencySampleInputContainer = $(document.createElement('div'));
@@ -955,10 +996,11 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
             this.dependencyFilesContainer.append(this.dependencyFilesHeader);
             _.each(this.dependencyViews(), function(v) { 
 
-                // fileUpload indicates whether this is an dependency that accepts input
+                /* fileUpload indicates whether this is an dependency that accepts input.
+                 */
                 if (v.model.get('fileUpload')) {
-                    // when a dependency is clicked on,
-                    // ask for a file
+                    /* When a dependency is clicked on, ask for a file.
+                     */
                     var i = 0;
                     v.$el.click(function() {
                         var dFileView = new m.Views.DependencyFile({
@@ -972,8 +1014,8 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
                         dFileView.askForFile();
                     });
 
-                    // when a dependency is rolled over,
-                    // show a sample input file
+                    /* When a dependency is rolled over, show a sample input file.
+                     */
                     v.$el.mouseover(function() {
                         that.highlight(v);
                         if (typeof v.model.get('rows') != "undefined" && typeof v.model.get('header') != "undefined") {
@@ -986,7 +1028,8 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
                             that.dependencySampleInputContainer.html("<h4>Sample Input File:</h4>");
                             that.dependencySampleInputContainer.append(saminp.render().$el);
                         } else {
-                            // if we don't have a dependency file, just clear the container
+                            /* If we don't have a dependency file, just clear the container.
+                             */
                             that.dependencySampleInputContainer.empty();
                         }
                     });
@@ -996,8 +1039,22 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
         },
 
     });
-    // TOOD: refactor onclick file additions into this class
+
     m.Views.DependencyGraphShow = m.Views.DependencyGraph.extend({
+        /* Render a dependency graph for showing the result of a fully built graph.  Clicking on a 
+         * node in the dependency graph asynchronously 
+         *
+         * The model is a m.DependencyGraph.  The m.Dependency models should also define the 
+         * following attributes:
+         * {
+         *     // the number of results for this dependency
+         *     count: Integer,
+         *     // a relative url to query when this dependency is clicked on
+         *     listUrl: URL,
+         *     // an identifier to be used as a query param in the listUrl
+         *     jobId: Identifier,
+         * }
+         */
         DependencyView : m.Views.Dependency.extend({
             template : "pipeline/dependencyShow",
             _init : function() {
@@ -1007,6 +1064,16 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
 
         router : null,
 
+        /* When loading a link from a listUrl for a dependency, return true if we should fetch this 
+         * link asynchronously.
+         *
+         * 'this' will refer to the HTMLAnchorElement, so you can inspect its properties by doing 
+         * stuff like:
+         *
+         * ! $(this).hasClass('somethingToLoadSynchronously')
+         *
+         * Index is just an integer index indicating it's the i-th link (not really useful...).
+         */
         fetchAsync : function(index) {
             return true;
         },
@@ -1021,17 +1088,11 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
             this.listContainer = $(document.createElement('div'));
             this.outerEl.append(this.listContainer);
 
-            // when a dependency is clicked on, load its server-side list view
+            /* When a dependency is clicked on, load its server-side list view.
+             */
             var that = this;
             _.each(this.dependencyViews(), function(v) {
                 v.$el.click(function() {
-                    // that.highlight(v);
-                    // that.visit(
-                    // v.model.get('listUrl'),
-                    // {
-                    // jobId: v.model.get('jobId'),
-                    // }
-                    // );
                     that.select(v);
                     var target = that.highlightedNode.model.get('target');
                     that.router.navigate(target);
@@ -1058,8 +1119,7 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
         },
 
         _hackLinks : function(el) {
-            /*
-             * Hack links in el to fetch asynchronously and load inside el
+            /* Hack links in el to fetch asynchronously and load inside el
              * instead of linking to a new page.
              */
             var that = this;
@@ -1069,10 +1129,9 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
                     event.preventDefault();
                     var link = $a.attr('href');
                     var target = that.highlightedNode.model.get('target');
-                    // that.router.targetAt(that.highlightedNode.model.get('target'),
-                    // link);
                     that.visit(link);
-                    // record this link in our history
+                    /* Record this link in our history.
+                     */
                     that.router.navigate(target + '/link' + link);
                 });
             });
@@ -1080,10 +1139,16 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
         },
     });
 
-    // routers
+    /* Routers.
+     * =============================================================================================
+     */
+
     m.Routers = {};
 
     m.Routers.DependencyGraphShowRouter = Backbone.Router.extend({
+        /* Implements logic for managing the back-button history in m.Views.DependencyGraphShow when 
+         * clicking on nodes or links.
+         */
 
         initialize : function(options) {
             this.view = options.view;

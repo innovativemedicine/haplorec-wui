@@ -75,3 +75,6 @@ Some general notes on the schema:
 
 haplorec-wui
 ============
+
+Most of the complexity in haplorec-wui is in ``web-app/js/pipeline.js``, which is where the logic for laying out a 
+dependency graph is implemented.

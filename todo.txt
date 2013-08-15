@@ -256,3 +256,9 @@ steps:
   - data with tabs
   - data with nulls where there shouldn't be
   - poorly typed data causing MySQL exceptions
+
+- overview of haplorec-wui
+  - pipeline.js
+  - creating views of targets
+
+- only make variants uploadable in wui

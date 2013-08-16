@@ -12,8 +12,13 @@
         </style>
 	</head>
 	<body>
+    <p>Haplorec is a pipeline for mapping sample variants to therapeutic drug recommendations 
+    published by the Clinical Pharmacogenetics Implementation Consortium (CPIC), as catalogued by <a 
+    href="http://www.pharmgkb.org/page/cpicGeneDrugPairs" target="_blank">PharmGKB</a>.</p>
+
     <h3>Mapping Variants to Haplotypes:</h3>
-    <p>First of all, to determine which variants belong to each side of the chromosome there must be a maximum of one heterozygote variant.</p>
+    <p>Resolving haplotypes for variants is complected by the presence of heterzygous variants for 
+    the same gene.</p>
     <p>This is because when the variants are recorded for each location, the physical chromosome which they came from is not stored.</p>
     <img src="${resource(dir: 'images', file: 'chromosome_1.png')}" alt="Chromosomes">
     <p>For example, the above physical chromosomes could be recorded as</p>
@@ -47,6 +52,21 @@
 		</tr>
 	</table>
 	<p>The variants can not be split since the data does not show if A and T are on the same physical chromosome or A and C.</p> 
+
+    <p>To work around this limitation, we consider all the heterozygous variant combinations 
+    matching the following cases:</p>
+
+    <p>
+    <ol>
+    <li>There exists <b>one</b> unique known haplotype which contains alleles matching the observed heterozygote 
+    alleles.  The remaining alleles (not belonging to the known haplotype) may make up a novel 
+    haplotype (or they may ambiguously match more than one known haplotype).</li>
+    <li>There exist <b>two</b> unique known haplotypes which contains alleles matching the observed heterozygote 
+    alleles. Call those haplotypes.</li>
+    </ol>
+    <b>NOTE:</b> there can be multiple cases matching each of 1. and 2.
+    </p>
+
 	<h4>How Variants are mapped to Haplotypes:</h4>
 	
 	<div>A portion of the gene's variants can be used to identify its haplotype if it is unique to a specific haplotype.

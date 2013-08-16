@@ -22,6 +22,7 @@ Haplorec
     :maxdepth: 2
 
     scraping_pharmgkb
+    haplorec_requirements
 
 **haplorec-wui:**
 

@@ -3,8 +3,6 @@ import grails.converters.JSON
 import haplorec.wui.Util
 import haplorec.util.Input
 
-
-//import haplorec.util.*
 import haplorec.util.pipeline.PipelineInput
 import haplorec.util.pipeline.Pipeline
 import haplorec.util.pipeline.Report
@@ -21,12 +19,27 @@ import org.springframework.dao.DataIntegrityViolationException
 import javax.sql.DataSource
 import groovy.sql.Sql
 
+/* PipelineJobController defines the following:
+ *
+ * - Actions for creating a new job and running the haplorec pipeline (see Pipeline.groovy), as well 
+ *   as deleting a job (update and edit actions not currently supported).
+ * - A function for rendering JSON versions of the dependency graph (as returned by 
+ *   Pipeline.dependencyGraph),
+ *   adding properties to dependencies required by javascript Backbone views defined in pipeline.js.
+ * - A status action for incrementally obtaining the state of targets in the dependency graph of a 
+ *   running job.
+ */
 class PipelineJobController {
     DataSource dataSource
     LinkGenerator grailsLinkGenerator
     def grailsApplication
 
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
+
+    /* Restrict haplorec-wui to only accept a subset of the inputs accepted by the haplorec pipeline 
+     * (in particular, only allow variant input).
+    */
+    static final Set inputTables = ['variant'].grep { it in PipelineInput.inputTables } as Set
 
     def index() {
         redirect(action: "list", params: params)
@@ -37,12 +50,24 @@ class PipelineJobController {
         [jobInstanceList: Job.list(params), jobInstanceTotal: Job.count()]
     }
 
+    /* Inject dependencyGraphJSON for rendering pipeline.Views.DependencyGraphForm Backbone view.
+     */
     def create() {
-        [jobInstance: new Job(params), dependencyGraphJSON: dependencyGraphJSON(grailsLinkGenerator: grailsLinkGenerator, context: grailsApplication.mainContext,sampleInputs:true)]
+        [
+            jobInstance: new Job(params), 
+            dependencyGraphJSON: dependencyGraphJSON(
+                grailsLinkGenerator: grailsLinkGenerator, 
+                context: grailsApplication.mainContext,
+                sampleInputs: true,
+            )
+        ]
     }
 
-    /* Changes the list of jobs to a JSON list
-     * each job is converted to {id: job.id, jobName: job.jobName}
+    /* Render a list of Jobs as json.  
+     * Each job is converted to: 
+     *     {id: job.id, jobName: job.jobName}
+     *
+     * Used in grails-app/views/layouts/main.gsp for autocomplete job search in navbar.
      */
     def jsonList() {
         render ( 
@@ -56,23 +81,23 @@ class PipelineJobController {
         as JSON )
     }
 
-    /* The save function has been altered from the generated save function 
-     * -to add input files to the inputs map based on target
-     * -for each target define methods beforeBuild, afterBuild, onFail
-     * -then build each target
-     * -once all the targets are done being built redirct to show page of that job
+    /* The save function has been altered from the generated save function:
+     * - To add input files to the inputs map based on target
+     * - For each target define methods beforeBuild, afterBuild, onFail
+     * - Then build each target
+     * - Once all the targets are done being built redirect to show page of that job
      */
     def save() {
         log.error("SAVE PARAMS: $params")
 
-        /* inputs['variants'] == [file1, file2, ...]
+        /* inputs['variants'] == [files from params[/variant\d/]]
          */ 
         Map inputs = new LinkedHashMap();
         params.each { p, v ->
             def m = (p =~ /^[^\d]+/)
             if (m.getCount() == 1) {
                 def inputTable = m[0]
-                if (PipelineInput.inputTables.contains(inputTable)) {
+                if (inputTables.contains(inputTable)) {
                     def inputKey = inputTable + 's'
                     if (!inputs.containsKey(inputTable)) {
                         inputs[inputKey] = []
@@ -94,7 +119,7 @@ class PipelineJobController {
         }
 
         try {
-            /* Run the pipeline
+            /* Run the pipeline.
              */ 
             withSql(dataSource) { sql ->
                 def jobId = jobInstance.id
@@ -117,7 +142,6 @@ class PipelineJobController {
                     jobState.save(flush: true)
                 }
 
-
                 job.values().each { dependency ->
                     dependency.beforeBuild += beforeBuild 
                     dependency.afterBuild += afterBuild 
@@ -127,8 +151,8 @@ class PipelineJobController {
             } 
         } catch (InvalidInputException e) {
             jobInstance.refresh()
-            /* Don't delete the job on failure, since otherwise /pipelineJob/status might miss this occurence (race 
-             * condition).
+            /* Don't delete the job on failure, since otherwise /pipelineJob/status might miss this 
+             * occurence (race condition).
              * jobInstance.delete(flush: true)
              */
             jobInstance.errors.reject('job.errors.invalidInput', e.message)
@@ -140,6 +164,9 @@ class PipelineJobController {
         redirect(action: "show", id: jobInstance.id)
     }
 
+    /* Inject dependencyGraphJSON for rendering pipeline.Views.DependencyGraphShow Backbone view.
+     * We need to add table counts for each dependency.
+     */
     def show(Long id, String jobName) {
         def jobInstance = getJob(id, jobName) { identifier -> }
         if (!jobInstance) {
@@ -157,6 +184,8 @@ class PipelineJobController {
         [jobInstance: jobInstance, dependencyGraphJSON: json]
     }
 
+    // editting a graph is currenly not supported.
+    /*
     def edit(Long id) {
         def jobInstance = Job.get(id)
         if (!jobInstance) {
@@ -167,7 +196,10 @@ class PipelineJobController {
 
         [jobInstance: jobInstance, dependencyGraphJSON: dependencyGraphJSON()]
     }
+    */
 
+    // updating a graph is currenly not supported.
+    /*
     def update(Long id, Long version) {
         def jobInstance = Job.get(id)
         if (!jobInstance) {
@@ -196,6 +228,7 @@ class PipelineJobController {
         flash.message = message(code: 'default.updated.message', args: [message(code: 'job.label', default: 'Job'), jobInstance.id])
         redirect(action: "show", id: jobInstance.id)
     }
+    */
 
     def delete(Long id) {
         def jobInstance = Job.get(id)
@@ -216,16 +249,38 @@ class PipelineJobController {
         }
     }
 
-    /* Defining dependencyGraphJSON
+    /** Render Pipeline.dependencyGraph as JSON in a format acceptable by 
+     * pipeline.Views.DependencyGraphShow / pipeline.Views.DependencyGraphForm Backbone views.
+     *
+     *
+     * Defining dependencyGraphJSON
      * takes in map
      * Dispalys Counts on the target if map.counts=true
      * Displays Sample Input files if map.sampleInputs = true
      * running function levels on the dependencies
      * returns JSON of dependency Graph, which includes level and dependencies
+     *
+     * @param kwargs.sql
+     * A connection to the haplorec database.
+     * @param kwargs.counts
+     * If true, for each dependency, add a 'count' property with its table count (default: false).
+     * @param kwargs.sampleInputs
+     * If true, for each dependency look for the existence of a file 
+     * web-app/sample_input/${target}.txt
+     * If it exists, read its contents as a tab-separated file with a header and a list of rows, and 
+     * add these as 'header' and 'rows' attributes to this dependency.
+     *
+     * @param kwargs.grailsLinkGenerator
+     * injected LinkGenerator needed to resolve location of a table's 'listTemplate' (e.g.  
+     * grails-app/views/jobPatientVariant/_list.gsp) for adding 'listUrl' properties to 
+     * dependencies.  Required when kwargs.counts is true.
+     * @param kwargs.context
+     * grailsApplication.mainContext. Needed to find sample input file location. Required when 
+     * kwargs.sampleInputs is true.
      */
 	
 	//SPHINX depGraph start
-    def private static dependencyGraphJSON(Map kwargs = [:])  {
+    private static def dependencyGraphJSON(Map kwargs = [:])  {
 
         if (kwargs.counts == null) { kwargs.counts = false }
         if (kwargs.sampleInputs == null) { kwargs.sampleInputs = false }
@@ -234,6 +289,8 @@ class PipelineJobController {
             Util.makeRenderable(d) 
         } 
         if (kwargs.counts) {
+            /* pipeline.Views.DependencyGraphShow properties.
+             */
             deps.each { d ->
                 /* add counts for tables
                  */
@@ -244,12 +301,12 @@ class PipelineJobController {
         }
 
         if (kwargs.sampleInputs) {
+            /* pipeline.Views.DependencyGraphForm properties.
+             */
             deps.each { d ->
                 /* add sample input for each dependency
                  */ 
-                if (d['target'] == 'variant') {
-                    /* Only allow variant input from the web user-interface of haplorec.
-                     */
+                if (inputTables.contains(d['target'])) {
                     def filename = "/sample_input/${d.target}.txt"
                     def rows = []
                     try {
@@ -259,10 +316,10 @@ class PipelineJobController {
                             /* row is a list of strings, e.g. [PLATE, EXPERIMENT, CHIP, WELL_POSITION, ASSAY_ID, GENOTYPE_ID, DESCRIPTION, SAMPLE_ID, ENTRY_OPERATOR]
                              */
                         } 
-                        d['header']=rows[0]
+                        d['header'] = rows[0]
                         d['rows'] = rows[1,2..rows.size()-1]
                     } catch (FileNotFoundException e) {
-                        /* don't add rows/ headers since we don't have a sample input file
+                        /* Don't add rows/ headers since we don't have a sample input file.
                          */
                     } 
                 } else {
@@ -271,6 +328,9 @@ class PipelineJobController {
             }
         }
 		
+        /* pipeline.Views.DependencyGraph properties (both pipeline.Views.DependencyGraphShow and 
+         * pipeline.Views.DependencyGraphForm).
+        */
         Map<Dependency, Integer> level = Dependency.levels(dependencies.values())
 		Map<Dependency, Integer> rowLevel = Dependency.rowLvls(dependencies.values() as Set)
 		
@@ -287,12 +347,16 @@ class PipelineJobController {
     /** Outputs a report as text file (for the current response).
      *
      * Optional:
-     * @param id a job_id
-     * @param kwargs.filename the name of the output file (HTTP header)
-     * @param kwargs.output a function of type ( iterable, java.io.Writer -> void ) that writes the 
-     * iterable to the response output stream
-     * @param generateReport a function from haplorec.util.pipeline.Report (which generates the 
-     * iterable passed to kwargs.output
+     * @param id 
+     * a job_id
+     * @param kwargs.filename
+     * the name of the output file (HTTP header)
+     * @param kwargs.output
+     * a function of type ( iterable, java.io.Writer -> void ) that writes the iterable to the 
+     * response output stream
+     * @param generateReport
+     * a function from haplorec.util.pipeline.Report (which generates the iterable passed to 
+     * kwargs.output
      */ 
     def private report(Map kwargs = [:], Long id, generateReport) {
         if (kwargs.filename == null) { kwargs.filename = 'output.txt' }
@@ -325,11 +389,12 @@ class PipelineJobController {
         try {
             f(sql)
         } finally {
-                sql.close()
-            }
+            sql.close()
+        }
     }
 
-    /* Creating reports for genotypeDrugRecommendation, phenotypeDrugRecommendation and novelHaplotypes
+    /* Creating reports for genotypeDrugRecommendation, phenotypeDrugRecommendation and 
+     * novelHaplotypes.
      */
     def genotypeReport(Long id) {
         report(id, Report.&genotypeDrugRecommendationReport,
@@ -343,8 +408,8 @@ class PipelineJobController {
         )
     }
 
-    /* Takes in id and outputs data from each gene's geneHaplotypeMatrix
-     * as a textfile
+    /* Takes in a job_id and outputs data from each gene's geneHaplotypeMatrix
+     * as a textfile.
      */
     def novelHaplotypeReport(Long id) {
         report(id, Report.&novelHaplotypeReport,
@@ -385,10 +450,12 @@ class PipelineJobController {
         )
     }
 
+    /* To get grails-app/views/pipelineJob/main.gsp to show.
+     */
     def main() {}
 
-    /* Checks if the job exists 
-     * and returns jobInstance if the Job exits
+    /* Checks if the job exists and returns jobInstance if the Job, otherwise executes 
+     * notFind(jobId).
      */
     private Job getJob(Long jobId, String jobName, Closure notFound) {
         def jobInstance = null
@@ -407,6 +474,7 @@ class PipelineJobController {
         }
         return jobInstance
     }
+
     // SPHINX insert
     /* Render a response consisting of newline separated JSON objects:
      * { target: "variant", state: "running" }
@@ -420,11 +488,7 @@ class PipelineJobController {
      *
      * The response will continue to render (in one long GET request) if the job is in the midst of 
      * processing, and the client will incrementally receive the state updates as the job processes.
-     *
-     * 
-     *
      */
-     
     def status(Long jobId, String jobName) {
 
         def jobInstance = getJob(jobId, jobName) { identifier ->
@@ -445,7 +509,7 @@ class PipelineJobController {
          
         def (_, dependencies) = Pipeline.dependencyGraph() 
 
-        /*Checks if the Job is done or if one of the dependencies failed by checking states
+        /* Checks if the Job is done or if one of the dependencies failed by checking states.
          */
         def jobDone = {rows ->
 
@@ -470,8 +534,8 @@ class PipelineJobController {
         def start_time = System.currentTimeMillis()
         def rows=[]
 
-        /* Ouputs any new or changed rows from job_state table, and
-         * stops if jobDone returns true or time exceeds 10 minutes
+        /* Ouputs any new or changed rows from job_state table, and stops if jobDone returns true or 
+         * time exceeds 10 minutes.
          */
         while (true) {
             def new_rows

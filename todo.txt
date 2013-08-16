@@ -260,5 +260,7 @@ steps:
 - overview of haplorec-wui
   - pipeline.js
   - creating views of targets
+- update main page to describe updated requirements (heterozygote disambiguation)
+- deploy haplorec to analysis (create mysql db)
 
 - only make variants uploadable in wui

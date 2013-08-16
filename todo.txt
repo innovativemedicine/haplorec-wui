@@ -1,5 +1,3 @@
-- update main page to describe updated requirements (heterozygote disambiguation)
-- make sure it's clear what dependencies need to be installed to get just haplorec running
 - overview of haplorec-wui
   - pipeline.js
   - creating views of targets

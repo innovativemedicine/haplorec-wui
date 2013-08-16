@@ -1,3 +1,5 @@
+.. _dependencyGraph:
+
 Dependency Graph
 ****************
 

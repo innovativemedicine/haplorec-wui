@@ -6,13 +6,14 @@ Code is split across haplorec and haplorec-wui in the following way:
 **haplorec**: backend
   * scraping data from pharmgkb
   * validating pipeline input
-  * running stages of the pipeline for a specific job
+  * running stages of the pipeline for a job using input (streams / files / iterable data) for 
+    dependencies in the graph
   * saving results of each pipeline stage into the appropriate table
   * generating reports for a job
   * algorithms for mapping a dependency graph onto a cartesian coordinate system
 
 **haplorec-wui**: web user interface
-  * creating a job from input files
+  * creating a job from files submitted in a form
   * viewing the status of a running job
   * viewing the results of different stages
   * downloading reports for a job
@@ -76,5 +77,12 @@ Some general notes on the schema:
 haplorec-wui
 ============
 
-Most of the complexity in haplorec-wui is in ``web-app/js/pipeline.js``, which is where the logic for laying out a 
-dependency graph is implemented.
+Most of the complexity in haplorec-wui is in ``web-app/js/pipeline.js``, which is where the logic 
+for laying out a dependency graph in a cartesian coordinate system is implemented.
+
+The javascript code is provided with the cartesian coordinates for laying out nodes in the graph 
+(where the x coordinate is the ``level``, and y coordinate is the ``rowLevel``), and the coordinates 
+themselves are calculated in ``haplorec.util.dependency.Dependency``.
+
+The details of laying out the graph and calculating cartesian coordinates are well documented in 
+:ref:`dependencyGraph` as well as in ``web-app/js/pipeline.js``.

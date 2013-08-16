@@ -1,6 +1,8 @@
 Haplorec Requirements
 =====================
 
+This page documents implemented / yet to be implemented requirements in haplorec.
+
 Implemented
 ***********
 

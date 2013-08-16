@@ -8,6 +8,11 @@
 Haplorec
 ======================================================
 
+This is a technical overview of haplorec and haplorec-wui (i.e. to be read by developers).  
+
+The first thing you should read (after setting up haplorec-wui in :ref:`getting_started`) is the 
+index page of haplorec-wui for a user-level overview of haplorec.
+
 **General:**
 
 .. toctree::

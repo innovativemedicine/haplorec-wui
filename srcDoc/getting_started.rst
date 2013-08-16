@@ -1,3 +1,5 @@
+.. _getting_started:
+
 Getting Started
 ***************
 
@@ -13,10 +15,14 @@ checkout haplorec-wui, make sure to do:
 
     git clone --recursive https://github.com/innovativemedicine/haplorec-wui.git 
 
+The haplorec project can be used without haplorec-wui (simply follow the installation of 
+dependencies for haplorec).
+
 Dependencies
 ============
 
-You'll want to install the following dependencies before trying to do anything.
+You'll want to install the following dependencies before trying to do anything (with either haplorec 
+or haplorec-wui).
 
 Python dependencies 
 -------------------
@@ -84,6 +90,16 @@ You can then load the generated schema:
 
     mysql -u root -e 'create database haplorec'
     mysql -u root haplorec < src/sql/mysql/haplorec.sql
+
+**NOTE:** If you are generating a database to be used by haplorec-wui, you should also do the 
+following:
+
+.. code-block:: sh 
+
+    mysql -u root haplorec < ../../src/sql/mysql/haplorec_wui.sql
+
+This schema file defines the ``job_state`` table, which is required for providing incremental feedback 
+to the user about the state of running jobs (see :ref:`jobStatus`).
 
 The files for loading the haplorec schema are generated from scraping the PharmGKB website.  However 
 in case PharmGKB changes (which it has a few times as of writing this), you can simply grab the 

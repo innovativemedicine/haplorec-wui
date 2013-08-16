@@ -247,21 +247,27 @@ class PipelineJobController {
             deps.each { d ->
                 /* add sample input for each dependency
                  */ 
-                def filename = "/sample_input/${d.target}.txt"
-                def rows = []
-                try {
-                    def absoluteFilename = kwargs.context.getResource(filename).getFile().getCanonicalPath()
-                    Input.dsv(absoluteFilename, asList: true).each { row ->
-                        rows.add(row) 
-                        /* row is a list of strings, e.g. [PLATE, EXPERIMENT, CHIP, WELL_POSITION, ASSAY_ID, GENOTYPE_ID, DESCRIPTION, SAMPLE_ID, ENTRY_OPERATOR]
+                if (d['target'] == 'variant') {
+                    /* Only allow variant input from the web user-interface of haplorec.
+                     */
+                    def filename = "/sample_input/${d.target}.txt"
+                    def rows = []
+                    try {
+                        def absoluteFilename = kwargs.context.getResource(filename).getFile().getCanonicalPath()
+                        Input.dsv(absoluteFilename, asList: true).each { row ->
+                            rows.add(row) 
+                            /* row is a list of strings, e.g. [PLATE, EXPERIMENT, CHIP, WELL_POSITION, ASSAY_ID, GENOTYPE_ID, DESCRIPTION, SAMPLE_ID, ENTRY_OPERATOR]
+                             */
+                        } 
+                        d['header']=rows[0]
+                        d['rows'] = rows[1,2..rows.size()-1]
+                    } catch (FileNotFoundException e) {
+                        /* don't add rows/ headers since we don't have a sample input file
                          */
                     } 
-                    d['header']=rows[0]
-                    d['rows'] = rows[1,2..rows.size()-1]
-                } catch (FileNotFoundException e) {
-                    /* don't add rows/ headers since we don't have a sample input file
-                     */
-                } 
+                } else {
+                    d['fileUpload'] = false
+                }
             }
         }
 		

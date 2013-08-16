@@ -1,47 +1,21 @@
+/* pipeline defines Backbone models and views for rendering a dependency graph.  
+ *
+ * pipeline.DependencyGraphShow:
+ * render a dependency graph which has been built, allowing the user to click on nodes in the graph 
+ * to display built targets from some url.
+ *
+ * pipeline.DependencyGraphForm:
+ * render a dependency graph which is to be run on the server using input files submitted in a form.  
+ *
+ */
 var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
     'use strict';
-
-    // models
-
-    var _grailsModel = {
-        readAction : 'show',
-        createAction : 'create',
-        updateAction : 'update',
-        deleteAction : 'remove',
-
-        // http://stackoverflow.com/questions/8731729/backbone-js-model-different-url-for-create-and-update
-
-        methodToURL : {
-            'read' : function() {
-                return this.url + '/' + this.readAction
-            },
-            'create' : function() {
-                return this.url + '/' + this.createAction
-            },
-            'update' : function() {
-                return this.url + '/' + this.updateAction
-            },
-            'delete' : function() {
-                return this.url + '/' + this.deleteAction
-            },
-        },
-
-        sync : function(method, model, options) {
-            options = options || {};
-            // options.url = model.methodToURL[method.toLowerCase()];
-            options.url = model.methodToURL[method.toLowerCase()].apply(model);
-            return Backbone.sync(method, model, options);
-        },
-
-    };
-    m.GrailsCollection = Backbone.Collection.extend(_grailsModel);
-    m.GrailsModel = Backbone.Model.extend(_grailsModel);
 
     /* Models.
      * =============================================================================================
      */
 
-    m.Dependency = m.GrailsModel.extend({
+    m.Dependency = Backbone.Model.extend({
         /* A Dependency model corresponds to a haplorec.util.dependency.Dependency. That is, it has a 
          * dependsOn property, however the elements of dependsOn are TargetName's instead of 
          * other Dependency model's (DependencyGraph helps provide access to actual dependencies).
@@ -54,18 +28,27 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
         }
 
     });
+
     m.DependencyFile = Backbone.Model.extend({
+        /* A DependencyFile model is a file to upload to the server for a particular dependency.
+         */
+
+        /* Name of the file to send to the server.
+         */
         filename : null,
+        /* An m.Dependency model.
+         */
         dependency : null,
     });
 
-    m.Dependencies = m.GrailsCollection.extend({
+    m.Dependencies = Backbone.Collection.extend({
         model : m.Dependency,
-        url : 'dependencies',
     });
 
-    m.DependencyGraph = m.GrailsModel.extend({
-        /* A DependencyGraph model is a collection of dependencies.
+    m.DependencyGraph = Backbone.Model.extend({
+        /* A DependencyGraph model is a collection of dependencies with dependency relationships 
+         * (e.g. A depends on B) defined in a list dependsOn for each target.
+         *
          * It expects the following attributes:
          * {
          *     dependencies: {
@@ -103,9 +86,8 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
          * to the row in which it should be placed on a grid relative to all other targets with the 
          * same "level" as it (refer to haplorec.util.dependency.Dependency.rowLvls).
          */
-        url : 'dependencyGraph',
 
-        /* Fields initialized during initialize.
+        /* Fields initialized during initialize:
          */
 
         /* Integer -> { TargetName }
@@ -194,20 +176,20 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
         },
 
         /* Iterate over the dependencies in the order of dependencies at level 0 (in the order of 
-         * their rowLevel), then at level 1, ..., etc.  In other words, iterate and bread-first 
+         * their rowLevel), then at level 1, ..., etc.  In other words, iterate in breadth-first 
          * search order (plus rowLevel) ordering.
          *
          * f takes the level of the current dependency, and the dependency object.
          */
         BFS : function(f) {
-            var rmap=this.get('rowLevel');
+            var rmap = this.get('rowLevel');
             for ( var l = 0; l < this.get('numLevels'); l++) {
                 var targets = this._levelToTargets[l];
                 
                 //Sort targets by their rowLevel
                 var tarSort = Array(targets.length);
-                for (var n=0; n < tarSort.length; n++){
-                    tarSort[rmap[targets[n]]]=targets[n]
+                for (var n = 0; n < tarSort.length; n++){
+                    tarSort[rmap[targets[n]]] = targets[n]
                 }
                 
                 for ( var j = 0; j < tarSort.length; j += 1) {
@@ -222,14 +204,14 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
          * f takes the level of the current dependency, and the dependency object.
          */
         reverseBFS : function(f) {
-            var rmap=this.get('rowLevel');
+            var rmap = this.get('rowLevel');
             for ( var l = this.get('numLevels') - 1; l >= 0; l--) {
                 var targets = this._levelToTargets[l];
                 
                 //Sort targets by their rowLevel
                 var tarSort = Array(targets.length);
-                for (var n=0; n < tarSort.length; n++){
-                    tarSort[rmap[targets[n]]]=targets[n]
+                for (var n = 0; n < tarSort.length; n++){
+                    tarSort[rmap[targets[n]]] = targets[n]
                 }
                 
                 for ( var j = 0; j < tarSort.length; j += 1) {
@@ -250,6 +232,7 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
         /* A view backed by a dustjs template; it's render function uses dustjs to render this.template,
          * which is a template path (defined in ApplicationResources.groovy).
          */
+
         render : function() {
             var that = this;
             dust.render(this.template, this.model.attributes, function(err, output) {
@@ -271,6 +254,7 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
          * manipulation to set up your view.
          */
         _init : undefined,
+
     });
 
     m.Views.sampleinputfile = m.Views.Dust.extend({
@@ -290,7 +274,7 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
     m.Views.matrix = m.Views.Dust.extend({
         /* Render a template for displaying a gene-haplotype matrix.
          * The model is the JSON-ified version of haplorec.util.data.GeneHaplotypeMatrix.each (see 
-         * JobPatientNovelHaplotype.geneHaplotypeMatrixJSON).
+         * JobPatientNovelHaplotypeController.geneHaplotypeMatrixJSON).
          *
          * Hence, the model it accepts has the following attributes (the JSON:
          * {
@@ -341,7 +325,9 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
          *     ]
          * }
          */
+
         template : "pipeline/matrix",
+
         _init : function() {
             var that = this;
             
@@ -355,26 +341,26 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
              * matrix.
              */
             this.$(".leftTable tr.rows").hover(
-                    function(){
-                        $(this).addClass('active');
-                        $('.rightTable tr:eq(' + $('.leftTable tr').index($(this)) + ')').addClass('active');
-                    },
-                    function(){
-                        $(this).removeClass('active');
-                        $('.rightTable tr:eq(' + $('.leftTable tr').index($(this)) + ')').removeClass('active');
-                    }
-                );
+                function(){
+                    $(this).addClass('active');
+                    $('.rightTable tr:eq(' + $('.leftTable tr').index($(this)) + ')').addClass('active');
+                },
+                function(){
+                    $(this).removeClass('active');
+                    $('.rightTable tr:eq(' + $('.leftTable tr').index($(this)) + ')').removeClass('active');
+                }
+            );
             this.$(".rightTable tr.rows").hover(
-                    function(){
-                        $(this).addClass('active');
-                        $('.leftTable tr:eq(' + $('.rightTable tr').index($(this)) + ')').addClass('active');
-                    },
-                    function(){
-                        $(this).removeClass('active');
-                        $('.leftTable tr:eq(' + $('.rightTable tr').index($(this)) + ')').removeClass('active');
-                    }
-                );
-            
+                function(){
+                    $(this).addClass('active');
+                    $('.leftTable tr:eq(' + $('.rightTable tr').index($(this)) + ')').addClass('active');
+                },
+                function(){
+                    $(this).removeClass('active');
+                    $('.leftTable tr:eq(' + $('.rightTable tr').index($(this)) + ')').removeClass('active');
+                }
+            );
+
             /* Scrolling:
              * Matching up scrolling of alleles left and right with snp and up and down with 
              * haplotypes. Also, matching up scrolling of haplotypes left and right with 
@@ -398,24 +384,25 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
              * coloumn.
              */
             function cell_size(classname){
-                var max_header= that.$('th.'+classname).map(function(){ return $(this).width();});
-                var max_body= that.$('td.'+classname).map(function(){ return $(this).width();});
+                var max_header = that.$('th.'+classname).map(function(){ return $(this).width(); });
+                var max_body = that.$('td.'+classname).map(function(){ return $(this).width(); });
                 var max_width = new Array(max_header.length);
-                for(var i=0;i< max_header.length;i++){
-                    max_width[i]=Math.max(max_header[i],max_body[i]);
+                for(var i = 0; i< max_header.length; i++){
+                    max_width[i] = Math.max(max_header[i],max_body[i]);
                 }
                 that.$("td."+classname).map(function(){
                     var column = $(this).index()
                     $(this).css("min-width",max_width[column])
-                    });
+                });
                 that.$("th."+classname).map(function(){
                     var column = $(this).index()
                     $(this).css("min-width",max_width[column])
-                    });
+                });
             }
             cell_size("rightside");
             cell_size("leftside");
         },
+
     });
     
     //SPHINX matrixList start
@@ -425,8 +412,10 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
          *
          * The model is a list of matrix models.
          */
+
         template: "pipeline/novelHaplotypeReport",
-        _init: function(){
+
+        _init: function() {
             var matrices = this.model.get('matrices');
             var geneNameList = this.model.get('geneNameList');
 
@@ -438,7 +427,7 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
                 });
                 matrixView.render();
             }
-            for (var i=0; i < matrices.length; i++){
+            for (var i = 0; i < matrices.length; i++){
                 renderNextGene(i,geneNameList[i]);    
             }
             function changeGene(){
@@ -449,6 +438,7 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
             changeGene();
             this.$("select").change(changeGene);
         },
+
     });
     //SPHINX matrixList end
 
@@ -520,7 +510,7 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
 
     m.Views.Dependency = m.Views.Dust.extend({
         /* Render a view for a dependency node in the graph.
-         * The model is a m.Dependency. In addition to dependsOn, the model should define the follow 
+         * The model is an m.Dependency. In addition to dependsOn, the model should define the follow 
          * attributes:
          * {
          *     name: "Some Fancy Name To Display",
@@ -541,7 +531,7 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
          * It does not specify behaviour for what happens when nodes are clicked; subclasses 
          * implement this (see m.Views.DependencyGraphShow and m.Views.DependencyGraphForm).
          *
-         * The model is a m.DependencyGraph.
+         * The model is an m.DependencyGraph.
          */
 
         /* We'll use an existing <div id="dependency-graph"></div> to render ourself in.
@@ -933,7 +923,7 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
          * nodes in the graph (which permit it). Uses m.Views.DependencyFile's to render <input ..> 
          * elements for targets.
          *
-         * The model is a m.DependencyGraph.  The m.Dependency models should also define the 
+         * The model is an m.DependencyGraph.  The m.Dependency models should also define the 
          * following attributes:
          * {
          *     // specifies whether to allow a file upload or not for this dependency 
@@ -1044,7 +1034,7 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
         /* Render a dependency graph for showing the result of a fully built graph.  Clicking on a 
          * node in the dependency graph asynchronously 
          *
-         * The model is a m.DependencyGraph.  The m.Dependency models should also define the 
+         * The model is an m.DependencyGraph.  The m.Dependency models should also define the 
          * following attributes:
          * {
          *     // the number of results for this dependency
@@ -1079,6 +1069,20 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
         },
 
         initialize : function(options) {
+            /* Modify this.$el, which currently is <div id="dependency-graph"></div>, like so:
+             *
+             * // this.outerEl
+             * <div id="dependency-graph" class="dependency-graph-outer">
+             *     // this.$el
+             *     <div class="dependency-graph-inner">
+             *         // rendered DependencyView's
+             *         <div id="targetName1">...</div>
+             *         <div id="targetName2">...</div>
+             *     </div>
+             *     // this.listContainer
+             *     <div></div>
+             * </div>
+             */
             this.constructor.__super__.initialize.apply(this, [ options ]);
 
             this.router = new m.Routers.DependencyGraphShowRouter({
@@ -1101,6 +1105,8 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
 
         },
 
+        /* Hightlight this dependency view in the graph and visit it's associasted listUrl.
+         */
         select : function(dependencyView) {
             this.highlight(dependencyView);
             this.visit(dependencyView.model.get('listUrl'), {
@@ -1108,7 +1114,8 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
             });
         },
 
-        // load a url in a div below the graph
+        /* Load a url in a div below the graph (this.listContainer).
+         */
         visit : function(url, params) {
             var request = $.get(url, params);
             var that = this;
@@ -1118,10 +1125,10 @@ var pipeline = (function(m, Backbone, _, dust, jsPlumb, Spinner, jsonstream) {
             });
         },
 
+        /* Hack links in el to fetch asynchronously and load inside el instead of linking to a 
+         * new page.
+         */
         _hackLinks : function(el) {
-            /* Hack links in el to fetch asynchronously and load inside el
-             * instead of linking to a new page.
-             */
             var that = this;
             el.find('a').filter(that.fetchAsync).each(function(i, a) {
                 var $a = $(a);

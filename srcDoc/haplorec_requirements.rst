@@ -38,12 +38,15 @@ ambiguously map to multiple known haplotypes, then call those haplotypes.
 
     Rs1,AT
     Rs2,AT
+
 |
+
 .. csv-table:: Gene-haplotype Matrix
     :header: Haplotype,Rs1,Rs2
 
     \*1,A,T
     \*2,T,A
+
 Call \*1/\*2
 
 *Example 2.*
@@ -53,7 +56,9 @@ Call \*1/\*2
 
     Rs1,AT
     Rs2,AT
+
 |
+
 .. csv-table:: Gene-haplotype Matrix
     :header: Haplotype,Rs1,Rs2
 
@@ -61,6 +66,7 @@ Call \*1/\*2
     \*2,T,A
     \*3,A,A
     \*4,T,T
+
 Call nothing
 
 **Additions:**
